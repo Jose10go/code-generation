@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="CodeGen.Commands.CloneCommand&lt;TSyntaxNode, TRootNode, TProcessEntity&gt;">
+    <Position X="11" Y="5" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAIAAAAAAAAACAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\CloneCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CodeGen.Commands.Handlers.DocumentEditing.MethodCloneCommandHandler">
+    <Position X="3.5" Y="6.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Engine\CSharp\DocumentEditing\CommandHandlers\MethodCloneHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CodeGen.Commands.CSharpTarget&lt;TSyntaxNode&gt;">
+    <Position X="7.25" Y="5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>ACAAEAAAAAAIAAAAAAAQAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Engine\CSharp\CSharpTarget.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CodeGen.Commands.Handlers.DocumentEditing.RoslynDocumentEditorCommandHandler&lt;TCommand, TSyntaxNode&gt;" Collapsed="true">
+    <Position X="1.25" Y="5" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAQAAACAAAAAABCgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Engine\CSharp\DocumentEditing\CommandHandlers\CSharpCodeGenerationHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CodeGen.Commands.Handlers.DocumentEditing.ClassCloneCommandHandler">
+    <Position X="0.5" Y="6.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Engine\CSharp\DocumentEditing\CommandHandlers\ClassCloneHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CodeGen.Engine.CSharp.DocumentEditing.CSharpTargetBuilder&lt;TNode, TProcessEntity&gt;" Collapsed="true">
+    <Position X="7.25" Y="7.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAEEAAAAgAAAAUAQAAAAAABAAEAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Engine\CSharp\CSharpTargetBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="CodeGen.Commands.Abstract.ICommandHandler&lt;TCommand, TTarget, TNode, TRootNode, TProcessEntity&gt;">
+    <Position X="1.25" Y="2.5" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAABCAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Abstract\ICommandHandler.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeGen.Commands.Abstract.ICommandHandler">
+    <Position X="1.25" Y="0.5" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAABCAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Abstract\ICommandHandler.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeGen.Commands.Abstract.ITarget&lt;TNode, TRoot&gt;">
+    <Position X="7.25" Y="2.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Commands\Abstract\ITarget.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeGen.Commands.Abstract.ITarget">
+    <Position X="7.25" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Commands\Abstract\ITarget.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeGen.Commands.Abstract.ICommandBuilder&lt;TCommand, TNode, TRoot, TProcessEntity&gt;">
+    <Position X="15" Y="2.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Abstract\ICommandBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeGen.Commands.Abstract.ICommandBuilder&lt;TCommand&gt;">
+    <Position X="15" Y="0.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Abstract\ICommandBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeGen.Commands.Abstract.ICommand">
+    <Position X="11.25" Y="0.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAACAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Abstract\ICommand.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeGen.Engine.Abstract.ICodeGenerationEngine">
+    <Position X="18.75" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAACAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Engine\Abstract\ICodeGenerationEngine.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeGen.Engine.Abstract.ICodeGenerationEngine&lt;TSolution, TRoot, TProcessEntity&gt;">
+    <Position X="18.5" Y="2.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAACAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Engine\Abstract\ICodeGenerationEngine.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
