@@ -7,15 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using CodeGen.DI.Abstract;
-using CodeGen.Engine.Abstract;
-using CodeGen.Commands.Abstract;
 
 namespace CodeGen.DI
 {
     public class AutofacResolver<TSolution, TRoot, TProcessEntity> : ICodeGenerationResolver<TSolution, TRoot, TProcessEntity>
     {
         protected IContainer _container { get; set; }
-        protected ICodeGenerationEngine<TSolution, TRoot, TProcessEntity> _engine;
+        protected Context.CodeGenContext<TSolution, TRoot, TProcessEntity>.ICodeGenerationEngine _engine;
 
         public virtual void BuildContainer()
         {
@@ -24,25 +22,25 @@ namespace CodeGen.DI
             _container = builder.Build();
         }
 
-        public void RegisterEngine(ICodeGenerationEngine<TSolution, TRoot, TProcessEntity> engine)
+        public void RegisterEngine(Context.CodeGenContext<TSolution, TRoot, TProcessEntity>.ICodeGenerationEngine engine)
         {
             _engine = engine;
         }
 
-        public ICommandBuilder<TCommand, TNode, TRoot, TProcessEntity> ResolveCommandBuilder<TCommand, TNode>()
-            where TCommand : ICommand<TNode, TRoot, TProcessEntity>
+        public Context.CodeGenContext<TSolution,TRoot,TProcessEntity>.ICommandBuilder<TCommand, TNode> ResolveCommandBuilder<TCommand, TNode>()
+            where TCommand : Context.CodeGenContext<TSolution, TRoot, TProcessEntity>.ICommand<TNode>
         {
-            return _container.Resolve<ICommandBuilder<TCommand, TNode, TRoot, TProcessEntity>>();
+            return _container.Resolve< Context.CodeGenContext < TSolution,TRoot,TProcessEntity>.ICommandBuilder<TCommand,TNode>>();
         }
 
-        public ICodeGenerationEngine<TSolution, TRoot, TProcessEntity> ResolveEngine()
+        public Context.CodeGenContext<TSolution, TRoot, TProcessEntity>.ICodeGenerationEngine ResolveEngine()
         {
             return _engine;
         }
 
-        public ITargetBuilder<TNode, TRoot, TProcessEntity> ResolveTargetBuilder<TNode>()
+        public Context.CodeGenContext<TSolution, TRoot, TProcessEntity>.ITargetBuilder<TNode> ResolveTargetBuilder<TNode>()
         {
-            return _container.Resolve<ITargetBuilder<TNode, TRoot, TProcessEntity>>();
+            return _container.Resolve< Context.CodeGenContext <TSolution,TRoot,TProcessEntity>.ITargetBuilder <TNode>>();
         }
 
         protected virtual void DoAutomaticRegister(ContainerBuilder builder)
@@ -54,7 +52,7 @@ namespace CodeGen.DI
                .AsImplementedInterfaces();
 
             // register the engine as singleton
-            builder.RegisterInstance(_engine).As<ICodeGenerationEngine<TSolution, TRoot, TProcessEntity>>().ExternallyOwned();
+            builder.RegisterInstance(_engine).As<Context.CodeGenContext<TSolution,TRoot,TProcessEntity>.ICodeGenerationEngine>().ExternallyOwned();
         }
     }
 }

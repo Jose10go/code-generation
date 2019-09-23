@@ -1,6 +1,4 @@
-﻿using CodeGen.Commands.Abstract;
-using CodeGen.Engine.Abstract;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,9 +9,9 @@ namespace CodeGen.DI.Abstract
     public interface ICodeGenerationResolver<TSolution, TRoot, TProcessEntity>
     {
         void BuildContainer();
-        ITargetBuilder<TNode, TRoot, TProcessEntity> ResolveTargetBuilder<TNode>();
-        ICommandBuilder<TCommand, TNode, TRoot, TProcessEntity> ResolveCommandBuilder<TCommand, TNode>() where TCommand : ICommand<TNode, TRoot, TProcessEntity>;
-
-        ICodeGenerationEngine<TSolution, TRoot, TProcessEntity> ResolveEngine();
+        Context.CodeGenContext<TSolution, TRoot, TProcessEntity>.ITargetBuilder<TNode> ResolveTargetBuilder<TNode>();
+        Context.CodeGenContext<TSolution, TRoot, TProcessEntity>.ICommandBuilder<TCommand, TNode> ResolveCommandBuilder<TCommand, TNode>()
+        where TCommand : Context.CodeGenContext<TSolution, TRoot, TProcessEntity>.ICommand<TNode>;
+        Context.CodeGenContext<TSolution, TRoot, TProcessEntity>.ICodeGenerationEngine ResolveEngine();
     }
 }

@@ -239,11 +239,6 @@
   <ItemGroup>
     <Compile Include="Attributes\BuilderProp.cs" />
     <Compile Include="Attributes\CodeGenCreated.cs" />
-    <Compile Include="Commands\Abstract\ICommand.cs" />
-    <Compile Include="Commands\Abstract\ICommandBuilder.cs" />
-    <Compile Include="Commands\Abstract\ICommandHandler.cs" />
-    <Compile Include="Commands\Abstract\ITargerBuilder.cs" />
-    <Compile Include="Commands\Abstract\ITarget.cs" />
     <Compile Include="Context\Typed\Abstract\CodeGenContext.cs" />
     <Compile Include="Context\Typed\Commands\CloneCommand.cs" />
     <Compile Include="Context\TypelessContext\Abstract\CodeGenTypelessContext.cs" />
@@ -251,19 +246,18 @@
     <Compile Include="Context\Typed\CommandBuilders\CommandBuilderExtensors.cs" />
     <Compile Include="Context\Typed\CommandBuilders\Generated\CloneCommandBuilder.cs" />
     <Compile Include="DI\Abstract\ICodeGenerationResolver.cs" />
-    <Compile Include="Engine\CSharp\Abstract\ICSharpTarget.cs" />
-    <Compile Include="Engine\CSharp\DocumentEditing\CommandBuilders.cs" />
-    <Compile Include="Engine\CSharp\DocumentEditing\CSharpCodeGenerationResolver.cs" />
-    <Compile Include="Engine\CSharp\DocumentEditing\CommandHandlers\ClassCloneHandler.cs" />
     <Compile Include="Context\Typed\CommandBuilders\RoseLibGenerator.csx.cs" />
-    <Compile Include="Engine\CSharp\DocumentEditing\CommandHandlers\CSharpCodeGenerationHandler.cs" />
-    <Compile Include="Engine\CSharp\CSharpTarget.cs" />
-    <Compile Include="Engine\CSharp\DocumentEditing\CommandHandlers\MethodCloneHandler.cs" />
-    <Compile Include="Engine\Abstract\ICodeGenerationEngine.cs" />
-    <Compile Include="Engine\CSharp\CSharpTargetBuilder.cs" />
-    <Compile Include="Engine\CSharp\DocumentEditing\DocumentEditingCodeGenerationEngine.cs" />
-    <Compile Include="Engine\CSharp\Abstract\ICSharpCodeGenerationEngine.cs" />
-    <Compile Include="Engine\CSharp\Abstract\ICSharpTargetBuilder.cs" />
+    <Compile Include="Context\CSharp\Abstract\ICSharpCodeGenerationEngine.cs" />
+    <Compile Include="Context\CSharp\Abstract\ICSharpTarget.cs" />
+    <Compile Include="Context\CSharp\Abstract\ICSharpTargetBuilder.cs" />
+    <Compile Include="Context\CSharp\Concrete\CSharpTarget.cs" />
+    <Compile Include="Context\CSharp\Concrete\CSharpTargetBuilder.cs" />
+    <Compile Include="Context\CSharp\DocumentEditing\CommandBuilders.cs" />
+    <Compile Include="Context\CSharp\DocumentEditing\CommandHandlers\ClassCloneHandler.cs" />
+    <Compile Include="Context\CSharp\Abstract\CSharpCodeGenerationHandler.cs" />
+    <Compile Include="Context\CSharp\DocumentEditing\CommandHandlers\MethodCloneHandler.cs" />
+    <Compile Include="Context\CSharp\Concrete\CSharpCodeGenerationResolver.cs" />
+    <Compile Include="Context\CSharp\Concrete\DocumentEditingCodeGenerationEngine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -281,14 +275,8 @@
       <Project>{a009e036-5052-4722-8c1b-481fa4e72dcb}</Project>
       <Name>CodeGen.Generators</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RoseLibApp\RoseLibApp.csproj">
-      <Project>{c0b6f8e2-92b3-4254-9c42-c85f561c05d4}</Project>
-      <Name>RoseLibApp</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Engine\CSharp\DocumentEditing\CommandHandlers\Document\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Context\Typed\CommandBuilders\Generated\Description.txt" />
   </ItemGroup>
