@@ -1,4 +1,6 @@
 ﻿using CodeGen.Attributes;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +10,7 @@ using System.Threading.Tasks;
 namespace CodeGen.Context
 {
     // Typed Context - Commands
-    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
+    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>:CodeGen.Context.CodeGenTypelessContext
     {
         public class CloneCommand<TSyntaxNode> : ICommand<TSyntaxNode>
         {

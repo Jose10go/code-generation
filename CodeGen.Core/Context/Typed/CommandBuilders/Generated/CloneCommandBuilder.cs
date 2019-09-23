@@ -1,14 +1,14 @@
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using System;
 
 namespace CodeGen.Context
 {
-        // Typed Context - Commands
-    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
-     {
+    // Typed Context - Commands
+    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>:CodeGen.Context.CodeGenTypelessContext
+    {
 		public class CloneCommandBuilder<TSyntaxNode> : ICommandBuilder<CloneCommand<TSyntaxNode>, TSyntaxNode>
-			where TSyntaxNode : TRootNode
-		{
+        {
 				public Func<TSyntaxNode, string> NewName { get; set; }
 		
 			public CloneCommandBuilder<TSyntaxNode> WithNewName(Func<TSyntaxNode, string> value)

@@ -1,10 +1,10 @@
-﻿using CodeGen.Commands.Abstract;
-using CodeGen.Context;
+﻿using CodeGen.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static CodeGen.Context.CodeGenTypelessContext;
 
 namespace CodeGen.Commands.CommandBuilders
 {

@@ -28,7 +28,7 @@ namespace ScriptContainer
             _context.Output[_descriptionFile].BuildAction = Scripty.Core.Output.BuildAction.GenerateOnly;
             //_context.Output[_documentStructureFile].BuildAction = Scripty.Core.Output.BuildAction.Compile;
 
-            _context.Project.Workspace.WorkspaceFailed += Workspace_WorkspaceFailed;            
+            //_context.Project.Workspace.WorkspaceFailed += Workspace_WorkspaceFailed;            
 
             var compilation = await _context.Project.Analysis.GetCompilationAsync();
 
