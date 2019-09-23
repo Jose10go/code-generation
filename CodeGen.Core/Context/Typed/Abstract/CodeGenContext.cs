@@ -9,16 +9,16 @@ namespace CodeGen.Context
     // Typed context - Abstract
     public partial class CodeGenContext<TProject, TRootNode, TProcessEntity> : CodeGenTypelessContext
     {
-        public interface ITarget<TNode> : ITarget
+        public interface ITarget<out TNode> : ITarget
         {
-            new Func<TNode, bool> WhereSelector { get; }
+            //new Func<TNode, bool> WhereSelector { get; }//TODO check without func because of in Tnode
 
             IEnumerable<TNode> Select(TRootNode root);
         }
 
-        public interface ICommand<TSyntaxNode> : ICommand
+        public interface ICommand<out TSyntaxNode> : ICommand
         {
-            new ITarget<TSyntaxNode> Target { get; set; }
+            new ITarget<TSyntaxNode> Target { get;}
         }
 
         public interface ICommandHandler<TCommand, out TTarget, TNode> : ICommandHandler
