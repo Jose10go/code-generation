@@ -258,6 +258,7 @@
     <Compile Include="Context\CSharp\DocumentEditing\CommandHandlers\MethodCloneHandler.cs" />
     <Compile Include="Context\CSharp\Concrete\CSharpCodeGenerationResolver.cs" />
     <Compile Include="Context\CSharp\Concrete\DocumentEditingCodeGenerationEngine.cs" />
+    <Compile Include="in.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
