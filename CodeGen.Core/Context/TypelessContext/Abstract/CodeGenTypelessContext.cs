@@ -40,10 +40,8 @@ namespace CodeGen.Context
 
         public interface ITargetBuilder
         {
-            Func<object, bool> WhereSelector { get; }
             ITargetBuilder Where(Func<object, bool> filter);
             ITarget Build();
-
             ICommandBuilder<TCommand> Execute<TCommand>() where TCommand : ICommand;
         }
 

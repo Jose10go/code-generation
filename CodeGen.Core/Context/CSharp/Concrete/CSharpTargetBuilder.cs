@@ -14,10 +14,7 @@ namespace CodeGen.Context.CSharp
             {
                 _resolver = resolver;
             }
-
-            public Func<TNode, bool> WhereSelector { get; set; }
-
-            Func<object, bool> ITargetBuilder.WhereSelector => obj => WhereSelector((TNode)obj);
+            private Func<TNode, bool> WhereSelector { get; set; }
 
             public ITarget<TNode> Build()
             {
