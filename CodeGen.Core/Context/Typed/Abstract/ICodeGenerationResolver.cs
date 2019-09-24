@@ -1,6 +1,6 @@
 ﻿namespace CodeGen.Context
 {
-    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>:CodeGenTypelessContext
+    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
     {
         public interface ICodeGenerationResolver
         {

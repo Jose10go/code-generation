@@ -5,7 +5,7 @@ using System;
 namespace CodeGen.Context
 {
     // Typed Context - Commands
-    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>:CodeGen.Context.CodeGenTypelessContext
+    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
     {
 		public class CloneCommandBuilder<TSyntaxNode> : ICommandBuilder<CloneCommand<TSyntaxNode>, TSyntaxNode>
         {

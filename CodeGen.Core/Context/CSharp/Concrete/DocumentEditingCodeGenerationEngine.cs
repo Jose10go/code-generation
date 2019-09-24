@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
+using static CodeGen.Context.CodeGenTypelessContext;
 
 namespace CodeGen.Context.CSharp
 {

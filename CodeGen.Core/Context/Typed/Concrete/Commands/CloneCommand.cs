@@ -4,7 +4,7 @@ using System;
 namespace CodeGen.Context
 {
     // Typed Context - Commands
-    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>:CodeGen.Context.CodeGenTypelessContext
+    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
     {
         public class CloneCommand<TSyntaxNode> : ICommand<TSyntaxNode>
         {
@@ -13,8 +13,11 @@ namespace CodeGen.Context
 
             public ITarget<TSyntaxNode> Target { get; set; }
 
-            public ICommandHandler Handler { get; set; }
-            ITarget ICommand.Target => Target;
+            public ICommandHandler<ICommand<TSyntaxNode>, ITarget<TSyntaxNode>,TSyntaxNode> Handler { get; set; }
+
+            CodeGenTypelessContext.ITarget CodeGenTypelessContext.ICommand.Target => Target;
+
+            CodeGenTypelessContext.ICommandHandler CodeGenTypelessContext.ICommand.Handler =>Handler;
         }
     }
 }

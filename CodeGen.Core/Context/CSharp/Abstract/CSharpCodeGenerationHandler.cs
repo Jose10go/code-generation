@@ -2,12 +2,13 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
 using System;
+using static CodeGen.Context.CodeGenTypelessContext;
 
 namespace CodeGen.Context.CSharp
 {
     public partial class ICSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
     {
-        public abstract class RoslynDocumentEditorCommandHandler<TCommand, TSyntaxNode>:
+        public abstract class RoslynDocumentEditorCommandHandler<TCommand,TSyntaxNode>:
             ICommandHandler<TCommand, CSharpTarget<TSyntaxNode>,CSharpSyntaxNode>
             where TCommand : ICommand<TSyntaxNode>
             where TSyntaxNode : CSharpSyntaxNode
