@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.MSBuild;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Editing;
 using Autofac;
+using CodeGen.Context.CSharp;
 
 namespace Tests
 {
@@ -28,16 +29,17 @@ namespace Tests
                 //Environment.SetEnvironmentVariable("VisualStudioVersion", @"15.0");
 
                 var workspace = MSBuildWorkspace.Create();
-                var project = await workspace.OpenProjectAsync(@"..\..\CodeGen.Core.csproj");
+                var solution = workspace.CurrentSolution;
+            //var project = await workspace.OpenProjectAsync(@"..\..\CodeGen.Core.csproj");
+            //Console.WriteLine($"Diagnostics: {compilation.GetDiagnostics().Count()} \n" +
+            //    $"{compilation.GetDiagnostics().Select(diag => diag.GetMessage()).Aggregate((a, b) => $"{a}\n{b}")}");
 
-                var compilation = await project.GetCompilationAsync();
-
-                Console.WriteLine($"Diagnostics: {compilation.GetDiagnostics().Count()} \n" +
-                    $"{compilation.GetDiagnostics().Select(diag => diag.GetMessage()).Aggregate((a, b) => $"{a}\n{b}")}");
-
-                Console.WriteLine($"Syntax trees: {compilation.SyntaxTrees.Count()}");
-
-                var ctx = new MyContext(project);
+            //Console.WriteLine($"Syntax trees: {compilation.SyntaxTrees.Count()}");
+            var resolver = new ICSharpContext<DocumentEditor>.AutofacResolver();
+            var engine = new ICSharpContext<DocumentEditor>.DocumentEditingCodeGenerationEngine(solution, resolver);
+            engine.Select<MethodDeclarationSyntax>()
+                  .Where(x=>true)
+                  .Execute<ICSharpContext<DocumentEditor>.CloneCommand<MethodDeclarationSyntax>>().Build();
                 //var compilation = await project.GetCompilationAsync();
 
                 //var workspace = MSBuildWorkspace.Create();
@@ -51,11 +53,11 @@ namespace Tests
                 //var handler = codegen.DIContainer.Resolve<ICommandHandler<CloneCommand<MethodDeclarationSyntax>, CSharpTarget<MethodDeclarationSyntax>,
                 //    MethodDeclarationSyntax, DocumentEditor>>();
 
-                var modifiedDocument = ctx.result.GetChangedDocument();
+                //var modifiedDocument = ctx.result.GetChangedDocument();
 
-                var text = await modifiedDocument.GetTextAsync();
+                //var text = await modifiedDocument.GetTextAsync();
 
-                Console.WriteLine(text);
+                //Console.WriteLine(text);
 
             }
         public class MyContext:CodeGen.Context.CSharp.ICSharpContext<DocumentEditor>

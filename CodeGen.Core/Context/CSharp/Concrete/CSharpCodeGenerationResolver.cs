@@ -13,12 +13,11 @@ namespace CodeGen.Context.CSharp
 {
     public partial class ICSharpContext<TProcessEntity> : CodeGen.Context.CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
     {
-        public class AutofacResolver : DI.AutofacResolver<Solution, CSharpSyntaxNode, DocumentEditor>
+        public class CSharpAutofacResolver : AutofacResolver
         {
             protected override void DoAutomaticRegister(ContainerBuilder builder)
             {
                 base.DoAutomaticRegister(builder);
-
             }
         }
     }

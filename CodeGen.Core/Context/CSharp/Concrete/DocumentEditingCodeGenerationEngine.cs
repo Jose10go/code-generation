@@ -1,27 +1,26 @@
-﻿using CodeGen.DI.Abstract;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
-using System;
 
 namespace CodeGen.Context.CSharp
 {
-    public partial class ICSharpContext<TProcessEntity> : CodeGen.Context.CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
+    public partial class ICSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
     {
         public class DocumentEditingCodeGenerationEngine : ICSharpCodeGenerationEngine
         {
             public Solution CurrentSolution { get; private set; }
 
-            protected SolutionEditor Editor { get; private set; }
-
-            protected ICodeGenerationResolver<Solution, CSharpSyntaxNode, DocumentEditor> Resolver { get; private set; }
-
             object CodeGenTypelessContext.ICodeGenerationEngine.CurrentSolution => CurrentSolution;
 
-            public DocumentEditingCodeGenerationEngine(Solution solution, ICodeGenerationResolver<Solution, CSharpSyntaxNode, DocumentEditor> resolver)
+            protected SolutionEditor Editor { get; private set; }
+
+            protected AutofacResolver Resolver { get; private set; }
+
+            public DocumentEditingCodeGenerationEngine(Solution solution, AutofacResolver resolver)
             {
                 Editor = new SolutionEditor(solution);
                 Resolver = resolver;
+                resolver.RegisterEngine(this);
                 resolver.BuildContainer();
             }
 
@@ -35,20 +34,23 @@ namespace CodeGen.Context.CSharp
                 return Editor.GetChangedSolution();
             }
 
+            public ICSharpTargetBuilder<TSyntaxNode> Select<TSyntaxNode>()where TSyntaxNode :CSharpSyntaxNode
+            {
+                return Resolver.ResolveTargetBuilder<TSyntaxNode>() as ICSharpTargetBuilder<TSyntaxNode>;
+            }
             ICSharpTargetBuilder<TSyntaxNode> ICSharpCodeGenerationEngine.Select<TSyntaxNode>()
             {
-                throw new NotImplementedException();
+                return Select<TSyntaxNode>();
             }
-
             ITargetBuilder<TSyntaxNode> ICodeGenerationEngine.Select<TSyntaxNode>()
             {
-                throw new NotImplementedException();
+                return Resolver.ResolveTargetBuilder<TSyntaxNode>();
+            }
+            ITargetBuilder CodeGenTypelessContext.ICodeGenerationEngine.Select<TSyntaxNode>()
+            {
+                return Resolver.ResolveTargetBuilder<TSyntaxNode>();
             }
 
-            public ITargetBuilder Select<TSyntaxNode>()
-            {
-                throw new NotImplementedException();
-            }
         }
     }
 }

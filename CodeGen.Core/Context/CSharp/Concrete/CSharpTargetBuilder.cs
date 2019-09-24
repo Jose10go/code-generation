@@ -1,22 +1,16 @@
-﻿using CodeGen.Commands;
-using CodeGen.DI.Abstract;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 namespace CodeGen.Context.CSharp
 {
-    public partial class ICSharpContext<TProcessEntity> : CodeGen.Context.CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
+    public partial class ICSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
     {
         public class CSharpTargetBuilder<TNode> : ICSharpTargetBuilder<TNode>
             where TNode : CSharpSyntaxNode
         {
-            ICodeGenerationResolver<Solution, CSharpSyntaxNode, TProcessEntity> _resolver;
+            ICodeGenerationResolver _resolver;
 
-            public CSharpTargetBuilder(ICodeGenerationResolver<Solution, CSharpSyntaxNode, TProcessEntity> resolver)
+            public CSharpTargetBuilder(ICodeGenerationResolver resolver)
             {
                 _resolver = resolver;
             }

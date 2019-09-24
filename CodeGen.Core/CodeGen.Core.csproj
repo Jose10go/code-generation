@@ -240,22 +240,22 @@
     <Compile Include="Attributes\BuilderProp.cs" />
     <Compile Include="Attributes\CodeGenCreated.cs" />
     <Compile Include="Context\Typed\Abstract\CodeGenContext.cs" />
-    <Compile Include="Context\Typed\Commands\CloneCommand.cs" />
+    <Compile Include="Context\Typed\Concrete\Commands\CloneCommand.cs" />
     <Compile Include="Context\TypelessContext\Abstract\CodeGenTypelessContext.cs" />
-    <Compile Include="DI\Autofac\AutofacDIContainer.cs" />
-    <Compile Include="Context\Typed\CommandBuilders\CommandBuilderExtensors.cs" />
-    <Compile Include="Context\Typed\CommandBuilders\Generated\CloneCommandBuilder.cs" />
-    <Compile Include="DI\Abstract\ICodeGenerationResolver.cs" />
-    <Compile Include="Context\Typed\CommandBuilders\RoseLibGenerator.csx.cs" />
+    <Compile Include="Context\Typed\Concrete\AutofacDIContainer.cs" />
+    <Compile Include="Context\Typed\Concrete\CommandBuilders\CommandBuilderExtensors.cs" />
+    <Compile Include="Context\Typed\Concrete\CommandBuilders\Generated\CloneCommandBuilder.cs" />
+    <Compile Include="Context\Typed\Abstract\ICodeGenerationResolver.cs" />
+    <Compile Include="Context\Typed\Concrete\CommandBuilders\RoseLibGenerator.csx.cs" />
     <Compile Include="Context\CSharp\Abstract\ICSharpCodeGenerationEngine.cs" />
     <Compile Include="Context\CSharp\Abstract\ICSharpTarget.cs" />
     <Compile Include="Context\CSharp\Abstract\ICSharpTargetBuilder.cs" />
     <Compile Include="Context\CSharp\Concrete\CSharpTarget.cs" />
     <Compile Include="Context\CSharp\Concrete\CSharpTargetBuilder.cs" />
-    <Compile Include="Context\CSharp\DocumentEditing\CommandBuilders.cs" />
-    <Compile Include="Context\CSharp\DocumentEditing\CommandHandlers\ClassCloneHandler.cs" />
+    <Compile Include="Context\CSharp\Concrete\CommandBuilders.cs" />
+    <Compile Include="Context\CSharp\Concrete\CommandHandlers\ClassCloneHandler.cs" />
     <Compile Include="Context\CSharp\Abstract\CSharpCodeGenerationHandler.cs" />
-    <Compile Include="Context\CSharp\DocumentEditing\CommandHandlers\MethodCloneHandler.cs" />
+    <Compile Include="Context\CSharp\Concrete\CommandHandlers\MethodCloneHandler.cs" />
     <Compile Include="Context\CSharp\Concrete\CSharpCodeGenerationResolver.cs" />
     <Compile Include="Context\CSharp\Concrete\DocumentEditingCodeGenerationEngine.cs" />
     <Compile Include="in.cs" />
@@ -264,9 +264,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ClassDiagram.cd" />
-    <None Include="Context\Typed\CommandBuilders\FluentInterfaceBuilder.csx" />
-    <None Include="Context\Typed\CommandBuilders\Templates\CommandBuilder.t.cs" />
+    <None Include="Context\Typed\Concrete\CommandBuilders\FluentInterfaceBuilder.csx" />
+    <None Include="Context\Typed\Concrete\CommandBuilders\Templates\CommandBuilder.t.cs" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -279,7 +278,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="Context\Typed\CommandBuilders\Generated\Description.txt" />
+    <Content Include="Context\Typed\Concrete\CommandBuilders\Generated\Description.txt" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

@@ -10,9 +10,9 @@ namespace CodeGen.Commands.CommandBuilders
 {
     public static class CommandBuilderExtensions
     {
-        public static CodeGenTypelessContext.ICommandBuilder<TCommand> With<TCommand, TValue>
-            (this CodeGenTypelessContext.ICommandBuilder<TCommand> commandBuilder, string prop, TValue value)
-            where TCommand: CodeGenTypelessContext.ICommand
+        public static ICommandBuilder<TCommand> With<TCommand, TValue>
+            (this ICommandBuilder<TCommand> commandBuilder, string prop, TValue value)
+            where TCommand:ICommand
         {
             try
             {
