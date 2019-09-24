@@ -9,7 +9,7 @@ namespace CodeGen.Context
     {
 		public class CloneCommandBuilder<TSyntaxNode> : ICommandBuilder<CloneCommand<TSyntaxNode>, TSyntaxNode>
         {
-				public Func<TSyntaxNode, string> NewName { get; set; }
+			public Func<TSyntaxNode, string> NewName { get; set; }
 		
 			public CloneCommandBuilder<TSyntaxNode> WithNewName(Func<TSyntaxNode, string> value)
 			{

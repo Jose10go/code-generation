@@ -18,6 +18,10 @@ namespace CodeGen.Context.CSharp
             protected override void DoAutomaticRegister(ContainerBuilder builder)
             {
                 base.DoAutomaticRegister(builder);
+                builder.RegisterGeneric(typeof(CSharpTarget<>)).As(typeof(ICSharpTarget<>));
+                builder.RegisterGeneric(typeof(CSharpTarget<>)).As(typeof(ITarget<>));
+                builder.RegisterGeneric(typeof(CSharpTargetBuilder<>)).As(typeof(ICSharpTargetBuilder<>));
+                builder.RegisterGeneric(typeof(CSharpTargetBuilder<>)).As(typeof(ITargetBuilder<>));
             }
         }
     }

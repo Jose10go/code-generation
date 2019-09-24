@@ -31,16 +31,12 @@ namespace CodeGen.Context.CSharp
 
             object CodeGenTypelessContext.ICodeGenerationEngine.ApplyChanges()
             {
-                return Editor.GetChangedSolution();
+                return ApplyChanges();
             }
 
             public ICSharpTargetBuilder<TSyntaxNode> Select<TSyntaxNode>()where TSyntaxNode :CSharpSyntaxNode
             {
                 return Resolver.ResolveTargetBuilder<TSyntaxNode>() as ICSharpTargetBuilder<TSyntaxNode>;
-            }
-            ICSharpTargetBuilder<TSyntaxNode> ICSharpCodeGenerationEngine.Select<TSyntaxNode>()
-            {
-                return Select<TSyntaxNode>();
             }
             ITargetBuilder<TSyntaxNode> ICodeGenerationEngine.Select<TSyntaxNode>()
             {

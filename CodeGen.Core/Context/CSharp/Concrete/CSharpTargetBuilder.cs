@@ -16,20 +16,19 @@ namespace CodeGen.Context.CSharp
             }
             private Func<TNode, bool> WhereSelector { get; set; }
 
-            public ITarget<TNode> Build()
+            public ITarget<CSharpSyntaxNode> Build()
             {
-                return new CSharpTarget<TNode>(((ITargetBuilder)this).WhereSelector);
+                return new CSharpTarget<TNode>(this.WhereSelector);
             }
 
             public ICommandBuilder<TCommand> Execute<TCommand>() where TCommand : ICommand<TNode>
             {
-                throw new NotImplementedException();
+                 return _resolver.ResolveCommandBuilder<TCommand,TNode>();
             }
 
             public ITargetBuilder<TNode> Where(Func<TNode, bool> filter)
             {
                 WhereSelector = filter;
-
                 return this;
             }
 
@@ -37,28 +36,16 @@ namespace CodeGen.Context.CSharp
             {
                 return Build();
             }
-
-            ITarget<CSharpSyntaxNode> ITargetBuilder<TNode>.Build()
-            {
-                throw new NotImplementedException();
-            }
-
             ICommandBuilder<TCommand> ITargetBuilder.Execute<TCommand>()
             {
-                throw new NotImplementedException();
+                return (ICommandBuilder<TCommand>)Execute<ICommand<TNode>>();
             }
 
             ITargetBuilder ITargetBuilder.Where(Func<object, bool> filter)
             {
-                WhereSelector = filter;
-                return this;
+                return Where(filter);
             }
 
-            ITargetBuilder<TNode> ITargetBuilder<TNode>.Where(Func<TNode, bool> filter)
-            {
-                WhereSelector = filter;
-                return this;
-            }
         }
     }
 }
