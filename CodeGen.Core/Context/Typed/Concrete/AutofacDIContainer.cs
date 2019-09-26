@@ -1,17 +1,11 @@
-﻿using Microsoft.CodeAnalysis.Editing;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Autofac;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace CodeGen.Context
 {
-    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>:CodeGenTypelessContext
+    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
     {
         public class AutofacResolver: ICodeGenerationResolver
         {
@@ -50,12 +44,17 @@ namespace CodeGen.Context
             {
                 var coreAssembly = Assembly.GetExecutingAssembly();
 
-                builder.RegisterAssemblyTypes(coreAssembly)
-                   .Where(t => t.Name.EndsWith("CommandBuilder"))
-                   .AsImplementedInterfaces();
+                foreach (var t in coreAssembly.GetTypes().Where(x => x.Name.EndsWith("CommandBuilder")))
+                    builder.RegisterGeneric(t).AsImplementedInterfaces();
 
+                foreach (var t in coreAssembly.GetTypes().Where(x =>x.IsClass && x.Name.EndsWith("Command")))
+                    builder.RegisterGeneric(t).AsImplementedInterfaces();
+            
                 // register the engine as singleton
                 builder.RegisterInstance(_engine).As<ICodeGenerationEngine>().ExternallyOwned();
+                // register this as singleton
+                builder.RegisterInstance(this).As<ICodeGenerationResolver>().ExternallyOwned();
+
             }
         }
     }

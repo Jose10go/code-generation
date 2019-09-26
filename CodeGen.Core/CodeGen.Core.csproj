@@ -239,9 +239,13 @@
   <ItemGroup>
     <Compile Include="Attributes\BuilderProp.cs" />
     <Compile Include="Attributes\CodeGenCreated.cs" />
-    <Compile Include="Context\Typed\Abstract\CodeGenContext.cs" />
+    <Compile Include="Context\Typed\Abstract\ICodeGenerationEngine.cs" />
+    <Compile Include="Context\Typed\Abstract\ICommand.cs" />
+    <Compile Include="Context\Typed\Abstract\ICommandBuilder.cs" />
+    <Compile Include="Context\Typed\Abstract\ICommandHandler.cs" />
+    <Compile Include="Context\Typed\Abstract\ITarget.cs" />
+    <Compile Include="Context\Typed\Abstract\ITargetBuilder.cs" />
     <Compile Include="Context\Typed\Concrete\Commands\CloneCommand.cs" />
-    <Compile Include="Context\TypelessContext\Abstract\CodeGenTypelessContext.cs" />
     <Compile Include="Context\Typed\Concrete\AutofacDIContainer.cs" />
     <Compile Include="Context\Typed\Concrete\CommandBuilders\CommandBuilderExtensors.cs" />
     <Compile Include="Context\Typed\Concrete\CommandBuilders\Generated\CloneCommandBuilder.cs" />
@@ -258,6 +262,12 @@
     <Compile Include="Context\CSharp\Concrete\CommandHandlers\MethodCloneHandler.cs" />
     <Compile Include="Context\CSharp\Concrete\CSharpCodeGenerationResolver.cs" />
     <Compile Include="Context\CSharp\Concrete\DocumentEditingCodeGenerationEngine.cs" />
+    <Compile Include="Context\TypelessContext\Abstract\ICodeGenerationEngine.cs" />
+    <Compile Include="Context\TypelessContext\Abstract\ICommand.cs" />
+    <Compile Include="Context\TypelessContext\Abstract\ICommandBuilder.cs" />
+    <Compile Include="Context\TypelessContext\Abstract\ICommandHandler.cs" />
+    <Compile Include="Context\TypelessContext\Abstract\ITarget.cs" />
+    <Compile Include="Context\TypelessContext\Abstract\ITargetBuilder.cs" />
     <Compile Include="in.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

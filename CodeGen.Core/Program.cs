@@ -23,43 +23,31 @@ namespace Tests
 
         }
         private async static Task Run(string[] args)
-            {
-                // In order to MSBuildWorkspace find MSBuild Tools
-                //Environment.SetEnvironmentVariable("VSINSTALLDIR", @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise");
-                //Environment.SetEnvironmentVariable("VisualStudioVersion", @"15.0");
+        {
+            // In order to MSBuildWorkspace find MSBuild Tools
+            //Environment.SetEnvironmentVariable("VSINSTALLDIR", @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise");
+            //Environment.SetEnvironmentVariable("VisualStudioVersion", @"15.0");
 
-                var workspace = MSBuildWorkspace.Create();
-                var solution = workspace.CurrentSolution;
-            //var project = await workspace.OpenProjectAsync(@"..\..\CodeGen.Core.csproj");
-            //Console.WriteLine($"Diagnostics: {compilation.GetDiagnostics().Count()} \n" +
-            //    $"{compilation.GetDiagnostics().Select(diag => diag.GetMessage()).Aggregate((a, b) => $"{a}\n{b}")}");
+            var workspace = MSBuildWorkspace.Create();
+            var solution = workspace.CurrentSolution;
+            var project = await workspace.OpenProjectAsync(@"..\..\CodeGen.Core.csproj");
 
-            //Console.WriteLine($"Syntax trees: {compilation.SyntaxTrees.Count()}");
-            var resolver = new ICSharpContext<DocumentEditor>.AutofacResolver();
+            Document document = project.Documents.First(doc => doc.Name == "in.cs");
+
+            var editor = DocumentEditor.CreateAsync(document).Result;
+
+            var resolver = new ICSharpContext<DocumentEditor>.CSharpAutofacResolver();
             var engine = new ICSharpContext<DocumentEditor>.DocumentEditingCodeGenerationEngine(solution, resolver);
-            engine.Select<MethodDeclarationSyntax>()
-                  .Where(x=>true)
-                  .Execute<ICSharpContext<DocumentEditor>.CloneCommand<MethodDeclarationSyntax>>().Build();
-                //var compilation = await project.GetCompilationAsync();
+            var cmd =  engine.Select<MethodDeclarationSyntax>()
+                      .Where(x => true)
+                      .Execute<ICSharpContext<DocumentEditor>.CloneCommand<MethodDeclarationSyntax>, ICSharpContext<DocumentEditor>.MethodCloneCommandBuilder>()
+                      .WithNewName(m => m.Identifier.Text + "_generated")
+                      .Build();
 
-                //var workspace = MSBuildWorkspace.Create();
-                //var solution = await workspace.OpenSolutionAsync(@"E:\Tony\UH\Maestria\Tesis\project\CSharpCodeGeneration\CSharpCodeGeneration.sln");
+            var result = cmd.Handler.ProcessDocument(editor);
+            Console.WriteLine(result.ToString());
 
-                //Project project = solution.Projects.First(proj => proj.Name == "Tests");
-
-                //var codegen = new CodeGenerator(new SolutionEditor(solution));
-
-
-                //var handler = codegen.DIContainer.Resolve<ICommandHandler<CloneCommand<MethodDeclarationSyntax>, CSharpTarget<MethodDeclarationSyntax>,
-                //    MethodDeclarationSyntax, DocumentEditor>>();
-
-                //var modifiedDocument = ctx.result.GetChangedDocument();
-
-                //var text = await modifiedDocument.GetTextAsync();
-
-                //Console.WriteLine(text);
-
-            }
+        }
         public class MyContext:CodeGen.Context.CSharp.ICSharpContext<DocumentEditor>
         {
             public DocumentEditor result;
