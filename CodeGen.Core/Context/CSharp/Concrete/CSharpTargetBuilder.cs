@@ -23,9 +23,11 @@ namespace CodeGen.Context.CSharp
                 return new CSharpTarget<TNode>(this.WhereSelector);
             }
 
-            public ICommandBuilder<TCommand> Execute<TCommand>() where TCommand : ICommand<TNode>
+            public TCommandBuilder Execute<TCommand, TCommandBuilder>()
+                 where TCommand : ICommand<TNode>
+                 where TCommandBuilder : ICommandBuilder<TCommand>
             {
-                 return _resolver.ResolveCommandBuilder<TCommand,TNode>();
+                 return (TCommandBuilder)_resolver.ResolveCommandBuilder<TCommand,TNode>();
             }
 
             public ITargetBuilder<TNode> Where(Func<TNode, bool> filter)
@@ -38,16 +40,16 @@ namespace CodeGen.Context.CSharp
             {
                 return Build();
             }
-            ICommandBuilder<TCommand> ITargetBuilder.Execute<TCommand>()
-            {
-                return (ICommandBuilder<TCommand>)Execute<ICommand<TNode>>();
-            }
 
             ITargetBuilder ITargetBuilder.Where(Func<object, bool> filter)
             {
                 return Where(filter);
             }
 
+            TCommandBuilder ITargetBuilder.Execute<TCommand, TCommandBuilder>()
+            {
+                return (TCommandBuilder)Execute<ICommand<TNode>,ICommandBuilder<ICommand<TNode>>>();
+            }
         }
     }
 }

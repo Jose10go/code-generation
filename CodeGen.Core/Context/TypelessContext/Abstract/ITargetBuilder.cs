@@ -8,7 +8,9 @@ namespace CodeGen.Context
         {
             ITargetBuilder Where(Func<object, bool> filter);
             ITarget Build();
-            ICommandBuilder<TCommand> Execute<TCommand>() where TCommand : ICommand;
+            TCommandBuilder Execute<TCommand,TCommandBuilder>() 
+                where TCommand : ICommand 
+                where TCommandBuilder:ICommandBuilder<TCommand>;
         }
     }
 }

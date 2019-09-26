@@ -10,7 +10,9 @@ namespace CodeGen.Context
         {
             ITargetBuilder<TNode> Where(Func<TNode, bool> filter);
             new ITarget<TRootNode> Build();
-            new ICommandBuilder<TCommand> Execute<TCommand>() where TCommand : ICommand<TNode>;
+            new TCommandBuilder Execute<TCommand, TCommandBuilder>()
+                 where TCommand : ICommand<TNode>
+                 where TCommandBuilder : ICommandBuilder<TCommand>;
         }
     }
 }
