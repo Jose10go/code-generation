@@ -13,7 +13,7 @@ namespace CodeGen.Context
 
             public ITarget<TSyntaxNode> Target { get; set; }
 
-            public ICommandHandler<ICommand<TSyntaxNode>, ITarget<TSyntaxNode>,TSyntaxNode> Handler { get; set; }
+            public ICommandHandler<CloneCommand<TSyntaxNode>, ITarget<TSyntaxNode>,TSyntaxNode> Handler { get; set; }
 
             CodeGenTypelessContext.ITarget CodeGenTypelessContext.ICommand.Target => Target;
 

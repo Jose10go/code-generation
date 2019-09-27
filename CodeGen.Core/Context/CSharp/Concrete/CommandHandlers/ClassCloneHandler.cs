@@ -13,7 +13,7 @@ namespace CodeGen.Context.CSharp
     {
         public class ClassCloneCommandHandler : RoslynDocumentEditorCommandHandler<CloneCommand<ClassDeclarationSyntax>, ClassDeclarationSyntax>
         {
-            public override CloneCommand<ClassDeclarationSyntax> Command { get; internal set; }
+            public override CloneCommand<ClassDeclarationSyntax> Command { get; set; }
 
             public override DocumentEditor ProcessDocument(DocumentEditor editor)
             {

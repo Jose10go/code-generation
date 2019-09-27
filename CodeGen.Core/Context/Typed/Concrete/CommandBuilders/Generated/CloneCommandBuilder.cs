@@ -9,25 +9,28 @@ namespace CodeGen.Context
     // Typed Context - Commands
     public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
     {
-		public class CloneCommandBuilder<TSyntaxNode> : ICommandBuilder<CloneCommand<TSyntaxNode>, TSyntaxNode>
+        public class CloneCommandBuilder<TSyntaxNode> : ICommandBuilder<CloneCommand<TSyntaxNode>, TSyntaxNode>
         {
-			public Func<TSyntaxNode, string> NewName { get; set; }
+            public Func<TSyntaxNode, string> NewName { get; set; }
 
             public CloneCommandBuilder<TSyntaxNode> WithNewName(Func<TSyntaxNode, string> value)
-			{
-			   NewName = value;
-			   return this;
-			}
+            {
+                NewName = value;
+                return this;
+            }
 
             public CloneCommand<TSyntaxNode> Build()
             {
-                var handler = new CSharp.ICSharpContext<DocumentEditor>.MethodCloneCommandHandler();
-                return new CloneCommand<TSyntaxNode>()
+                var handler = Resolver.ResolveCommandHandler<CloneCommand<TSyntaxNode>, TSyntaxNode>();
+                var cmd = new CloneCommand<TSyntaxNode>()
                 {
                     NewName = NewName,
                     Target = Target,
                     Handler = handler
                 };
+                handler.Command = cmd;
+                handler.Target = Target;
+                return cmd;
             }
 
             public void Go(TProcessEntity processEntity)

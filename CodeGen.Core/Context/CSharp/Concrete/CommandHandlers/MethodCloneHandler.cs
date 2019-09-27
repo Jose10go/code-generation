@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
@@ -10,11 +6,11 @@ using CodeGen.Attributes;
 
 namespace CodeGen.Context.CSharp
 {
-    public partial class ICSharpContext<TProcessEntity> : CodeGen.Context.CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
+    public partial class ICSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
     {
         public class MethodCloneCommandHandler : RoslynDocumentEditorCommandHandler<CloneCommand<MethodDeclarationSyntax>, MethodDeclarationSyntax>
         {
-            public override CloneCommand<MethodDeclarationSyntax> Command { get; internal set; }
+            public override CloneCommand<MethodDeclarationSyntax> Command { get; set; }
 
             public override DocumentEditor ProcessDocument(DocumentEditor editor)
             {
