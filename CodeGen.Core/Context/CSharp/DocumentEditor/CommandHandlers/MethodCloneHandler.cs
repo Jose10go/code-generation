@@ -6,7 +6,7 @@ using CodeGen.Attributes;
 
 namespace CodeGen.Context.CSharp
 {
-    public partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
+    public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         public class MethodCloneCommandHandler : RoslynDocumentEditorCommandHandler<CloneCommand<MethodDeclarationSyntax>, MethodDeclarationSyntax>
         {

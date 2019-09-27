@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Editing;
 
 namespace CodeGen.Context.CSharp
 {
-    public partial class CSharpContext<TProcessEntity> : CodeGen.Context.CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
+    public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         public class ClassCloneCommandHandler : RoslynDocumentEditorCommandHandler<CloneCommand<ClassDeclarationSyntax>, ClassDeclarationSyntax>
         {

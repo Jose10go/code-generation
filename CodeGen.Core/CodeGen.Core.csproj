@@ -257,9 +257,9 @@
     <Compile Include="Context\CSharp\Concrete\CSharpTarget.cs" />
     <Compile Include="Context\CSharp\Concrete\CSharpTargetBuilder.cs" />
     <Compile Include="Context\CSharp\Concrete\CommandBuilders.cs" />
-    <Compile Include="Context\CSharp\Concrete\CommandHandlers\ClassCloneHandler.cs" />
-    <Compile Include="Context\CSharp\Abstract\CSharpCodeGenerationHandler.cs" />
-    <Compile Include="Context\CSharp\Concrete\CommandHandlers\MethodCloneHandler.cs" />
+    <Compile Include="Context\CSharp\DocumentEditor\CommandHandlers\ClassCloneHandler.cs" />
+    <Compile Include="Context\CSharp\DocumentEditor\RoslynDocumentEditorCommandHandler.cs" />
+    <Compile Include="Context\CSharp\DocumentEditor\CommandHandlers\MethodCloneHandler.cs" />
     <Compile Include="Context\CSharp\Concrete\CSharpCodeGenerationResolver.cs" />
     <Compile Include="Context\CSharp\Concrete\DocumentEditingCodeGenerationEngine.cs" />
     <Compile Include="Context\TypelessContext\Abstract\ICodeGenerationEngine.cs" />
