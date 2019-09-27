@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Autofac;
+using CodeGen.Attributes;
 
 namespace CodeGen.Context
 {
@@ -54,17 +55,15 @@ namespace CodeGen.Context
                 var coreAssembly = Assembly.GetExecutingAssembly();
 
                 //Register Command Builders only as generic services
-                foreach (var t in coreAssembly.GetTypes().Where(x => x.Name.EndsWith("CommandBuilder")))
-                    foreach (var i in t.GetInterfaces())
-                        if (i.IsGenericType)
-                            builder.RegisterGeneric(t).As(i);
-                
+                foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a=>a.AttributeType==typeof(CommandBuilderAttribute))))
+                    foreach (var i in t.GetInterfaces().Where(x=>x.IsGenericType))
+                        builder.RegisterGeneric(t).As(i);
+
                 //Register Command Handlers only as generic services
-                foreach (var t in coreAssembly.GetTypes().Where(x=> x.Name.EndsWith("CommandHandler")))
-                    foreach (var i in t.GetInterfaces())
-                        if(i.IsGenericType)
-                            builder.RegisterGeneric(t).As(i);
-            
+                foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandHandlerAttribute))))
+                    foreach (var i in t.GetInterfaces().Where(x => x.IsGenericType))
+                        builder.RegisterType(t).As(i);
+
                 // register the engine as singleton
                 builder.RegisterInstance(_engine).As<ICodeGenerationEngine>().ExternallyOwned();
             }
