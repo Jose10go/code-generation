@@ -10,8 +10,8 @@ namespace CodeGen.Context
 		public class CloneCommandBuilder<TSyntaxNode> : ICommandBuilder<CloneCommand<TSyntaxNode>, TSyntaxNode>
         {
 			public Func<TSyntaxNode, string> NewName { get; set; }
-		
-			public CloneCommandBuilder<TSyntaxNode> WithNewName(Func<TSyntaxNode, string> value)
+
+            public CloneCommandBuilder<TSyntaxNode> WithNewName(Func<TSyntaxNode, string> value)
 			{
 			   NewName = value;
 			   return this;
@@ -22,6 +22,9 @@ namespace CodeGen.Context
 			   return new CloneCommand<TSyntaxNode>(){ 
 				NewName = NewName, };
 			}
+
+            public ITarget<TSyntaxNode> Target { get; set; }
+            CodeGenTypelessContext.ITarget CodeGenTypelessContext.ICommandBuilder<CloneCommand<TSyntaxNode>>.Target { get => Target; set => Target=(ITarget<TSyntaxNode>)value; }
 		}
 	}
 }

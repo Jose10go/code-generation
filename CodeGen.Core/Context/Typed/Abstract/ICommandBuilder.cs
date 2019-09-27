@@ -8,7 +8,7 @@ namespace CodeGen.Context
         public interface ICommandBuilder<TCommand, TNode> : ICommandBuilder<TCommand>
             where TCommand : ICommand<TNode>
         {
-            new TCommand Build();
+            new ITarget<TNode> Target { get; set;}
         }
     }
 }

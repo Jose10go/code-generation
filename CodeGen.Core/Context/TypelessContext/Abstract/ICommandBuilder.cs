@@ -5,6 +5,7 @@
         public interface ICommandBuilder<TCommand> where TCommand : ICommand
         {
             TCommand Build();
+            ITarget Target { get; set; }
         }
     }
 }

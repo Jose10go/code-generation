@@ -27,7 +27,9 @@ namespace CodeGen.Context.CSharp
                  where TCommand : ICommand<TNode>
                  where TCommandBuilder : ICommandBuilder<TCommand>
             {
-                 return (TCommandBuilder)_resolver.ResolveCommandBuilder<TCommand,TNode>();
+                var commandbuilder=(TCommandBuilder)_resolver.ResolveCommandBuilder<TCommand,TNode>();
+                commandbuilder.Target = Build();
+                return commandbuilder;
             }
 
             public ITargetBuilder<TNode> Where(Func<TNode, bool> filter)
