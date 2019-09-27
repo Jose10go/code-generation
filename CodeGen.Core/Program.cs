@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Editing;
-using Autofac;
-using CodeGen.Context.CSharp;
+using CodeGen.Context.CSharp.DocumentEdit;
 
 namespace Tests
 {
@@ -36,32 +32,34 @@ namespace Tests
 
             var editor = DocumentEditor.CreateAsync(document).Result;
 
-            var resolver = new ICSharpContext<DocumentEditor>.CSharpAutofacResolver();
-            var engine = new ICSharpContext<DocumentEditor>.DocumentEditingCodeGenerationEngine(solution, resolver);
+            var resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
+            var engine = new CSharpContextDocumentEditor.DocumentEditingCodeGenerationEngine(solution);
 
             engine.Select<MethodDeclarationSyntax>()
                 .Where(x => true)
-                .Execute<ICSharpContext<DocumentEditor>.CloneCommand<MethodDeclarationSyntax>, ICSharpContext<DocumentEditor>.MethodCloneCommandBuilder>()
+                .Execute<CSharpContextDocumentEditor.CloneCommand<MethodDeclarationSyntax>, CSharpContextDocumentEditor.MethodCloneCommandBuilder>()
                 .WithNewName(m => m.Identifier.Text + "_generated")
                 .Go(editor);
 
+            Console.WriteLine(editor.GetChangedDocument().GetTextAsync().Result);
         }
-        public class MyContext:CodeGen.Context.CSharp.ICSharpContext<DocumentEditor>
-        {
-            public DocumentEditor result;
-            public MyContext(Project project)
-            {
-                Document document = project.Documents.First(doc => doc.Name == "in.cs");
 
-                var editor = DocumentEditor.CreateAsync(document).Result;
-                var target = new CSharpTarget<MethodDeclarationSyntax>((method)=>true);
-                var cloneCommand = new MethodCloneCommandBuilder()
-                    .WithNewName((method) => method.Identifier.Text + "_generated")
-                    .Build(); 
-                var handler=new MethodCloneCommandHandler() { Target = target, Command = cloneCommand };
+        //public class MyContext: CSharpContext<DocumentEditor>
+        //{
+        //    public DocumentEditor result;
+        //    public MyContext(Project project)
+        //    {
+        //        Document document = project.Documents.First(doc => doc.Name == "in.cs");
 
-                result= handler.ProcessDocument(editor);
-            }
-        }
+        //        var editor = DocumentEditor.CreateAsync(document).Result;
+        //        var target = new CSharpTarget<MethodDeclarationSyntax>((method)=>true);
+        //        var cloneCommand = new MethodCloneCommandBuilder()
+        //            .WithNewName((method) => method.Identifier.Text + "_generated")
+        //            .Build(); 
+        //        var handler=new MethodCloneCommandHandler() { Target = target, Command = cloneCommand };
+
+        //        result= handler.ProcessDocument(editor);
+        //    }
+        //}
     }
 }

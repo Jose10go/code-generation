@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.CodeAnalysis;
+﻿using CodeGen.Attributes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace CodeGen.Context.CSharp
+namespace CodeGen.Context.CSharp.DocumentEdit
 {
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
+        [CommandHandler]
         public class ClassCloneCommandHandler : RoslynDocumentEditorCommandHandler<CloneCommand<ClassDeclarationSyntax>, ClassDeclarationSyntax>
         {
             public override CloneCommand<ClassDeclarationSyntax> Command { get; set; }

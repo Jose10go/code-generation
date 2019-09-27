@@ -37,7 +37,7 @@ namespace CodeGen.Context
             {
                 var command = Build();
                 var result=command.Handler.ProcessDocument(processEntity);
-                Console.WriteLine(result.ToString());
+               
             }
 
             public void Go(object processEntity)

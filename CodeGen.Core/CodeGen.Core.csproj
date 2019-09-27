@@ -237,6 +237,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\CommandHandler.cs" />
+    <Compile Include="Attributes\CommandBuilder.cs" />
     <Compile Include="Attributes\BuilderProp.cs" />
     <Compile Include="Attributes\CodeGenCreated.cs" />
     <Compile Include="Context\Typed\Abstract\ICodeGenerationEngine.cs" />

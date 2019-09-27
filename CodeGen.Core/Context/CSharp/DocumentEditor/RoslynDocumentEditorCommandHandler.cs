@@ -1,10 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
-using System;
 using static CodeGen.Context.CodeGenTypelessContext;
 
-namespace CodeGen.Context.CSharp
+namespace CodeGen.Context.CSharp.DocumentEdit
 {
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {

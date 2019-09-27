@@ -1,13 +1,14 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using CodeGen.Attributes;
+using System;
 
-namespace CodeGen.Context.CSharp
+namespace CodeGen.Context.CSharp.DocumentEdit
 {
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
+        [CommandHandler]
         public class MethodCloneCommandHandler : RoslynDocumentEditorCommandHandler<CloneCommand<MethodDeclarationSyntax>, MethodDeclarationSyntax>
         {
             public override CloneCommand<MethodDeclarationSyntax> Command { get; set; }
@@ -28,7 +29,6 @@ namespace CodeGen.Context.CSharp
 
                     editor.InsertAfter(methodDecl, cloneMethodDecl);
                 }
-
                 return editor;
             }
         }
