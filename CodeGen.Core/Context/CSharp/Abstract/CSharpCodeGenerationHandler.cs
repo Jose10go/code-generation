@@ -6,27 +6,22 @@ using static CodeGen.Context.CodeGenTypelessContext;
 
 namespace CodeGen.Context.CSharp
 {
-    public partial class ICSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
+    public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         public abstract class RoslynDocumentEditorCommandHandler<TCommand,TSyntaxNode>:
-            ICommandHandler<TCommand, CSharpTarget<TSyntaxNode>,CSharpSyntaxNode>
+            ICommandHandler<TCommand, ITarget<TSyntaxNode>,TSyntaxNode>
             where TCommand : ICommand<TSyntaxNode>
             where TSyntaxNode : CSharpSyntaxNode
         {
-            public CSharpTarget<TSyntaxNode> Target { get; set; }
+            public ITarget<TSyntaxNode> Target { get; set; }
 
-            public abstract TCommand Command { get; internal set; }
+            public abstract TCommand Command { get; set; }
 
             ITarget ICommandHandler.Target => Target;
 
             ICommand ICommandHandler.Command => Command;
 
             public abstract DocumentEditor ProcessDocument(DocumentEditor node);
-
-            public TProcessEntity ProcessDocument(TProcessEntity entity)
-            {
-                throw new NotImplementedException();
-            }
 
             object ICommandHandler.ProcessDocument(object editor)
             {
