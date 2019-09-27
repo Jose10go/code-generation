@@ -11,7 +11,10 @@ namespace CodeGen.Context
         {
             protected IContainer _container { get; set; }
             protected ICodeGenerationEngine _engine;
-
+            public AutofacResolver()
+            {
+                Resolver = this;
+            }
             public virtual void BuildContainer()
             {
                 var builder = new ContainerBuilder();
@@ -40,21 +43,30 @@ namespace CodeGen.Context
                 return _container.Resolve<ITargetBuilder<TNode>>();
             }
 
+            public ICommandHandler<TCommand, ITarget<TNode>, TNode> ResolveCommandHandler<TCommand, TNode>()
+            where TCommand : ICommand<TNode>
+            {
+                return _container.Resolve<ICommandHandler<TCommand, ITarget<TNode>, TNode>>();
+            }
+
             protected virtual void DoAutomaticRegister(ContainerBuilder builder)
             {
                 var coreAssembly = Assembly.GetExecutingAssembly();
 
+                //Register Command Builders only as generic services
                 foreach (var t in coreAssembly.GetTypes().Where(x => x.Name.EndsWith("CommandBuilder")))
-                    builder.RegisterGeneric(t).AsImplementedInterfaces();
-
-                foreach (var t in coreAssembly.GetTypes().Where(x =>x.IsClass && x.Name.EndsWith("Command")))
-                    builder.RegisterGeneric(t).AsImplementedInterfaces();
+                    foreach (var i in t.GetInterfaces())
+                        if (i.IsGenericType)
+                            builder.RegisterGeneric(t).As(i);
+                
+                //Register Command Handlers only as generic services
+                foreach (var t in coreAssembly.GetTypes().Where(x=> x.Name.EndsWith("CommandHandler")))
+                    foreach (var i in t.GetInterfaces())
+                        if(i.IsGenericType)
+                            builder.RegisterGeneric(t).As(i);
             
                 // register the engine as singleton
                 builder.RegisterInstance(_engine).As<ICodeGenerationEngine>().ExternallyOwned();
-                // register this as singleton
-                builder.RegisterInstance(this).As<ICodeGenerationResolver>().ExternallyOwned();
-
             }
         }
     }

@@ -10,12 +10,6 @@ namespace CodeGen.Context.CSharp
         public class CSharpTargetBuilder<TNode> : ICSharpTargetBuilder<TNode>
             where TNode : CSharpSyntaxNode
         {
-            ICodeGenerationResolver _resolver;
-
-            public CSharpTargetBuilder(ICodeGenerationResolver resolver)
-            {
-                _resolver = resolver;
-            }
             private Func<TNode, bool> WhereSelector { get; set; }
 
             public ITarget<CSharpSyntaxNode> Build()
@@ -27,7 +21,7 @@ namespace CodeGen.Context.CSharp
                  where TCommand : ICommand<TNode>
                  where TCommandBuilder : ICommandBuilder<TCommand>
             {
-                var commandbuilder=(TCommandBuilder)_resolver.ResolveCommandBuilder<TCommand,TNode>();
+                var commandbuilder=(TCommandBuilder)Resolver.ResolveCommandBuilder<TCommand,TNode>();
                 commandbuilder.Target = Build();
                 return commandbuilder;
             }

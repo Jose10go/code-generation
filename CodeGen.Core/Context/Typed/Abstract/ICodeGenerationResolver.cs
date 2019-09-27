@@ -2,6 +2,7 @@
 {
     public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
     {
+        public static ICodeGenerationResolver Resolver { get; set; }
         public interface ICodeGenerationResolver
         {
             void BuildContainer();
@@ -10,6 +11,9 @@
             where TCommand :ICommand<TNode>;
             ICodeGenerationEngine ResolveEngine();
             void RegisterEngine(ICodeGenerationEngine engine);
+
+            ICommandHandler<TCommand, ITarget<TNode>, TNode> ResolveCommandHandler<TCommand, TNode>()
+            where TCommand : ICommand<TNode>;
         }
     }
 }

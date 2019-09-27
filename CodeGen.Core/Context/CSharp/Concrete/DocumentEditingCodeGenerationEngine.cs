@@ -15,14 +15,11 @@ namespace CodeGen.Context.CSharp
 
             protected SolutionEditor Editor { get; private set; }
 
-            protected AutofacResolver Resolver { get; private set; }
-
-            public DocumentEditingCodeGenerationEngine(Solution solution, AutofacResolver resolver)
+            public DocumentEditingCodeGenerationEngine(Solution solution)
             {
                 Editor = new SolutionEditor(solution);
-                Resolver = resolver;
-                resolver.RegisterEngine(this);
-                resolver.BuildContainer();
+                Resolver.RegisterEngine(this);
+                Resolver.BuildContainer();
             }
 
             public Solution ApplyChanges()
