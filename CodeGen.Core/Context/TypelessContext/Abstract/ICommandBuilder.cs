@@ -6,6 +6,7 @@
         {
             TCommand Build();
             ITarget Target { get; set; }
+            void Go(object processEntity);
         }
     }
 }

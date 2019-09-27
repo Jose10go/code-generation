@@ -38,14 +38,12 @@ namespace Tests
 
             var resolver = new ICSharpContext<DocumentEditor>.CSharpAutofacResolver();
             var engine = new ICSharpContext<DocumentEditor>.DocumentEditingCodeGenerationEngine(solution, resolver);
-            var cmd =  engine.Select<MethodDeclarationSyntax>()
-                      .Where(x => true)
-                      .Execute<ICSharpContext<DocumentEditor>.CloneCommand<MethodDeclarationSyntax>, ICSharpContext<DocumentEditor>.MethodCloneCommandBuilder>()
-                      .WithNewName(m => m.Identifier.Text + "_generated")
-                      .Build();
 
-            var result = cmd.Handler.ProcessDocument(editor);
-            Console.WriteLine(result.ToString());
+            engine.Select<MethodDeclarationSyntax>()
+                .Where(x => true)
+                .Execute<ICSharpContext<DocumentEditor>.CloneCommand<MethodDeclarationSyntax>, ICSharpContext<DocumentEditor>.MethodCloneCommandBuilder>()
+                .WithNewName(m => m.Identifier.Text + "_generated")
+                .Go(editor);
 
         }
         public class MyContext:CodeGen.Context.CSharp.ICSharpContext<DocumentEditor>

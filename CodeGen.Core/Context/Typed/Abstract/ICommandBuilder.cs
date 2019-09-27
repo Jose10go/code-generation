@@ -9,6 +9,7 @@ namespace CodeGen.Context
             where TCommand : ICommand<TNode>
         {
             new ITarget<TNode> Target { get; set;}
+            void Go(TProcessEntity processEntity);
         }
     }
 }
