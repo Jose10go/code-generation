@@ -105,25 +105,25 @@ namespace Tests
             Assert.True(st.IsEquivalentTo(st2));
         }
 
-        [Fact]
-        public void CreateClass()
-        {
-            string path = Path.Combine("Examples", "CreateClass");
-            Document document_in = project.Documents.First(doc => doc.Folders.Aggregate((x, y) => Path.Combine(x, y)) == path && doc.Name == "in.cs");
-            var editor = DocumentEditor.CreateAsync(document_in).Result;
+        //[Fact]
+        //public void CreateClass()
+        //{
+        //    string path = Path.Combine("Examples", "CreateClass");
+        //    Document document_in = project.Documents.First(doc => doc.Folders.Aggregate((x, y) => Path.Combine(x, y)) == path && doc.Name == "in.cs");
+        //    var editor = DocumentEditor.CreateAsync(document_in).Result;
 
-            engine.Select<NamespaceDeclarationSyntax>()
-               .Execute<CSharpContextDocumentEditor.CreateClassComand, CSharpContextDocumentEditor.ClassCreateCommandBuilder>()
-               .WithAccesModifier("public")
-               .MakePartial()
-               .MakeStatic()
-               .WithName("B")
-               .Go(editor);
+        //    engine.Select<NamespaceDeclarationSyntax>()
+        //       .Execute<CSharpContextDocumentEditor.CreateClassComand, CSharpContextDocumentEditor.ClassCreateCommandBuilder>()
+        //       .WithAccesModifier("public")
+        //       .MakePartial()
+        //       .MakeStatic()
+        //       .WithName("B")
+        //       .Go(editor);
 
-            editor.GetChangedDocument().TryGetSyntaxTree(out var st);
-            var st2 = ParseOut(path);
-            Assert.True(st.IsEquivalentTo(st2));
-        }
+        //    editor.GetChangedDocument().TryGetSyntaxTree(out var st);
+        //    var st2 = ParseOut(path);
+        //    Assert.True(st.IsEquivalentTo(st2));
+        //}
 
     }
 }
