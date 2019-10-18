@@ -2,7 +2,7 @@
 {
     public partial class CodeGenTypelessContext
     {
-        public interface ICommandBuilder<TCommand> where TCommand : ICommand
+        public interface ICommandBuilder<out TCommand> where TCommand : ICommand
         {
             TCommand Build();
             ITarget Target { get; set; }
