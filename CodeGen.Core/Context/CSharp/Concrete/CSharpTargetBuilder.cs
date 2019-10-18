@@ -17,15 +17,6 @@ namespace CodeGen.Context.CSharp
                 return new CSharpTarget<TNode>(this.WhereSelector);
             }
 
-            public TCommandBuilder Execute<TCommand, TCommandBuilder>()
-                 where TCommand : ICommand<TNode>
-                 where TCommandBuilder : ICommandBuilder<TCommand>
-            {
-                var commandbuilder=(TCommandBuilder)Resolver.ResolveCommandBuilder<TCommand,TNode>();
-                commandbuilder.Target = Build();
-                return commandbuilder;
-            }
-
             public ITargetBuilder<TNode> Where(Func<TNode, bool> filter)
             {
                 WhereSelector = filter;
@@ -42,10 +33,28 @@ namespace CodeGen.Context.CSharp
                 return Where(filter);
             }
 
-            TCommandBuilder ITargetBuilder.Execute<TCommand, TCommandBuilder>()
+        }
+
+        public class ChainCSharpTargetBuilder<TNode> : IChainCSharpTargetBuilder<TNode>,IChainTargetBuilderSelector<TNode>
+           where TNode : CSharpSyntaxNode
+        {
+            private Func<TNode, bool> WhereSelector { get; set; }
+
+            public TCommandBuilder Execute<TCommand, TCommandBuilder>()
+                where TCommand : ICommand<TNode>
+                where TCommandBuilder : ICommandBuilder<TCommand>
             {
-                return (TCommandBuilder)Execute<ICommand<TNode>,ICommandBuilder<ICommand<TNode>>>();
+                var commandbuilder = (TCommandBuilder)Resolver.ResolveCommandBuilder<TCommand, TNode>();
+                commandbuilder.Target =new CSharpTarget<TNode>(this.WhereSelector);
+                return commandbuilder;
+            }
+
+            public IChainTargetBuilder<TNode> Where(Func<TNode, bool> filter)
+            {
+                WhereSelector = filter;
+                return this;
             }
         }
     }
+
 }

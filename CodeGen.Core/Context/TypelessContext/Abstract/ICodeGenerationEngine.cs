@@ -8,7 +8,7 @@
 
             object CurrentSolution { get; }
 
-            ITargetBuilder Select<TSyntaxNode>();
+            //IChainTargetBuilder Select<TSyntaxNode>();TODO:see this and in general review all typelessContext
         }
     }
 }

@@ -39,9 +39,9 @@ namespace CodeGen.Context
                 return _engine;
             }
 
-            public ITargetBuilder<TNode> ResolveTargetBuilder<TNode>()
+            public IChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>()
             {
-                return _container.Resolve<ITargetBuilder<TNode>>();
+                return _container.Resolve<IChainTargetBuilder<TNode>>();
             }
 
             public ICommandHandler<TCommand, ITarget<TNode>, TNode> ResolveCommandHandler<TCommand, TNode>()

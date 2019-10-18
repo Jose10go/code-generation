@@ -9,7 +9,7 @@
 
             new TProject CurrentSolution { get; }
 
-            new ITargetBuilder<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TRootNode;
+            IChainTargetBuilder<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TRootNode;
         }
     }
 }

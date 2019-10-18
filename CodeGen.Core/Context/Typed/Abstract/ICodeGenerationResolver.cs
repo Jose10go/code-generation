@@ -6,7 +6,7 @@
         public interface ICodeGenerationResolver
         {
             void BuildContainer();
-            ITargetBuilder<TNode> ResolveTargetBuilder<TNode>();
+            IChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>();
             ICommandBuilder<TCommand, TNode> ResolveCommandBuilder<TCommand, TNode>()
             where TCommand :ICommand<TNode>;
             ICodeGenerationEngine ResolveEngine();

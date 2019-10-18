@@ -1,7 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
-using static CodeGen.Context.CodeGenTypelessContext;
 
 namespace CodeGen.Context.CSharp
 {
@@ -32,15 +31,12 @@ namespace CodeGen.Context.CSharp
                 return ApplyChanges();
             }
 
-            public ICSharpTargetBuilder<TSyntaxNode> Select<TSyntaxNode>()where TSyntaxNode :CSharpSyntaxNode
+            public IChainCSharpTargetBuilder<TSyntaxNode> Select<TSyntaxNode>()where TSyntaxNode :CSharpSyntaxNode
             {
-                return Resolver.ResolveTargetBuilder<TSyntaxNode>() as ICSharpTargetBuilder<TSyntaxNode>;
+                return Resolver.ResolveTargetBuilder<TSyntaxNode>() as IChainCSharpTargetBuilder<TSyntaxNode>;
             }
-            ITargetBuilder<TSyntaxNode> ICodeGenerationEngine.Select<TSyntaxNode>()
-            {
-                return Resolver.ResolveTargetBuilder<TSyntaxNode>();
-            }
-            ITargetBuilder CodeGenTypelessContext.ICodeGenerationEngine.Select<TSyntaxNode>()
+
+            IChainTargetBuilder<TSyntaxNode> ICodeGenerationEngine.Select<TSyntaxNode>()
             {
                 return Resolver.ResolveTargetBuilder<TSyntaxNode>();
             }

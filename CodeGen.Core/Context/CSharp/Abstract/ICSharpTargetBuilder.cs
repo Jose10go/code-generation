@@ -8,5 +8,11 @@ namespace CodeGen.Context.CSharp
             where TNode : CSharpSyntaxNode
         {
         }
+
+        public interface IChainCSharpTargetBuilder<TNode> : IChainTargetBuilder<TNode>,IChainTargetBuilderSelector<TNode>
+            where TNode : CSharpSyntaxNode
+        {
+        }
+        
     }
 }
