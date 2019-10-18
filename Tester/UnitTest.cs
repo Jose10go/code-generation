@@ -3,14 +3,13 @@ using CodeGen.Context.CSharp.DocumentEdit;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.MSBuild;
-using System;
+using Microsoft.CodeAnalysis.CSharp;
 using System.Linq;
 using static CodeGen.Context.CSharp.DocumentEdit.CSharpContextDocumentEditor;
 using Microsoft.Build.Locator;
 using Xunit;
-using Microsoft.CodeAnalysis.CSharp;
 using System.IO;
+using Microsoft.CodeAnalysis.MSBuild;
 
 namespace Tests
 {
@@ -31,7 +30,7 @@ namespace Tests
                                             workspace.Diagnostics.Add(args.Diagnostic);
 
             solution = workspace.CurrentSolution;
-            project = workspace.OpenProjectAsync(@"..\..\..\Tests.csproj").Result;
+            project = workspace.OpenProjectAsync(@"..\..\..\Tester.csproj").Result;
 
             resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
             engine = new CSharpContextDocumentEditor.DocumentEditingCodeGenerationEngine(solution);
@@ -39,19 +38,19 @@ namespace Tests
 
         private SyntaxTree ParseOut(string path)
         {
-            using (FileStream f=new FileStream(Path.Combine("..","..","..",path,"out.cs"),FileMode.Open))
-                using (StreamReader reader=new StreamReader(f))
-                {
-                    var text = reader.ReadToEnd();
-                    return SyntaxFactory.ParseSyntaxTree(text);
-                }
+            using (FileStream f = new FileStream(Path.Combine("..", "..", "..", path, "out.cs"), FileMode.Open))
+            using (StreamReader reader = new StreamReader(f))
+            {
+                var text = reader.ReadToEnd();
+                return SyntaxFactory.ParseSyntaxTree(text);
+            }
         }
 
         [Fact]
         public void CloneMethodUnDeclarativeWay()
         {
             string path = Path.Combine("Examples", "CloneMethod");
-            Document document_in = project.Documents.First(doc => doc.Folders.Aggregate((x,y)=>Path.Combine(x,y))==path && doc.Name=="in.cs");
+            Document document_in = project.Documents.First(doc => doc.Folders.Aggregate((x, y) => Path.Combine(x, y)) == path && doc.Name == "in.cs");
             var editor = DocumentEditor.CreateAsync(document_in).Result;
 
             var target = new CSharpContext<DocumentEditor>.CSharpTarget<MethodDeclarationSyntax>((method) => true);
@@ -67,7 +66,7 @@ namespace Tests
             Assert.True(st.IsEquivalentTo(st2));
         }
 
-       
+
 
         [Fact]
         public void CloneMethod()
