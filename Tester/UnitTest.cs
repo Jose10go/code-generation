@@ -1,11 +1,9 @@
-using CodeGen.Context.CSharp;
 using CodeGen.Context.CSharp.DocumentEdit;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Linq;
-using static CodeGen.Context.CSharp.DocumentEdit.CSharpContextDocumentEditor;
 using Microsoft.Build.Locator;
 using Xunit;
 using System.IO;
@@ -46,27 +44,46 @@ namespace Tests
             }
         }
 
+        //[Fact]
+        //public void CloneMethodUnDeclarativeWay()
+        //{
+        //    string path = Path.Combine("Examples", "CloneMethod");
+        //    Document document_in = project.Documents.First(doc => doc.Folders.Aggregate((x, y) => Path.Combine(x, y)) == path && doc.Name == "in.cs");
+        //    var editor = DocumentEditor.CreateAsync(document_in).Result;
+
+        //    var target = new CSharpContext<DocumentEditor>.CSharpTarget<MethodDeclarationSyntax>((method) => true);
+        //    var cloneCommand = new CSharpContext<DocumentEditor>.MethodCloneCommandBuilder()
+        //        .WithNewName((method) => method.Identifier.Text + "_generated")
+        //        .Build();
+        //    var handler = new MethodCloneCommandHandler() { Target = target, Command = cloneCommand };
+
+        //    DocumentEditor result = handler.ProcessDocument(editor);
+
+        //    editor.GetChangedDocument().TryGetSyntaxTree(out var st);
+        //    var st2 = ParseOut(path);
+        //    Assert.True(st.IsEquivalentTo(st2));
+        //}
+
+
+
         [Fact]
-        public void CloneMethodUnDeclarativeWay()
+        public void CloneClass()
         {
-            string path = Path.Combine("Examples", "CloneMethod");
-            Document document_in = project.Documents.First(doc => doc.Folders.Aggregate((x, y) => Path.Combine(x, y)) == path && doc.Name == "in.cs");
+            string path = Path.Combine("Examples", "CloneClass");
+            Document document_in = project.Documents.First(doc => 
+            doc.Folders.Aggregate((x, y) => Path.Combine(x, y)) == path && doc.Name == "in.cs");
             var editor = DocumentEditor.CreateAsync(document_in).Result;
 
-            var target = new CSharpContext<DocumentEditor>.CSharpTarget<MethodDeclarationSyntax>((method) => true);
-            var cloneCommand = new CSharpContext<DocumentEditor>.MethodCloneCommandBuilder()
-                .WithNewName((method) => method.Identifier.Text + "_generated")
-                .Build();
-            var handler = new MethodCloneCommandHandler() { Target = target, Command = cloneCommand };
-
-            DocumentEditor result = handler.ProcessDocument(editor);
+            engine.Select<ClassDeclarationSyntax>()
+                .Where(x => true)
+                .Execute<CSharpContextDocumentEditor.ClassCloneCommand, CSharpContextDocumentEditor.IClassCloneCommandBuilder>()
+                .WithNewName(m => m.Identifier.Text + "_generated") 
+                .Go(editor);
 
             editor.GetChangedDocument().TryGetSyntaxTree(out var st);
             var st2 = ParseOut(path);
             Assert.True(st.IsEquivalentTo(st2));
         }
-
-
 
         [Fact]
         public void CloneMethod()
@@ -77,25 +94,7 @@ namespace Tests
 
             engine.Select<MethodDeclarationSyntax>()
                 .Where(x => true)
-                .Execute<CSharpContextDocumentEditor.CloneCommand<MethodDeclarationSyntax>, CSharpContextDocumentEditor.MethodCloneCommandBuilder>()
-                .WithNewName(m => m.Identifier.Text + "_generated")
-                .Go(editor);
-
-            editor.GetChangedDocument().TryGetSyntaxTree(out var st);
-            var st2 = ParseOut(path);
-            Assert.True(st.IsEquivalentTo(st2));
-        }
-
-        [Fact]
-        public void CloneClass()
-        {
-            string path = Path.Combine("Examples", "CloneClass");
-            Document document_in = project.Documents.First(doc => doc.Folders.Aggregate((x, y) => Path.Combine(x, y)) == path && doc.Name == "in.cs");
-            var editor = DocumentEditor.CreateAsync(document_in).Result;
-
-            engine.Select<ClassDeclarationSyntax>()
-                .Where(x => true)
-                .Execute<CSharpContextDocumentEditor.CloneCommand<ClassDeclarationSyntax>, CSharpContextDocumentEditor.ClassCloneCommandBuilder>()
+                .Execute<CSharpContextDocumentEditor.MethodCloneCommand, CSharpContextDocumentEditor.IMethodCloneCommandBuilder>()
                 .WithNewName(m => m.Identifier.Text + "_generated")
                 .Go(editor);
 

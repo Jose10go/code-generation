@@ -10,7 +10,6 @@ namespace Tests.Examples.CloneMethod
             Console.WriteLine("hello my friend.");
         }
 
-        [CodeGenCreatedAttribute]
         public void hello_generated()
         {
             Console.WriteLine("hello my friend.");
