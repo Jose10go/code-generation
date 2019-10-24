@@ -10,14 +10,13 @@ namespace CodeGen.Commands.CommandBuilders
 {
     public static class CommandBuilderExtensions
     {
-        public static ICommandBuilder<TCommand> With<TCommand, TValue>
-            (this ICommandBuilder<TCommand> commandBuilder, string prop, TValue value)
+        public static void With<TCommand>
+            (this TCommand commandBuilder, string prop, object value)
             where TCommand:ICommand
         {
             try
             {
-                var property = commandBuilder.GetType().GetProperty("With" + prop);
-
+                var property = commandBuilder.GetType().GetProperty(prop);
                 property.SetValue(commandBuilder, value);
             }
             catch (Exception)
@@ -25,25 +24,7 @@ namespace CodeGen.Commands.CommandBuilders
                 throw new InvalidOperationException($"Provided {nameof(prop)} doesn't exist in current CommandBuilder and underlying Command");
             }
 
-            return commandBuilder;
         }
 
-        public static CodeGenContext<TSolution, TRoot, TProcessEntity>.ICommandBuilder<TCommand, TNode> With<TCommand, TSolution, TRoot, TValue, TNode, TProcessEntity>
-            (this CodeGenContext<TSolution, TRoot, TProcessEntity>.ICommandBuilder<TCommand, TNode> commandBuilder, string prop, TValue value)
-            where TCommand: CodeGenContext<TSolution, TRoot, TProcessEntity>.ICommand<TNode>
-        {
-            try
-            {
-                var property = commandBuilder.GetType().GetProperty("With" + prop);
-
-                property.SetValue(commandBuilder, value);
-            }
-            catch (Exception e)
-            {
-                throw new InvalidOperationException($"Provided {nameof(prop)} doesn't exist in current CommandBuilder and underlying Command");
-            }
-
-            return commandBuilder;
-        }
     }
 }

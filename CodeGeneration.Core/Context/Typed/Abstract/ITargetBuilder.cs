@@ -8,19 +8,32 @@ namespace CodeGen.Context
     {
         public interface ITargetBuilder<TNode> : ITargetBuilder
         {
-            ITargetBuilder<TNode> Where(Func<TNode, bool> filter);
-            new ITarget<TRootNode> Build();
+            Func<TNode, bool> WhereSelector { get; set; }
+            
+            ITarget<TNode> Build() 
+            {
+                var target=Resolver.ResolveTarget<TNode>();
+                target.WhereSelector = WhereSelector;
+                return target;
+            }
         }
 
-        public interface IChainTargetBuilder<TNode>
+        public interface IChainTargetBuilder<TNode>:ITargetBuilder<TNode>
         {
-            TCommandBuilder Execute<TCommand, TCommandBuilder>()
-                        where TCommand : ICommand<TNode>
-                        where TCommandBuilder : ICommandBuilder<TCommand>;
-        }
-        public interface IChainTargetBuilderSelector<TNode>
-        {
-            IChainTargetBuilder<TNode> Where(Func<TNode, bool> filter);
+            IChainTargetBuilder<TNode> Where(Func<TNode, bool> filter)
+            {
+                WhereSelector = filter;
+                return this;
+            }
+            TCommandBuilder Execute<TCommand,TCommandBuilder>()
+                where TCommand : ICommand,new()
+                where TCommandBuilder : ICommandBuilder
+            {
+                var target = Build();
+                var commandbuilder = Resolver.ResolveCommandBuilder<TCommand>();
+                commandbuilder.Target = target;
+                return (TCommandBuilder)commandbuilder;
+            }
         }
     }
 }

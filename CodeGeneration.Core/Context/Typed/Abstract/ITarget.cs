@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using static CodeGen.Context.CodeGenTypelessContext;
 
 namespace CodeGen.Context
@@ -6,10 +7,9 @@ namespace CodeGen.Context
     // Typed context - Abstract
     public partial class CodeGenContext<TProject, TRootNode, TProcessEntity> 
     {
-        public interface ITarget<out TNode> : ITarget
+        public interface ITarget<TNode> : ITarget
         {
-            //new Func<TNode, bool> WhereSelector { get; }//TODO check without func because of in Tnode
-
+            Func<TNode, bool> WhereSelector{ get;set; }
             IEnumerable<TNode> Select(TRootNode root);
         }
     }

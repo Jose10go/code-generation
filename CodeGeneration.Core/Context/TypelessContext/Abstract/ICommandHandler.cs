@@ -2,13 +2,10 @@
 {
     public partial class CodeGenTypelessContext
     {
+        //Markup Interface
         public interface ICommandHandler
         {
-            ITarget Target { get; }
-
-            ICommand Command { get; }
-
-            object ProcessDocument(object entity);
+           
         }
     }
 }

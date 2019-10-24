@@ -8,11 +8,7 @@ namespace CodeGen.Context
     {
         public interface ITarget
         {
-            Type TargetNode { get; }
 
-            Func<object, bool> WhereSelector { get; }
-
-            IEnumerable<object> Select(object root);
         }
     }
 }

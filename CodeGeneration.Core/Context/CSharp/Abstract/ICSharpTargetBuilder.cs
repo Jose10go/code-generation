@@ -9,10 +9,9 @@ namespace CodeGen.Context.CSharp
         {
         }
 
-        public interface IChainCSharpTargetBuilder<TNode> : IChainTargetBuilder<TNode>,IChainTargetBuilderSelector<TNode>
+        public interface IChainCSharpTargetBuilder<TNode> : IChainTargetBuilder<TNode>
             where TNode : CSharpSyntaxNode
         {
         }
-        
     }
 }

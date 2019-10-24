@@ -15,7 +15,6 @@ namespace CodeGen.Context.CSharp
                 builder.RegisterGeneric(typeof(CSharpTargetBuilder<>)).As(typeof(ICSharpTargetBuilder<>));
                 builder.RegisterGeneric(typeof(CSharpTargetBuilder<>)).As(typeof(ITargetBuilder<>));
                 builder.RegisterGeneric(typeof(ChainCSharpTargetBuilder<>)).As(typeof(IChainTargetBuilder<>));
-                builder.RegisterGeneric(typeof(ChainCSharpTargetBuilder<>)).As(typeof(IChainTargetBuilderSelector<>));
 
                 base.DoAutomaticRegister(builder);
             }

@@ -9,21 +9,18 @@ namespace CodeGen.Context.CSharp.DocumentEdit
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         [CommandHandler]
-        public class MethodCloneCommandHandler : RoslynDocumentEditorCommandHandler<CloneCommand<MethodDeclarationSyntax>, MethodDeclarationSyntax>
+        public class MethodCloneCommandHandler : RoslynDocumentEditorCommandHandler<MethodCloneCommand, MethodDeclarationSyntax>
         {
-            public override CloneCommand<MethodDeclarationSyntax> Command { get; set; }
+            public override MethodCloneCommand Command { get; set; }
 
             public override DocumentEditor ProcessDocument(DocumentEditor editor)
             {
-                var methodDeclFiltered = Target.Select((CSharpSyntaxNode)editor.GetChangedRoot());
+                var target = Command.Target as ITarget<MethodDeclarationSyntax>;
+                var methodDeclFiltered = target.Select((CSharpSyntaxNode)editor.GetChangedRoot());
 
                 foreach (var methodDecl in methodDeclFiltered)
                 {
-                    var newAttrList = SyntaxFactory.AttributeList();
-                    newAttrList = newAttrList.AddAttributes(SyntaxFactory.Attribute(SyntaxFactory.ParseName(nameof(CodeGenCreatedAttribute))));
-                    var newAttrList1 = methodDecl.AttributeLists.Add(newAttrList);
-
-                    var cloneMethodDecl = SyntaxFactory.MethodDeclaration(newAttrList1, methodDecl.Modifiers, methodDecl.ReturnType, methodDecl.ExplicitInterfaceSpecifier,
+                    var cloneMethodDecl = SyntaxFactory.MethodDeclaration(methodDecl.AttributeLists, methodDecl.Modifiers, methodDecl.ReturnType, methodDecl.ExplicitInterfaceSpecifier,
                         SyntaxFactory.Identifier(Command.NewName(methodDecl)), methodDecl.TypeParameterList, methodDecl.ParameterList,
                         methodDecl.ConstraintClauses, methodDecl.Body, methodDecl.ExpressionBody);
 

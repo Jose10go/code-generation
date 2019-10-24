@@ -28,12 +28,6 @@ namespace CodeGen.Context
                 _engine = engine;
             }
 
-            public ICommandBuilder<TCommand, TNode> ResolveCommandBuilder<TCommand, TNode>()
-                where TCommand : ICommand<TNode>
-            {
-                return _container.Resolve<ICommandBuilder<TCommand, TNode>>();
-            }
-
             public ICodeGenerationEngine ResolveEngine()
             {
                 return _engine;
@@ -42,12 +36,6 @@ namespace CodeGen.Context
             public IChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>()
             {
                 return _container.Resolve<IChainTargetBuilder<TNode>>();
-            }
-
-            public ICommandHandler<TCommand, ITarget<TNode>, TNode> ResolveCommandHandler<TCommand, TNode>()
-            where TCommand : ICommand<TNode>
-            {
-                return _container.Resolve<ICommandHandler<TCommand, ITarget<TNode>, TNode>>();
             }
 
             protected virtual void DoAutomaticRegister(ContainerBuilder builder)
@@ -66,6 +54,21 @@ namespace CodeGen.Context
 
                 // register the engine as singleton
                 builder.RegisterInstance(_engine).As<ICodeGenerationEngine>().ExternallyOwned();
+            }
+
+            public ITarget<TSyntaxNode> ResolveTarget<TSyntaxNode>()
+            {
+                return _container.Resolve<ITarget<TSyntaxNode>>();
+            }
+
+            public ICommandBuilder<TCommand> ResolveCommandBuilder<TCommand>() where TCommand : CodeGenTypelessContext.ICommand, new()
+            {
+                return _container.Resolve<ICommandBuilder<TCommand>>();
+            }
+
+            public ICommandHandler<TCommand> ResolveCommandHandler<TCommand>() where TCommand : CodeGenTypelessContext.ICommand
+            {
+                return _container.Resolve<ICommandHandler<TCommand>>();
             }
         }
     }

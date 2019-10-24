@@ -4,8 +4,7 @@
     {
         public interface ICommand
         {
-            ITarget Target { get; }
-            ICommandHandler Handler { get; }
+            ITarget Target { get; set; }
         }
     }
 }

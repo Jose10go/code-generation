@@ -12,32 +12,11 @@ namespace CodeGen.Context.CSharp
     {
         public class CSharpTarget<TSyntaxNode> : ICSharpTarget<TSyntaxNode> where TSyntaxNode : CSharpSyntaxNode
         {
-            public Type TargetNode => typeof(TSyntaxNode);
-
-            public Func<TSyntaxNode, bool> WhereSelector { get; private set; }
-
-            Func<object, bool> ITarget.WhereSelector => (o) => WhereSelector((TSyntaxNode)o);
-
-            public CSharpTarget(Func<TSyntaxNode, bool> filter = null)
-            {
-                if (filter != null)
-                {
-                    WhereSelector = filter;
-                }
-                else
-                {
-                    WhereSelector = (node) => true;
-                }
-            }
+            public Func<TSyntaxNode, bool> WhereSelector { get; set; }
 
             public IEnumerable<TSyntaxNode> Select(CSharpSyntaxNode root)
             {
                 return root.DescendantNodes().OfType<TSyntaxNode>().Where(WhereSelector);
-            }
-
-            IEnumerable<object> ITarget.Select(object root)
-            {
-                return Select((CSharpSyntaxNode)root);
             }
         }
     }

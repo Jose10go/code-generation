@@ -5,16 +5,12 @@ namespace CodeGen.Context
 
     public partial class CodeGenContext<TProject, TRootNode, TProcessEntity> 
     {
-        public interface ICommandHandler<TCommand,TTarget, TNode> : ICommandHandler
-            where TCommand : ICommand<TNode>
-            where TTarget : ITarget<TNode>
+        public interface ICommandHandler<TCommand> : ICommandHandler
+            where TCommand : ICommand
         {
-            new TTarget Target { get; set; }
-
-            new TCommand Command { get; set; }
+            TCommand Command { get; set; }
 
             TProcessEntity ProcessDocument(TProcessEntity entity);
-
         }
     }
 }

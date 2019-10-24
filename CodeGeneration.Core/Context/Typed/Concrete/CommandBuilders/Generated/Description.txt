@@ -1,3 +1,0 @@
-Diagnostics: 1 
-Program does not contain a static 'Main' method suitable for an entry point
-Syntax trees: 0

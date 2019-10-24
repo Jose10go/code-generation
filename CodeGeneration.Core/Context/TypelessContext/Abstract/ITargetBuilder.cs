@@ -4,10 +4,9 @@ namespace CodeGen.Context
 {
     public partial class CodeGenTypelessContext
     {
+        //markup Interface
         public interface ITargetBuilder
         {
-            ITargetBuilder Where(Func<object, bool> filter);
-            ITarget Build();
         }
     }
 }
