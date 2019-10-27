@@ -10,7 +10,6 @@ namespace CodeGen.Context
         public interface ICommandBuilder<TCommand> : ICommandBuilder
             where TCommand : ICommand, new()
         {
-            ITarget Target { get; set; }
 
             TCommand Build()
             {

@@ -7,7 +7,7 @@ namespace CodeGen.Context
         //Markup Interface
         public interface ICommandBuilder
         {
-           
+            ITarget Target { get; set; }
         }
     }
 }

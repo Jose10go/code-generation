@@ -25,14 +25,13 @@ namespace CodeGen.Context
                 WhereSelector = filter;
                 return this;
             }
-            TCommandBuilder Execute<TCommand,TCommandBuilder>()
-                where TCommand : ICommand,new()
+            TCommandBuilder Execute<TCommandBuilder>()
                 where TCommandBuilder : ICommandBuilder
             {
                 var target = Build();
-                var commandbuilder = Resolver.ResolveCommandBuilder<TCommand>();
+                var commandbuilder = Resolver.ResolveCommandBuilder<TCommandBuilder>();
                 commandbuilder.Target = target;
-                return (TCommandBuilder)commandbuilder;
+                return commandbuilder;
             }
         }
     }

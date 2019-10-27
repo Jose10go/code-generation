@@ -61,9 +61,9 @@ namespace CodeGen.Context
                 return _container.Resolve<ITarget<TSyntaxNode>>();
             }
 
-            public ICommandBuilder<TCommand> ResolveCommandBuilder<TCommand>() where TCommand : CodeGenTypelessContext.ICommand, new()
+            public TCommandBuilder ResolveCommandBuilder<TCommandBuilder>() where TCommandBuilder :CodeGenTypelessContext.ICommandBuilder
             {
-                return _container.Resolve<ICommandBuilder<TCommand>>();
+                return _container.Resolve<TCommandBuilder>();
             }
 
             public ICommandHandler<TCommand> ResolveCommandHandler<TCommand>() where TCommand : CodeGenTypelessContext.ICommand

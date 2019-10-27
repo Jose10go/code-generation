@@ -10,8 +10,8 @@ namespace CodeGen.Context
             void BuildContainer();
             IChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>();
             ITarget<TSyntaxNode> ResolveTarget<TSyntaxNode>();
-            ICommandBuilder<TCommand> ResolveCommandBuilder<TCommand>()
-            where TCommand :ICommand,new();
+            TCommandBuilder ResolveCommandBuilder<TCommandBuilder>()
+            where TCommandBuilder :ICommandBuilder;
             ICodeGenerationEngine ResolveEngine();
             void RegisterEngine(ICodeGenerationEngine engine);
             ICommandHandler<TCommand> ResolveCommandHandler<TCommand>()
