@@ -4,4 +4,16 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="CloneClass\out.cs" />
+    <Compile Remove="CloneMethod\out.cs" />
+    <Compile Remove="CreateClass\out.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="CloneClass\out.cs" />
+    <None Include="CloneMethod\out.cs" />
+    <None Include="CreateClass\out.cs" />
+  </ItemGroup>
+
 </Project>
