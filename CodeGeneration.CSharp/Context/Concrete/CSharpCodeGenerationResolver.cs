@@ -23,15 +23,12 @@ namespace CodeGen.CSharp.Context
                 var coreAssembly = Assembly.GetExecutingAssembly();
 
                 ////Register Command Builders only as generic services
-                //foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandBuilderAttribute))))
-                //    foreach (var i in t.GetInterfaces().Where(x => x.IsGenericType))
-                //        builder.RegisterGeneric(t).As(i);
-                builder.RegisterType(typeof(MethodCloneCommandBuilder)).As<IMethodClone>();
+                foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandBuilderAttribute))))
+                    builder.RegisterGeneric(t).As(t.GetInterfaces().First());//TODO: fix here only explicit interfaces
 
                 //Register Command Handlers only as generic services
                 foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandHandlerAttribute))))
-                    //foreach (var i in t.GetInterfaces().Where(x => x.IsGenericType))
-                        builder.RegisterType(t).AsSelf();
+                    builder.RegisterType(t).AsSelf();
 
                 // register the engine as singleton
                 builder.RegisterInstance(_engine).As<ICodeGenerationEngine>().ExternallyOwned();

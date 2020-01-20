@@ -1,24 +1,24 @@
-using CodeGen.Context.CSharp.DocumentEdit;
+using CodeGen.CSharp.Context.DocumentEdit;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Linq;
 using Microsoft.Build.Locator;
 using Xunit;
 using System.IO;
 using Microsoft.CodeAnalysis.MSBuild;
-using CodeGen.Context.CSharp;
+using static CodeGen.CSharp.Context.DocumentEdit.CSharpContextDocumentEditor;
 
 namespace Tests
 {
     public class UnitTest
     {
         MSBuildWorkspace workspace;
+        string slnPath;
         Solution solution;
-        Project project;
         CSharpContextDocumentEditor.CSharpAutofacResolver resolver;
-        CSharpContextDocumentEditor.DocumentEditingCodeGenerationEngine engine;
+        DocumentEditingCodeGenerationEngine engine;
+        
         public UnitTest()
         {
             var instance = MSBuildLocator.QueryVisualStudioInstances().First();
@@ -27,83 +27,58 @@ namespace Tests
             workspace = MSBuildWorkspace.Create();
             workspace.WorkspaceFailed += (sender, args) =>
                                             workspace.Diagnostics.Add(args.Diagnostic);
-
-            solution = workspace.CurrentSolution;
-            project = workspace.OpenProjectAsync(@"..\..\..\Tester.csproj").Result;
+            slnPath = Path.GetFullPath(Path.Combine("..", "..", "..", "Examples"));
+            solution = workspace.OpenSolutionAsync(Path.Combine(slnPath, "Examples.sln")).Result;
 
             resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
-            engine = new CSharpContextDocumentEditor.DocumentEditingCodeGenerationEngine(solution);
+            engine = new DocumentEditingCodeGenerationEngine(solution);
         }
 
-        private SyntaxTree ParseOut(string path)
+        private SyntaxTree ParseFile(string path)
         {
-            using (FileStream f = new FileStream(Path.Combine("..", "..", "..", path, "out.cs"), FileMode.Open))
-            using (StreamReader reader = new StreamReader(f))
-            {
-                var text = reader.ReadToEnd();
-                return SyntaxFactory.ParseSyntaxTree(text);
-            }
+            using (FileStream f = new FileStream(path, FileMode.Open))
+                using (StreamReader reader = new StreamReader(f))
+                {
+                    var text = reader.ReadToEnd();
+                    return SyntaxFactory.ParseSyntaxTree(text);
+                }
         }
-
-        [Fact]
-        public void CloneMethodUnDeclarativeWay()
-        {
-            string path = Path.Combine("Examples", "CloneMethod");
-            Document document_in = project.Documents.First(doc => doc.Folders.Aggregate((x, y) => Path.Combine(x, y)) == path && doc.Name == "in.cs");
-            var editor = DocumentEditor.CreateAsync(document_in).Result;
-
-            var target = resolver.ResolveTargetBuilder<MethodDeclarationSyntax>().Where(x=>true).Build();
-            var cloneCommand = resolver.ResolveCommandBuilder<CSharpContext<DocumentEditor>.IMethodCloneCommandBuilder>()
-                .WithNewName((method) => method.Identifier.Text + "_generated")
-                .Build();
-            cloneCommand.Target = target;
-            var handler =resolver.ResolveCommandHandler<CSharpContextDocumentEditor.MethodCloneCommand>();
-            handler.Command = cloneCommand;
-
-            DocumentEditor result = handler.ProcessDocument(editor);
-
-            editor.GetChangedDocument().TryGetSyntaxTree(out var st);
-            var st2 = ParseOut(path);
-            Assert.True(st.IsEquivalentTo(st2));
-        }
-
-
 
         [Fact]
         public void CloneClass()
         {
-            string path = Path.Combine("Examples", "CloneClass");
-            Document document_in = project.Documents.First(doc => 
-            doc.Folders.Aggregate((x, y) => Path.Combine(x, y)) == path && doc.Name == "in.cs");
-            var editor = DocumentEditor.CreateAsync(document_in).Result;
-
+            string inpath = Path.Combine(slnPath, "CloneClass", "in.cs");
+            string outpath = Path.Combine(slnPath, "CloneClass", "out.cs");
+            DocumentId document_id = solution.GetDocumentIdsWithFilePath(inpath).First();
+            Document document_in = solution.GetDocument(document_id);
+            
             engine.Select<ClassDeclarationSyntax>()
-                .Where(x => true)
-                .Execute<CSharpContextDocumentEditor.IClassCloneCommandBuilder>()
-                .WithNewName(m => m.Identifier.Text + "_generated") 
-                .Go(editor);
+                    .Where(x => true)
+                        .Execute<CSharpContextDocumentEditor.IClassClone>()
+                            .WithNewName(m => m.Identifier.Text + "_generated")
+                  .Go<ClassCloneCommandHandler>();
 
-            editor.GetChangedDocument().TryGetSyntaxTree(out var st);
-            var st2 = ParseOut(path);
-            Assert.True(st.IsEquivalentTo(st2));
+            engine.CurrentSolution.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1); 
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
         }
 
         [Fact]
         public void CloneMethod()
         {
-            string path = Path.Combine("Examples", "CloneMethod");
-            Document document_in = project.Documents.First(doc => doc.Folders.Aggregate((x, y) => Path.Combine(x, y)) == path && doc.Name == "in.cs");
-            var editor = DocumentEditor.CreateAsync(document_in).Result;
-
+            string inpath = Path.Combine(slnPath,"CloneMethod","in.cs");
+            string outpath = Path.Combine(slnPath,"CloneMethod","out.cs");
+            DocumentId document_id = solution.GetDocumentIdsWithFilePath(inpath).First();
+            Document document_in = solution.GetDocument(document_id);
             engine.Select<MethodDeclarationSyntax>()
-                .Where(x => true)
-                .Execute<CSharpContextDocumentEditor.IMethodCloneCommandBuilder>()
-                .WithNewName(m => m.Identifier.Text + "_generated")
-                .Go(editor);
+                    .Where(x => true)
+                        .Execute<CSharpContextDocumentEditor.IMethodClone>()
+                            .WithNewName(m => m.Identifier.Text + "_generated")
+                    .Go<MethodCloneCommandHandler>();
 
-            editor.GetChangedDocument().TryGetSyntaxTree(out var st);
-            var st2 = ParseOut(path);
-            Assert.True(st.IsEquivalentTo(st2));
+            engine.CurrentSolution.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
         }
 
         //[Fact]
