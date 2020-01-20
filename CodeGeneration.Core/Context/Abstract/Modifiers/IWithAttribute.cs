@@ -1,15 +1,14 @@
 ﻿using CodeGen.Attributes;
+using CodeGen.Core;
 using System.Collections.Generic;
-using static CodeGen.Context.CodeGenTypelessContext;
 
 namespace CodeGen.Context
 {
-    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
+    public abstract partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
     {
         [CommandBuilderModifier]
-        public interface IWithAttribute<TCommandBuilder,TCommand,TNode>
-            where TCommandBuilder:ICommandBuilder<TCommand>
-            where TCommand:ICommand,new()
+        public interface IWithAttribute<TCommandBuilder,TNode>
+            where TCommandBuilder:Core.ICommandBuilder
             where TNode:TRootNode                    
         {
             ICollection<string> Attributes{ get; set; }

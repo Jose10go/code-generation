@@ -1,15 +1,14 @@
-﻿using System;
-using static CodeGen.Context.CodeGenTypelessContext;
+﻿using CodeGen.Core;
+using System;
 
 namespace CodeGen.Context
 {
-
-    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity> 
+    public abstract partial class CodeGenContext<TProject, TRootNode, TProcessEntity> 
     {
         public interface ITargetBuilder<TNode> : ITargetBuilder
         {
+            ICodeGenerationEngine Engine { get; set; }
             Func<TNode, bool> WhereSelector { get; set; }
-            
             ITarget<TNode> Build() 
             {
                 var target=Resolver.ResolveTarget<TNode>();
@@ -26,9 +25,10 @@ namespace CodeGen.Context
                 return this;
             }
             TCommandBuilder Execute<TCommandBuilder>()
-                where TCommandBuilder : ICommandBuilder
+            where TCommandBuilder : Core.ICommandBuilder
             {
                 var target = Build();
+                target.CodeGenerationEngine = Engine;
                 var commandbuilder = Resolver.ResolveCommandBuilder<TCommandBuilder>();
                 commandbuilder.Target = target;
                 return commandbuilder;

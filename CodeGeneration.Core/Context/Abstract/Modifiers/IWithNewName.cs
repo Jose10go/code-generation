@@ -1,15 +1,14 @@
 ﻿using System;
 using CodeGen.Attributes;
-using static CodeGen.Context.CodeGenTypelessContext;
+using CodeGen.Core;
 
 namespace CodeGen.Context
 {
-    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
+    public abstract partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
     {
         [CommandBuilderModifier]
-        public interface IWithNewName<TCommandBuilder,TCommand,TNode>
-            where TCommandBuilder:ICommandBuilder<TCommand>
-            where TCommand:ICommand,new()
+        public interface IWithNewName<TCommandBuilder,TNode>
+            where TCommandBuilder:Core.ICommandBuilder
             where TNode:TRootNode                    
         {
             Func<TNode, string> NewName { get; set; }

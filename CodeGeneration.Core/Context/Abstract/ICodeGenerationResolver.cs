@@ -1,8 +1,8 @@
-﻿using static CodeGen.Context.CodeGenTypelessContext;
+﻿using CodeGen.Core;
 
 namespace CodeGen.Context
 {
-    public partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
+    public abstract partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
     {
         public static ICodeGenerationResolver Resolver { get; set; }
         public interface ICodeGenerationResolver
@@ -11,11 +11,11 @@ namespace CodeGen.Context
             IChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>();
             ITarget<TSyntaxNode> ResolveTarget<TSyntaxNode>();
             TCommandBuilder ResolveCommandBuilder<TCommandBuilder>()
-            where TCommandBuilder :ICommandBuilder;
+            where TCommandBuilder :Core.ICommandBuilder;
             ICodeGenerationEngine ResolveEngine();
             void RegisterEngine(ICodeGenerationEngine engine);
-            ICommandHandler<TCommand> ResolveCommandHandler<TCommand>()
-            where TCommand : ICommand;
+            TCommandHandler ResolveCommandHandler<TCommandHandler>()
+            where TCommandHandler : Core.ICommandHandler;
         }
     }
 }
