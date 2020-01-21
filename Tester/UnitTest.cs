@@ -56,7 +56,7 @@ namespace Tests
                     .Where(x => true)
                         .Execute<CSharpContextDocumentEditor.IClassClone>()
                             .WithNewName(m => m.Identifier.Text + "_generated")
-                  .Go<ClassCloneCommandHandler>();
+                  .Go();
 
             engine.CurrentSolution.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1); 
             var st2 = ParseFile(outpath);
@@ -74,7 +74,7 @@ namespace Tests
                     .Where(x => true)
                         .Execute<CSharpContextDocumentEditor.IMethodClone>()
                             .WithNewName(m => m.Identifier.Text + "_generated")
-                    .Go<MethodCloneCommandHandler>();
+                    .Go();
 
             engine.CurrentSolution.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
