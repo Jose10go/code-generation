@@ -9,11 +9,11 @@ namespace CodeGen.CSharp.Context.DocumentEdit
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         [CommandHandler]
-        public class ClassCloneCommandHandler : RoslynDocumentEditorCommandHandler<ClassDeclarationSyntax>
+        public class ClassCloneCommandHandler :ICommandHandler<IClassClone> 
         {
-            public override Command Command { get; set; }
+            public Command Command { get; set; }
 
-            public override void ProcessDocument(DocumentEditor ProcessEntity)
+            public void ProcessDocument(DocumentEditor ProcessEntity)
             {
                 var target = Command.Target as ITarget<ClassDeclarationSyntax>;
                 var classDeclFiltered = target.Select((CSharpSyntaxNode)ProcessEntity.GetChangedRoot());

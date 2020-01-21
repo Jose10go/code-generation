@@ -8,5 +8,10 @@ namespace CodeGen.Context
         {
             void ProcessDocument(TProcessEntity processEntity);
         }
+
+        public interface ICommandHandler<TCommandBuilder> : ICommandHandler
+            where TCommandBuilder:Core.ICommandBuilder
+        {
+        }
     }
 }

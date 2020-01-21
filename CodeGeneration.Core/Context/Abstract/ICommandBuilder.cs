@@ -4,10 +4,10 @@
     {
         public interface ICommandBuilder : Core.ICommandBuilder
         {
-            void Go<TCommandHandler>() where TCommandHandler : Core.ICommandHandler
+            void Go()
             {
                 var command = Build();
-                var handler = Resolver.ResolveCommandHandler<TCommandHandler>();
+                var handler = Resolver.ResolveCommandHandler(this);
                 handler.Command = command;
                 handler.Command.Target.CodeGenerationEngine.ApplyChanges(handler);
             }

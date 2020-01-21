@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using CodeGen.Attributes;
-using System;
 using CodeGen.Core;
 
 namespace CodeGen.CSharp.Context.DocumentEdit
@@ -10,11 +9,11 @@ namespace CodeGen.CSharp.Context.DocumentEdit
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         [CommandHandler]
-        public class MethodCloneCommandHandler : RoslynDocumentEditorCommandHandler<MethodDeclarationSyntax>
+        public class MethodCloneCommandHandler : ICommandHandler<IMethodClone>
         {
-            public override Command Command { get; set; }
+            public Command Command { get; set; }
 
-            public override void ProcessDocument(DocumentEditor editor)
+            public void ProcessDocument(DocumentEditor editor)
             {
                 var target = Command.Target as ITarget<MethodDeclarationSyntax>;
                 var methodDeclFiltered = target.Select((CSharpSyntaxNode)editor.GetChangedRoot());
