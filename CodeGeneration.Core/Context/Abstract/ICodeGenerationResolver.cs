@@ -14,8 +14,8 @@ namespace CodeGen.Context
             where TCommandBuilder :Core.ICommandBuilder;
             ICodeGenerationEngine ResolveEngine();
             void RegisterEngine(ICodeGenerationEngine engine);
-            TCommandHandler ResolveCommandHandler<TCommandHandler>()
-            where TCommandHandler : Core.ICommandHandler;
+            ICommandHandler ResolveCommandHandler<TCommandBuilder>(TCommandBuilder commandBuilder)
+            where TCommandBuilder : Core.ICommandBuilder;
         }
     }
 }

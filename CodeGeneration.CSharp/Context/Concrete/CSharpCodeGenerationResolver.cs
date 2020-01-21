@@ -28,7 +28,7 @@ namespace CodeGen.CSharp.Context
 
                 //Register Command Handlers only as generic services
                 foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandHandlerAttribute))))
-                    builder.RegisterType(t).AsSelf();
+                    builder.RegisterType(t).As(t.GetInterfaces().First());//TODO: fix here only explicit interfaces
 
                 // register the engine as singleton
                 builder.RegisterInstance(_engine).As<ICodeGenerationEngine>().ExternallyOwned();

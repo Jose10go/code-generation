@@ -9,11 +9,11 @@ namespace CodeGen.Context
 {
     public abstract partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
     {
-        public class AutofacResolver: ICodeGenerationResolver
+        public abstract class AutofacResolver: ICodeGenerationResolver
         {
             protected IContainer _container { get; set; }
             protected ICodeGenerationEngine _engine;
-            public AutofacResolver()
+            protected AutofacResolver()
             {
                 Resolver = this;
             }
@@ -68,11 +68,14 @@ namespace CodeGen.Context
                 return _container.Resolve<TCommandBuilder>();
             }
 
-            public TCommandHandler ResolveCommandHandler<TCommandHandler>()
-                where TCommandHandler:Core.ICommandHandler
+            public ICommandHandler ResolveCommandHandler<TCommandBuilder>(TCommandBuilder commandBuilder)
+                where TCommandBuilder:Core.ICommandBuilder
             {
-                return _container.Resolve<TCommandHandler>();
+                var type = commandBuilder.GetType().GetInterfaces().First();
+                type = typeof(ICommandHandler<>).MakeGenericType(new[] {typeof(TProject),typeof(TRootNode),typeof(TProcessEntity),type });
+                return _container.Resolve(type) as ICommandHandler;
             }
+
         }
     }
 }
