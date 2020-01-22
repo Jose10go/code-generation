@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace CodeGen.CSharp.Context
 {
-    public partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
+    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
 {
         public interface IMethodClone : ICSharpCommandBuilder,
                                         IWithNewName<IMethodClone,MethodDeclarationSyntax>,

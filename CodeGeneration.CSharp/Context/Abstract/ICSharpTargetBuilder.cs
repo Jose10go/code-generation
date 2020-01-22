@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace CodeGen.CSharp.Context
 {
-    public partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
+    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
     {
         public interface ICSharpTargetBuilder<TNode> : ITargetBuilder<TNode>
             where TNode : CSharpSyntaxNode
