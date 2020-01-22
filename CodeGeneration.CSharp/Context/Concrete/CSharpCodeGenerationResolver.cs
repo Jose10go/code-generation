@@ -16,9 +16,8 @@ namespace CodeGen.CSharp.Context
             {
                 builder.RegisterGeneric(typeof(CSharpTarget<>)).As(typeof(ICSharpTarget<>));
                 builder.RegisterGeneric(typeof(CSharpTarget<>)).As(typeof(ITarget<>));
-                builder.RegisterGeneric(typeof(CSharpTargetBuilder<>)).As(typeof(ICSharpTargetBuilder<>));
-                builder.RegisterGeneric(typeof(CSharpTargetBuilder<>)).As(typeof(ITargetBuilder<>));
-                builder.RegisterGeneric(typeof(ChainCSharpTargetBuilder<>)).As(typeof(IChainTargetBuilder<>));
+                builder.RegisterGeneric(typeof(CSharpTargetBuilder<>)).As(typeof(TargetBuilder<>));
+                builder.RegisterGeneric(typeof(ChainCSharpTargetBuilder<>)).As(typeof(ChainTargetBuilder<>));
 
                 var coreAssembly = Assembly.GetExecutingAssembly();
 

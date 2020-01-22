@@ -1,6 +1,4 @@
-﻿using CodeGen.Context;
-using CodeGen.Core;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
 
@@ -37,17 +35,15 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 }
             }
 
-            public IChainCSharpTargetBuilder<TSyntaxNode> Select<TSyntaxNode>()where TSyntaxNode :CSharpSyntaxNode
+            public ChainCSharpTargetBuilder<TSyntaxNode> Select<TSyntaxNode>()where TSyntaxNode :CSharpSyntaxNode
             {
-                var result= Resolver.ResolveTargetBuilder<TSyntaxNode>() as IChainCSharpTargetBuilder<TSyntaxNode>;
-                result.Engine = this;
+                var result= Resolver.ResolveTargetBuilder<TSyntaxNode>() as ChainCSharpTargetBuilder<TSyntaxNode>;
                 return result;
             }
 
-            IChainTargetBuilder<TSyntaxNode> ICodeGenerationEngine.Select<TSyntaxNode>()
+            ChainTargetBuilder<TSyntaxNode> ICodeGenerationEngine.Select<TSyntaxNode>()
             {
                 var result= Resolver.ResolveTargetBuilder<TSyntaxNode>();
-                result.Engine = this;
                 return result;
             }
 

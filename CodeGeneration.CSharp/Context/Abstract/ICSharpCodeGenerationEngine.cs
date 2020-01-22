@@ -8,7 +8,7 @@ namespace CodeGen.CSharp.Context
     {
         public interface ICSharpCodeGenerationEngine:ICodeGenerationEngine
         {
-            new IChainCSharpTargetBuilder<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : CSharpSyntaxNode;
+            new ChainCSharpTargetBuilder<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : CSharpSyntaxNode;
         }
     }
 }

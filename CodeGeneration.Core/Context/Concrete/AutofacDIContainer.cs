@@ -34,9 +34,9 @@ namespace CodeGen.Context
                 return _engine;
             }
 
-            public IChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>()
+            public ChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>()
             {
-                return _container.Resolve<IChainTargetBuilder<TNode>>();
+                return _container.Resolve<ChainTargetBuilder<TNode>>();
             }
 
             protected virtual void DoAutomaticRegister(ContainerBuilder builder)

@@ -7,18 +7,20 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
     {
-        public class CSharpTargetBuilder<TNode> : ICSharpTargetBuilder<TNode>
+        public class CSharpTargetBuilder<TNode> : TargetBuilder<TNode>
             where TNode : CSharpSyntaxNode
         {
-            public Func<TNode, bool> WhereSelector { get ; set; }
-            public ICodeGenerationEngine Engine { get ; set ; }
+            public CSharpTargetBuilder(ICodeGenerationEngine engine,ITarget<TNode> target):base(engine,target)
+            {
+            }
         }
 
-        public class ChainCSharpTargetBuilder<TNode> : IChainCSharpTargetBuilder<TNode>
+        public class ChainCSharpTargetBuilder<TNode> : ChainTargetBuilder<TNode>
            where TNode : CSharpSyntaxNode
         {
-            public Func<TNode, bool> WhereSelector { get; set; }
-            public ICodeGenerationEngine Engine { get ; set ; }
+            public ChainCSharpTargetBuilder(ICodeGenerationEngine engine, ITarget<TNode> target) : base(engine, target)
+            {
+            }
         }
     }
 

@@ -8,7 +8,7 @@ namespace CodeGen.Context
         public interface ICodeGenerationResolver
         {
             void BuildContainer();
-            IChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>();
+            ChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>();
             ITarget<TSyntaxNode> ResolveTarget<TSyntaxNode>();
             TCommandBuilder ResolveCommandBuilder<TCommandBuilder>()
             where TCommandBuilder :Core.ICommandBuilder;

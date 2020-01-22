@@ -6,7 +6,7 @@
         {
             TProject CurrentSolution { get; }
 
-            IChainTargetBuilder<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TRootNode;
+            ChainTargetBuilder<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TRootNode;
 
             new void ApplyChanges<TCommandHandler>(TCommandHandler commandHandler)
             where TCommandHandler : ICommandHandler;
