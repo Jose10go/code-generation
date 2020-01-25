@@ -9,14 +9,13 @@ namespace CodeGen.CSharp.Context.DocumentEdit
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         [CommandHandler]
-        public class ClassCloneCommandHandler :ICommandHandler<IClassClone> 
+        public class ClassCloneCommandHandler :ICommandHandler<IClassClone,ClassDeclarationSyntax> 
         {
-            public Command Command { get; set; }
+            public Command<ClassDeclarationSyntax> Command { get; set; }
 
             public void ProcessDocument(DocumentEditor ProcessEntity)
             {
-                var target = Command.Target as ITarget<ClassDeclarationSyntax>;
-                var classDeclFiltered = target.Select((CSharpSyntaxNode)ProcessEntity.GetChangedRoot());
+                var classDeclFiltered = Command.Target.Select((CSharpSyntaxNode)ProcessEntity.GetChangedRoot());
                 dynamic cmd = Command;
                 foreach (var classDecl in classDeclFiltered)
                 {

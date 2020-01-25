@@ -17,8 +17,8 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 Resolver.BuildContainer();
             }
 
-            public void ApplyChanges<TCommandHandler>(TCommandHandler commandHandler)
-                where TCommandHandler:ICommandHandler
+            public void ApplyChanges<TSyntaxNode>(ICommandHandler<TSyntaxNode> commandHandler)
+                where TSyntaxNode:CSharpSyntaxNode
             {
                 foreach (var projectId in CurrentSolution.ProjectIds)
                 {
@@ -47,10 +47,6 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 return result;
             }
 
-            void Core.ICodeGenerationEngine.ApplyChanges<TCommandHandler>(TCommandHandler commandHandler)
-            {
-                ApplyChanges(commandHandler as ICommandHandler);
-            }
         }
     }
 }

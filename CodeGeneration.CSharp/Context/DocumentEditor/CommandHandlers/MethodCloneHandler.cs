@@ -3,19 +3,21 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using CodeGen.Attributes;
 using CodeGen.Core;
+using CodeGen.Context;
+using Microsoft.CodeAnalysis;
 
 namespace CodeGen.CSharp.Context.DocumentEdit
 {
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         [CommandHandler]
-        public class MethodCloneCommandHandler : ICommandHandler<IMethodClone>
+        public class MethodCloneCommandHandler : ICommandHandler<IMethodClone,MethodDeclarationSyntax>
         {
-            public Command Command { get; set; }
+            public Command<MethodDeclarationSyntax> Command { get ; set ; }
 
             public void ProcessDocument(DocumentEditor editor)
             {
-                var target = Command.Target as ITarget<MethodDeclarationSyntax>;
+                var target = Command.Target;
                 var methodDeclFiltered = target.Select((CSharpSyntaxNode)editor.GetChangedRoot());
                 dynamic cmd = Command;
                 foreach (var methodDecl in methodDeclFiltered)

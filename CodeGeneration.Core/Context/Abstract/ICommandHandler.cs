@@ -4,13 +4,17 @@ namespace CodeGen.Context
 {
     public abstract partial class CodeGenContext<TProject, TRootNode, TProcessEntity> 
     {
-        public interface ICommandHandler: Core.ICommandHandler
+        public interface ICommandHandler<TSyntaxNode> : ICommandHandler
+            where TSyntaxNode:TRootNode
         {
             void ProcessDocument(TProcessEntity processEntity);
+            Command<TSyntaxNode> Command { get; set; }
         }
 
-        public interface ICommandHandler<TCommandBuilder> : ICommandHandler
-            where TCommandBuilder:Core.ICommandBuilder
+        //Key Interface
+        public interface ICommandHandler<TCommandBuilder,TSyntaxNode> : ICommandHandler<TSyntaxNode>
+            where TCommandBuilder : ICommandBuilder<TSyntaxNode>
+            where TSyntaxNode : TRootNode
         {
         }
     }
