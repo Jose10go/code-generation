@@ -8,14 +8,16 @@ namespace CodeGen.Context
         public interface ICodeGenerationResolver
         {
             void BuildContainer();
-            ChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>();
+            ChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>()
+                where TNode : TRootNode;
             ITarget<TSyntaxNode> ResolveTarget<TSyntaxNode>();
-            TCommandBuilder ResolveCommandBuilder<TCommandBuilder>()
-            where TCommandBuilder :Core.ICommandBuilder;
+            TCommandBuilder ResolveCommandBuilder<TCommandBuilder,TSyntaxNode>()
+                where TCommandBuilder :ICommandBuilder<TSyntaxNode>
+                where TSyntaxNode:TRootNode;
             ICodeGenerationEngine ResolveEngine();
             void RegisterEngine(ICodeGenerationEngine engine);
-            ICommandHandler ResolveCommandHandler<TCommandBuilder>(TCommandBuilder commandBuilder)
-            where TCommandBuilder : Core.ICommandBuilder;
+            ICommandHandler<TSyntaxNode> ResolveCommandHandler<TSyntaxNode>(ICommandBuilder<TSyntaxNode> commandBuilder)
+                where TSyntaxNode : TRootNode;
         }
     }
 }

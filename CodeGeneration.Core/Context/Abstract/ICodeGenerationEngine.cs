@@ -8,8 +8,8 @@
 
             ChainTargetBuilder<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TRootNode;
 
-            new void ApplyChanges<TCommandHandler>(TCommandHandler commandHandler)
-            where TCommandHandler : ICommandHandler;
+            void ApplyChanges<TSyntaxNode>(ICommandHandler<TSyntaxNode> commandHandler)
+                where TSyntaxNode:TRootNode;
         }
     }
 }

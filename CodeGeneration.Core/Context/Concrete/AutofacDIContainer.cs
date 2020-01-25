@@ -35,6 +35,7 @@ namespace CodeGen.Context
             }
 
             public ChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>()
+                where TNode:TRootNode
             {
                 return _container.Resolve<ChainTargetBuilder<TNode>>();
             }
@@ -62,18 +63,20 @@ namespace CodeGen.Context
                 return _container.Resolve<ITarget<TSyntaxNode>>();
             }
 
-            public TCommandBuilder ResolveCommandBuilder<TCommandBuilder>()
-                where TCommandBuilder : Core.ICommandBuilder
+            public TCommandBuilder ResolveCommandBuilder<TCommandBuilder,TSyntaxNode>()
+                where TCommandBuilder : ICommandBuilder<TSyntaxNode>
+                where TSyntaxNode:TRootNode
             {
                 return _container.Resolve<TCommandBuilder>();
             }
 
-            public ICommandHandler ResolveCommandHandler<TCommandBuilder>(TCommandBuilder commandBuilder)
-                where TCommandBuilder:Core.ICommandBuilder
+            public ICommandHandler<TSyntaxNode> ResolveCommandHandler<TSyntaxNode>(ICommandBuilder<TSyntaxNode> commandBuilder)
+                where TSyntaxNode : TRootNode
             {
-                var type = commandBuilder.GetType().GetInterfaces().First();
-                type = typeof(ICommandHandler<>).MakeGenericType(new[] {typeof(TProject),typeof(TRootNode),typeof(TProcessEntity),type });
-                return _container.Resolve(type) as ICommandHandler;
+                var cmdbuildertype = commandBuilder.GetType().GetInterfaces().First();
+                var syntaxtype = typeof(TSyntaxNode);
+                var handlertype = typeof(ICommandHandler<,>).MakeGenericType(new[] {typeof(TProject),typeof(TRootNode),typeof(TProcessEntity),cmdbuildertype,syntaxtype});
+                return (ICommandHandler<TSyntaxNode>)_container.Resolve(handlertype);
             }
 
         }
