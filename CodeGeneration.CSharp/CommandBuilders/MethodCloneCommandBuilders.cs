@@ -11,7 +11,7 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
 {
-        public interface IMethodClone : ICSharpCommandBuilder,
+        public interface IMethodClone : ICommandBuilder<MethodDeclarationSyntax>,
                                         IWithNewName<IMethodClone,MethodDeclarationSyntax>,
                                         IWithAttribute<IMethodClone, MethodDeclarationSyntax>
         {
@@ -22,8 +22,7 @@ namespace CodeGen.CSharp.Context
         {
             public Func<MethodDeclarationSyntax, string> NewName { get; set; }
             public ICollection<string> Attributes { get; set; }
-            public ITarget Target { get ; set ; }
-
+            ITarget<MethodDeclarationSyntax> ICommandBuilder<MethodDeclarationSyntax>.Target { get; set ; }
         }
         
     }

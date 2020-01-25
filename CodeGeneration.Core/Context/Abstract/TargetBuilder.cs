@@ -26,6 +26,7 @@ namespace CodeGen.Context
         }
 
         public abstract class ChainTargetBuilder<TNode>
+            where TNode:TRootNode
         {
             protected ChainTargetBuilder(ICodeGenerationEngine engine, ITarget<TNode> target)
             {
@@ -41,12 +42,12 @@ namespace CodeGen.Context
                 return this;
             }
             public TCommandBuilder Execute<TCommandBuilder>()
-            where TCommandBuilder : Core.ICommandBuilder
+                where TCommandBuilder : ICommandBuilder<TNode>
             {
                 Target.CodeGenerationEngine = Engine;
-                var commandbuilder = Resolver.ResolveCommandBuilder<TCommandBuilder>();
-                commandbuilder.Target = Target;
-                return commandbuilder;
+                var commandBuilder=Resolver.ResolveCommandBuilder<TCommandBuilder,TNode>();
+                commandBuilder.Target = Target;
+                return commandBuilder;
             }
         }
     }
