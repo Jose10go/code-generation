@@ -8,12 +8,11 @@ namespace CodeGen.Context
             where TSyntaxNode:TRootNode
         {
             void ProcessDocument(TProcessEntity processEntity);
-            Command<TSyntaxNode> Command { get; set; }
         }
 
-        //Key Interface
+        //keyInterface
         public interface ICommandHandler<TCommandBuilder,TSyntaxNode> : ICommandHandler<TSyntaxNode>
-            where TCommandBuilder : ICommandBuilder<TSyntaxNode>
+            where TCommandBuilder:ICommandBuilder<TSyntaxNode>
             where TSyntaxNode : TRootNode
         {
         }

@@ -12,21 +12,8 @@ namespace CodeGen.Context
 
             void Go()
             {
-                var command = Build();
-                var handler = Resolver.ResolveCommandHandler(this);
-                handler.Command = command;
-                handler.Command.Target.CodeGenerationEngine.ApplyChanges(handler);
-            }
-
-            Command<TSyntaxNode> Build()
-            {
-                var Command = new Command<TSyntaxNode>();
-                Command.Target = this.Target;
-                dynamic cmd = Command;
-                foreach (var modifier in this.GetType().GetInterfaces().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandBuilderModifierAttribute))))
-                    foreach (var prop in modifier.GetProperties())
-                        cmd[$"{prop.Name}"] = prop.GetValue(this);
-                return Command;
+                 var handler=Resolver.ResolveCommandHandler(this);
+                 Target.CodeGenerationEngine.ApplyChanges(handler);
             }
 
         }

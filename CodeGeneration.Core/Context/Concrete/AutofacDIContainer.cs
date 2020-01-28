@@ -76,7 +76,7 @@ namespace CodeGen.Context
                 var cmdbuildertype = commandBuilder.GetType().GetInterfaces().First();
                 var syntaxtype = typeof(TSyntaxNode);
                 var handlertype = typeof(ICommandHandler<,>).MakeGenericType(new[] {typeof(TProject),typeof(TRootNode),typeof(TProcessEntity),cmdbuildertype,syntaxtype});
-                return (ICommandHandler<TSyntaxNode>)_container.Resolve(handlertype);
+                return (ICommandHandler<TSyntaxNode>)_container.Resolve(handlertype, new[] { new PositionalParameter(0,commandBuilder)}) ;
             }
 
         }
