@@ -9,20 +9,17 @@ namespace CodeGen.CSharp.Context.DocumentEdit
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         [CommandHandler]
-        public class ClassCloneCommandHandler :ICommandHandler<IClassClone,ClassDeclarationSyntax> 
+        public class ClassCloneCommandHandler :CommandHandler<IClassClone,ClassDeclarationSyntax> 
         {
-            public Command<ClassDeclarationSyntax> Command { get; set; }
-
-            public void ProcessDocument(DocumentEditor ProcessEntity)
+            public ClassCloneCommandHandler(IClassClone command) : base(command)
             {
-                var classDeclFiltered = Command.Target.Select((CSharpSyntaxNode)ProcessEntity.GetChangedRoot());
-                dynamic cmd = Command;
-                foreach (var classDecl in classDeclFiltered)
-                {
-                    var cloneClassDecl = SyntaxFactory.ClassDeclaration(classDecl.AttributeLists, classDecl.Modifiers, SyntaxFactory.Identifier(cmd.NewName(classDecl)),
-                                    classDecl.TypeParameterList, classDecl.BaseList, classDecl.ConstraintClauses, classDecl.Members);
-                    ProcessEntity.InsertAfter(classDecl, cloneClassDecl);
-                }
+            }
+
+            public override void ProccesNode(ClassDeclarationSyntax node, DocumentEditor documentEditor)
+            {
+                documentEditor.InsertAfter(node,
+                                           node.WithIdentifier(SyntaxFactory.ParseToken(Command.NewName(node)))
+                                                .WithAttributeLists(Command.Attributes));
             }
         }
     }
