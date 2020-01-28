@@ -7,7 +7,6 @@ namespace Tests.Examples.CloneMethod
     {
         public void hello()
         {
-            Console.WriteLine("hello my friend.");
         }
 
         public void hello_generated()

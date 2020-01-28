@@ -16,9 +16,9 @@ namespace Tests
         MSBuildWorkspace workspace;
         string slnPath;
         Solution solution;
-        CSharpContextDocumentEditor.CSharpAutofacResolver resolver;
         DocumentEditingCodeGenerationEngine engine;
-        
+        CSharpContextDocumentEditor.CSharpAutofacResolver resolver;
+
         public UnitTest()
         {
             var instance = MSBuildLocator.QueryVisualStudioInstances().First();
@@ -29,7 +29,6 @@ namespace Tests
                                             workspace.Diagnostics.Add(args.Diagnostic);
             slnPath = Path.GetFullPath(Path.Combine("..", "..", "..", "Examples"));
             solution = workspace.OpenSolutionAsync(Path.Combine(slnPath, "Examples.sln")).Result;
-
             resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
             engine = new DocumentEditingCodeGenerationEngine(solution);
         }
@@ -74,6 +73,7 @@ namespace Tests
                     .Where(x => true)
                         .Execute<CSharpContextDocumentEditor.IMethodClone>()
                             .WithNewName(m => m.Identifier.Text + "_generated")
+                            .WithBody("{Console.WriteLine(\"hello my friend.\");}")
                     .Go();
 
             engine.CurrentSolution.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
