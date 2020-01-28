@@ -1,15 +1,18 @@
 ﻿using System;
 using CodeGen.Attributes;
-using CodeGen.Core;
+using CodeGen.Context;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Editing;
 
-namespace CodeGen.Context
+namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
+    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
     {
         [CommandBuilderModifier]
         public interface IWithNewName<TCommandBuilder,TNode>
             where TCommandBuilder:Core.ICommandBuilder
-            where TNode:TRootNode                    
+            where TNode:CSharpSyntaxNode                    
         {
             Func<TNode, string> NewName { get; set; }
             TCommandBuilder WithNewName(Func<TNode, string> NewName) 
@@ -17,6 +20,8 @@ namespace CodeGen.Context
                 this.NewName = NewName;
                 return (TCommandBuilder)this;
             } 
+
+            
         }
     }
 }
