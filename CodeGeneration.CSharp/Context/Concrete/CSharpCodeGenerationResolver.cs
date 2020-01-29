@@ -10,9 +10,58 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
     {
-        public class CSharpAutofacResolver : AutofacResolver
+        public class CSharpAutofacResolver : ICodeGenerationResolver
         {
-            protected override void DoAutomaticRegister(ContainerBuilder builder)
+            protected IContainer _container { get; set; }
+            protected ICodeGenerationEngine _engine;
+            public CSharpAutofacResolver()
+            {
+                Resolver = this;
+            }
+            public virtual void BuildContainer()
+            {
+                var builder = new ContainerBuilder();
+                DoAutomaticRegister(builder);
+                _container = builder.Build();
+            }
+
+            public void RegisterEngine(ICodeGenerationEngine engine)
+            {
+                _engine = engine;
+            }
+
+            public ICodeGenerationEngine ResolveEngine()
+            {
+                return _engine;
+            }
+
+            public ChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>()
+                where TNode : CSharpSyntaxNode
+            {
+                return _container.Resolve<ChainTargetBuilder<TNode>>();
+            }
+
+            public ITarget<TSyntaxNode> ResolveTarget<TSyntaxNode>()
+            {
+                return _container.Resolve<ITarget<TSyntaxNode>>();
+            }
+
+            public TCommandBuilder ResolveCommandBuilder<TCommandBuilder, TSyntaxNode>()
+                where TCommandBuilder : ICommandBuilder<TSyntaxNode>
+                where TSyntaxNode : CSharpSyntaxNode
+            {
+                return _container.Resolve<TCommandBuilder>();
+            }
+
+            public ICommandHandler<TSyntaxNode> ResolveCommandHandler<TSyntaxNode>(ICommandBuilder<TSyntaxNode> commandBuilder)
+                where TSyntaxNode : CSharpSyntaxNode
+            {
+                var cmdbuildertype = commandBuilder.GetType().GetInterfaces().First();
+                var syntaxtype = typeof(TSyntaxNode);
+                var handlertype = typeof(ICommandHandler<,>).MakeGenericType(new[] { typeof(Solution), typeof(CSharpSyntaxNode), typeof(TProcessEntity), cmdbuildertype, syntaxtype });
+                return (ICommandHandler<TSyntaxNode>)_container.Resolve(handlertype, new[] { new PositionalParameter(0, commandBuilder) });
+            }
+            protected void DoAutomaticRegister(ContainerBuilder builder)
             {
                 builder.RegisterGeneric(typeof(CSharpTarget<>)).As(typeof(ICSharpTarget<>));
                 builder.RegisterGeneric(typeof(CSharpTarget<>)).As(typeof(ITarget<>));
