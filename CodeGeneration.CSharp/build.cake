@@ -29,7 +29,7 @@ Teardown(ctx =>
 
 Task("Precompile")
 .Does(() => {
-	Information("Precompiling");
+	Information("Precompiling "+Precompile());
 });
 
 RunTarget(target);

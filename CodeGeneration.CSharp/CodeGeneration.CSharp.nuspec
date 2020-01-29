@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package>
+  <metadata>
+    <id>CodeGeneration.CSharp</id>
+    <version>0.0.1</version>
+    <title>CodeGeneration.CSharp</title>
+    <authors>Jose Diego Menendez del Cueto</authors>
+    <owners>Jose Diego Menendez del Cueto</owners>
+    <licenseUrl>https://www.website.com/terms</licenseUrl><!--TODO: fill this-->
+    <projectUrl>https://www.website.com/project</projectUrl><!--TODO: fill this-->
+    <iconUrl>https://www.website.com/logo.png</iconUrl><!--TODO: fill this-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A language agnostic code generator.</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2020 Jose Diego Menendez del Cueto</copyright>
+    <tags></tags>
+    <dependencies>
+      <dependency id="Autofac" version="4.9.4" />
+      <dependency id="Microsoft.CodeAnalysis.CSharp" version="3.3.1" />
+      <dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="3.3.1" />
+      <dependency id="CodeGeneration.Core" version="0.0.1" />
+    </dependencies>
+    <summary> A CSharp Roslyn based code generator.</summary>
+  </metadata>
+  <files>
+    <file src="bin\Release\netcoreapp3.0\CodeGeneration.Core.dll" target="lib"/>
+    <file src="build.cake"/>
+    <file src="cake.config"/>
+    <file src="build.ps1"/>
+  </files>
+</package>
