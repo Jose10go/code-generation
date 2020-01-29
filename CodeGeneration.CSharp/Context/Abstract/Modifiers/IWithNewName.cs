@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Editing;
 
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
+    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, ISymbol, TProcessEntity>
     {
         [CommandBuilderModifier]
         public interface IWithNewName<TCommandBuilder,TNode>

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 namespace CodeGen.Context
 {
-    public abstract partial class CodeGenContext<TProject, TRootNode, TProcessEntity> 
+    public abstract partial class CodeGenContext<TProject, TRootNode,TSemanticModel,TProcessEntity> 
     {
         public interface ITarget<TNode> : ITarget
         {

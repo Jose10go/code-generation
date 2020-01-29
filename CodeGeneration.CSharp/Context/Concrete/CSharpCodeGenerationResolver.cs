@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, TProcessEntity>
+    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, ISymbol,TProcessEntity>
     {
         public class CSharpAutofacResolver : ICodeGenerationResolver
         {

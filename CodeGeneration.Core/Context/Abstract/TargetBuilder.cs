@@ -3,7 +3,7 @@ using System;
 
 namespace CodeGen.Context
 {
-    public abstract partial class CodeGenContext<TProject, TRootNode, TProcessEntity> 
+    public abstract partial class CodeGenContext<TProject, TRootNode,TSemanticModel,TProcessEntity> 
     {
         public abstract class TargetBuilder<TNode> : ITargetBuilder
         {
@@ -12,13 +12,16 @@ namespace CodeGen.Context
                 Engine = engine;
                 Target = target;
             }
+
             protected ICodeGenerationEngine Engine { get;}
             protected ITarget<TNode> Target { get; }
+
             public TargetBuilder<TNode> Where(Func<TNode, bool> filter)
             {
                 Target.WhereSelector = filter;
                 return this;
             }
+
             public ITarget<TNode> Build() 
             {
                 return Target;

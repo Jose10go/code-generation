@@ -2,7 +2,7 @@
 
 namespace CodeGen.Context
 {
-    public abstract partial class CodeGenContext<TProject, TRootNode, TProcessEntity>
+    public abstract partial class CodeGenContext<TProject, TRootNode, TSemanticModel, TProcessEntity>
     {
         public static ICodeGenerationResolver Resolver { get; set; }
         public interface ICodeGenerationResolver
