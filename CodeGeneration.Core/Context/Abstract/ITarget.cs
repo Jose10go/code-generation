@@ -8,7 +8,7 @@ namespace CodeGen.Context
         public interface ITarget<TNode> : ITarget
         {
             Func<TSemanticModel,TNode, bool> WhereSelector{ get;set; }
-            IEnumerable<TNode> Select(TRootNode root);
+            IEnumerable<TNode> Select(TRootNode root,TSemanticModel semanticModel);
             new ICodeGenerationEngine CodeGenerationEngine { get { return (this as ITarget).CodeGenerationEngine as ICodeGenerationEngine; }set { (this as ITarget).CodeGenerationEngine = value; } }
         }
     }
