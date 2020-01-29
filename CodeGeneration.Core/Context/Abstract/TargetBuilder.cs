@@ -16,9 +16,15 @@ namespace CodeGen.Context
             protected ICodeGenerationEngine Engine { get;}
             protected ITarget<TNode> Target { get; }
 
-            public TargetBuilder<TNode> Where(Func<TNode, bool> filter)
+            public TargetBuilder<TNode> Where(Func<TSemanticModel, TNode, bool> filter)
             {
                 Target.WhereSelector = filter;
+                return this;
+            }
+
+            public TargetBuilder<TNode> Where(Func<TNode, bool> filter)
+            {
+                Target.WhereSelector = (semantic, node) => filter(node);
                 return this;
             }
 
@@ -31,6 +37,7 @@ namespace CodeGen.Context
         public abstract class ChainTargetBuilder<TNode>
             where TNode:TRootNode
         {
+
             protected ChainTargetBuilder(ICodeGenerationEngine engine, ITarget<TNode> target)
             {
                 Engine = engine;
@@ -39,11 +46,18 @@ namespace CodeGen.Context
             protected ICodeGenerationEngine Engine { get; }
             protected ITarget<TNode> Target { get; }
 
-            public ChainTargetBuilder<TNode> Where(Func<TNode, bool> filter)
+            public ChainTargetBuilder<TNode> Where(Func<TSemanticModel,TNode, bool> filter)
             {
                 Target.WhereSelector = filter;
                 return this;
             }
+            
+            public ChainTargetBuilder<TNode> Where(Func<TNode, bool> filter)
+            {
+                Target.WhereSelector = (semantic,node)=>filter(node);
+                return this;
+            }
+
             public TCommandBuilder Execute<TCommandBuilder>()
                 where TCommandBuilder : ICommandBuilder<TNode>
             {
