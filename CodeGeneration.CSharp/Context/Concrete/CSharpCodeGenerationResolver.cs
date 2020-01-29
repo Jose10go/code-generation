@@ -58,7 +58,7 @@ namespace CodeGen.CSharp.Context
             {
                 var cmdbuildertype = commandBuilder.GetType().GetInterfaces().First();
                 var syntaxtype = typeof(TSyntaxNode);
-                var handlertype = typeof(ICommandHandler<,>).MakeGenericType(new[] { typeof(Solution), typeof(CSharpSyntaxNode), typeof(TProcessEntity), cmdbuildertype, syntaxtype });
+                var handlertype = typeof(ICommandHandler<,>).MakeGenericType(new[] { typeof(Solution), typeof(CSharpSyntaxNode),typeof(ISymbol), typeof(TProcessEntity), cmdbuildertype, syntaxtype });
                 return (ICommandHandler<TSyntaxNode>)_container.Resolve(handlertype, new[] { new PositionalParameter(0, commandBuilder) });
             }
             protected void DoAutomaticRegister(ContainerBuilder builder)
