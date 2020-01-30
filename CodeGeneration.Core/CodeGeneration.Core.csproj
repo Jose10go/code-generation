@@ -6,6 +6,11 @@
     <ApplicationIcon />
     <StartupObject />
     <RootNamespace>CodeGen.Core</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>A language agnostic code generator.</Description>
+    <Authors>Jose Diego Menendez del Cueto</Authors>
+    <Company>Jose Diego Menendez del Cueto</Company>
+    <Copyright>Copyrigth 2020 Jose Diego Menendez del Cueto</Copyright>
   </PropertyGroup>
 
 </Project>
