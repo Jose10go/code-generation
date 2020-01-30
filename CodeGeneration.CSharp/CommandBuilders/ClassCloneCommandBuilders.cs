@@ -12,7 +12,8 @@ namespace CodeGen.CSharp.Context
         public interface IClassClone : ICommandBuilder<ClassDeclarationSyntax>,
                                        IWithNewName<IClassClone, ClassDeclarationSyntax>,
                                        IWithAttribute<IClassClone, ClassDeclarationSyntax>,
-                                       IMakePublic<IClassClone,ClassDeclarationSyntax>
+                                       IMakePublic<IClassClone,ClassDeclarationSyntax>,
+                                       IMakePrivate<IClassClone,ClassDeclarationSyntax>
         {
         }
 
