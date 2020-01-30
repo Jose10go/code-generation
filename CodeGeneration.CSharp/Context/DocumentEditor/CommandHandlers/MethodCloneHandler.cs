@@ -18,8 +18,9 @@ namespace CodeGen.CSharp.Context.DocumentEdit
             {
                 documentEditor.InsertAfter(node,
                                            node.WithIdentifier(SyntaxFactory.ParseToken(Command.NewName(node)))
-                                                .WithAttributeLists(Command.Attributes)
-                                                .WithBody(Command.Body));
+                                               .WithAttributeLists(Command.Attributes)
+                                               .WithBody(Command.Body)
+                                               .WithModifiers(Command.Modifiers));
             }
         }
     }

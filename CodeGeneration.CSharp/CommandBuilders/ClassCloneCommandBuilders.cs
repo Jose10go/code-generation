@@ -11,7 +11,8 @@ namespace CodeGen.CSharp.Context
     {
         public interface IClassClone : ICommandBuilder<ClassDeclarationSyntax>,
                                        IWithNewName<IClassClone, ClassDeclarationSyntax>,
-                                       IWithAttribute<IClassClone, ClassDeclarationSyntax>
+                                       IWithAttribute<IClassClone, ClassDeclarationSyntax>,
+                                       IMakePublic<IClassClone,ClassDeclarationSyntax>
         {
         }
 
@@ -21,6 +22,7 @@ namespace CodeGen.CSharp.Context
             public Func<ClassDeclarationSyntax, string> NewName { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
             public ITarget<ClassDeclarationSyntax> Target { get; set; }
+            public SyntaxTokenList Modifiers { get ; set ; }
         }
 
     }

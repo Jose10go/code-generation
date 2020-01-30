@@ -12,7 +12,8 @@ namespace CodeGen.CSharp.Context
         public interface IMethodClone : ICommandBuilder<MethodDeclarationSyntax>,
                                         IWithNewName<IMethodClone,MethodDeclarationSyntax>,
                                         IWithAttribute<IMethodClone, MethodDeclarationSyntax>,
-                                        IWithBody<IMethodClone,MethodDeclarationSyntax>
+                                        IWithBody<IMethodClone,MethodDeclarationSyntax>,
+                                        IMakePublic<IMethodClone,MethodDeclarationSyntax>
         {
         }
 
@@ -23,6 +24,7 @@ namespace CodeGen.CSharp.Context
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
             public BlockSyntax Body { get; set; }
             public ITarget<MethodDeclarationSyntax> Target { get; set ; }
+            public SyntaxTokenList Modifiers { get ; set ; }
         }
         
     }
