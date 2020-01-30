@@ -13,7 +13,8 @@ namespace CodeGen.CSharp.Context
                                        IWithNewName<IClassClone, ClassDeclarationSyntax>,
                                        IWithAttribute<IClassClone, ClassDeclarationSyntax>,
                                        IMakePublic<IClassClone,ClassDeclarationSyntax>,
-                                       IMakePrivate<IClassClone,ClassDeclarationSyntax>
+                                       IMakePrivate<IClassClone,ClassDeclarationSyntax>,
+                                       IMakeProtected<IClassClone,ClassDeclarationSyntax>
         {
         }
 

@@ -14,7 +14,8 @@ namespace CodeGen.CSharp.Context
                                         IWithAttribute<IMethodClone, MethodDeclarationSyntax>,
                                         IWithBody<IMethodClone,MethodDeclarationSyntax>,
                                         IMakePublic<IMethodClone,MethodDeclarationSyntax>,
-                                        IMakePrivate<IMethodClone,MethodDeclarationSyntax>
+                                        IMakePrivate<IMethodClone,MethodDeclarationSyntax>,
+                                        IMakeProtected<IMethodClone,MethodDeclarationSyntax>
         {
         }
 
