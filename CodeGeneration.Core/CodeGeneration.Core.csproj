@@ -8,7 +8,4 @@
     <RootNamespace>CodeGen.Core</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-  </ItemGroup>
-
 </Project>
