@@ -74,6 +74,7 @@ namespace Tests
                         .Execute<CSharpContextDocumentEditor.IMethodClone>()
                             .WithNewName(m => m.Identifier.Text + "_generated")
                             .WithBody("{Console.WriteLine(\"hello my friend.\");}")
+                            //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever
                     .Go();
 
             engine.CurrentSolution.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);

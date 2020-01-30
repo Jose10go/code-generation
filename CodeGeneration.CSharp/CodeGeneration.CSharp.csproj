@@ -24,9 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="build.cake" />
-    <Resource Include="build.ps1" />
-    <Resource Include="cake.config" />
     <Resource Include="CodeGeneration.CSharp.nuspec" />
   </ItemGroup>
 
