@@ -14,7 +14,8 @@ namespace CodeGen.CSharp.Context
                                        IWithAttribute<IClassClone, ClassDeclarationSyntax>,
                                        IMakePublic<IClassClone,ClassDeclarationSyntax>,
                                        IMakePrivate<IClassClone,ClassDeclarationSyntax>,
-                                       IMakeProtected<IClassClone,ClassDeclarationSyntax>
+                                       IMakeProtected<IClassClone,ClassDeclarationSyntax>,
+                                       IMakeInternal<IClassClone,ClassDeclarationSyntax>
         {
         }
 
