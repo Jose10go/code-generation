@@ -13,10 +13,7 @@ namespace CodeGen.CSharp.Context
                                         IWithNewName<IMethodClone,MethodDeclarationSyntax>,
                                         IWithAttribute<IMethodClone, MethodDeclarationSyntax>,
                                         IWithBody<IMethodClone,MethodDeclarationSyntax>,
-                                        IMakePublic<IMethodClone,MethodDeclarationSyntax>,
-                                        IMakePrivate<IMethodClone,MethodDeclarationSyntax>,
-                                        IMakeProtected<IMethodClone,MethodDeclarationSyntax>,
-                                        IMakeInternal<IMethodClone,MethodDeclarationSyntax>
+                                        IWithAccessModifier<IMethodClone,MethodDeclarationSyntax>
         {
         }
 

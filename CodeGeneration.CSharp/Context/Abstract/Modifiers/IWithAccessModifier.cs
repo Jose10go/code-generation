@@ -2,15 +2,12 @@
 using CodeGen.Context;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
-using System.Linq;
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, ISymbol, TProcessEntity>
     {
         [CommandBuilderModifier]
-        public interface IMakePublic<TCommandBuilder,TNode>
+        public interface IWithAccessModifier<TCommandBuilder,TNode>
             where TCommandBuilder:Core.ICommandBuilder
             where TNode:CSharpSyntaxNode                    
         {
@@ -18,6 +15,21 @@ namespace CodeGen.CSharp.Context
             TCommandBuilder MakePublic() 
             {
                 Modifiers.Add(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+                return (TCommandBuilder)this;
+            }
+            TCommandBuilder MakeInternal()
+            {
+                Modifiers.Add(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
+                return (TCommandBuilder)this;
+            }
+            TCommandBuilder MakePrivate()
+            {
+                Modifiers.Add(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
+                return (TCommandBuilder)this;
+            }
+            TCommandBuilder MakeProtected()
+            {
+                Modifiers.Add(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
                 return (TCommandBuilder)this;
             }
         }
