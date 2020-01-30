@@ -1,5 +1,4 @@
 ﻿using System;
-using CodeGen.Attributes;
 
 namespace Tests.Examples.CloneClass
 {

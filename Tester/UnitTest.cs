@@ -81,6 +81,35 @@ namespace Tests
             Assert.True(st1.IsEquivalentTo(st2));
         }
 
+        [Fact]
+        public void ReplaceInvocation()
+        {
+            string inpath = Path.Combine(slnPath, "ReplaceInvocation", "in.cs");
+            string outpath = Path.Combine(slnPath, "ReplaceInvocation", "out.cs");
+            DocumentId document_id = solution.GetDocumentIdsWithFilePath(inpath).First();
+            Document document_in = solution.GetDocument(document_id);
+            engine.Select<InvocationExpressionSyntax>()
+                  .Where((symbol, node) =>
+                  {
+                      var s = (IMethodSymbol)symbol;
+                      if (s is null)
+                          return false;
+                      return s.Name == "f" && symbol.ContainingType.Name == "A";
+                  })
+                  .Execute<CSharpContextDocumentEditor.IReplaceInvocation>()
+                  .WithNewArgument(0, (x) =>
+                  {
+                      var lambda = x.ArgumentList.Arguments[0].Expression as ParenthesizedLambdaExpressionSyntax;
+                      var bodycode = SyntaxFactory.Literal(lambda.Body.ToString().Replace("@this", "this"));
+                      return SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, bodycode));
+                  })
+                  .Go();
+
+            engine.CurrentSolution.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
+        }
+
         //[Fact]
         //public void CreateClass()
         //{
