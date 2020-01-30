@@ -10,12 +10,12 @@ namespace CodeGen.CSharp.Context
     {
         public class CSharpTarget<TSyntaxNode> : ICSharpTarget<TSyntaxNode> where TSyntaxNode : CSharpSyntaxNode
         {
-            public Core.ICodeGenerationEngine CodeGenerationEngine { get; set ; }
+            public ICodeGenerationEngine CodeGenerationEngine { get; set ; }
             public Func<ISymbol, TSyntaxNode, bool> WhereSelector { get ; set ; }
 
-            public IEnumerable<TSyntaxNode> Select(CSharpSyntaxNode root,ISymbol semanticModel)
+            public IEnumerable<TSyntaxNode> Select(CSharpSyntaxNode root,Func<TSyntaxNode,ISymbol> semanticModelSelector)
             {
-                return root.DescendantNodes().OfType<TSyntaxNode>().Where(x=>WhereSelector(semanticModel,x));
+                return root.DescendantNodes().OfType<TSyntaxNode>().Where(x=>WhereSelector(semanticModelSelector(x),x));
             }
         }
     }

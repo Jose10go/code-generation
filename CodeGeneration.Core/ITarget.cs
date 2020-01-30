@@ -2,6 +2,5 @@
 {
     public interface ITarget
     {
-        ICodeGenerationEngine CodeGenerationEngine { get; set; }
     }
 }

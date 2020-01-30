@@ -1,4 +1,5 @@
 ﻿using CodeGen.Attributes;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
 
@@ -18,7 +19,9 @@ namespace CodeGen.CSharp.Context.DocumentEdit
 
             public void ProcessDocument(DocumentEditor processEntity)
             {
-                var nodes = Command.Target.Select((CSharpSyntaxNode)processEntity.GetChangedRoot());
+                var syntaxTreeroot= (CSharpSyntaxNode)processEntity.GetChangedRoot();
+                var semantic=processEntity.SemanticModel;
+                var nodes = Command.Target.Select(syntaxTreeroot,(node)=>semantic.GetSymbolInfo(node).Symbol);
                 foreach (var item in nodes)
                     ProccesNode(item,processEntity);
             }

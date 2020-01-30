@@ -6,6 +6,7 @@ namespace CodeGen.Context
     public abstract partial class CodeGenContext<TProject, TRootNode,TSemanticModel,TProcessEntity> 
     {
         public abstract class TargetBuilder<TNode> : ITargetBuilder
+            where TNode:TRootNode
         {
             protected TargetBuilder(ICodeGenerationEngine engine, ITarget<TNode> target)
             {

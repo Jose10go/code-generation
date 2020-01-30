@@ -42,6 +42,7 @@ namespace CodeGen.CSharp.Context
             }
 
             public ITarget<TSyntaxNode> ResolveTarget<TSyntaxNode>()
+                where TSyntaxNode:CSharpSyntaxNode
             {
                 return _container.Resolve<ITarget<TSyntaxNode>>();
             }
