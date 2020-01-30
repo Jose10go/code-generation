@@ -20,6 +20,10 @@ namespace CodeGen.CSharp.Context
         {
             public ITarget<InvocationExpressionSyntax> Target { get ; set ; }
             public IList<(Func<InvocationExpressionSyntax, ArgumentSyntax>, int)> NewArguments { get ; set ; }
+            public ReplaceInvocationCommandBuilder()
+            {
+                NewArguments = new List<(Func<InvocationExpressionSyntax, ArgumentSyntax>, int)>();
+            }
         }
 
     }
