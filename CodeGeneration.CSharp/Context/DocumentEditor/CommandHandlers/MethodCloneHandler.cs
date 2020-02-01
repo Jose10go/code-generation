@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using CodeGen.Attributes;
+using Microsoft.CodeAnalysis;
 
 namespace CodeGen.CSharp.Context.DocumentEdit
 {
@@ -20,7 +21,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                                            node.WithIdentifier(SyntaxFactory.ParseToken(Command.NewName(node)))
                                                .WithAttributeLists(Command.Attributes)
                                                .WithBody(Command.Body)
-                                               .WithModifiers(Command.Modifiers));
+                                               .WithModifiers(new SyntaxTokenList() { Command.Modifiers,Command.Abstract,Command.Static,Command.Partial }));
             }
         }
     }

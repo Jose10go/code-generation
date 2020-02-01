@@ -13,7 +13,10 @@ namespace CodeGen.CSharp.Context
                                         IWithNewName<IMethodClone,MethodDeclarationSyntax>,
                                         IWithAttribute<IMethodClone, MethodDeclarationSyntax>,
                                         IWithBody<IMethodClone,MethodDeclarationSyntax>,
-                                        IWithAccessModifier<IMethodClone,MethodDeclarationSyntax>
+                                        IWithAccessModifier<IMethodClone,MethodDeclarationSyntax>,
+                                        IAbstract<IMethodClone,MethodDeclarationSyntax>,
+                                        IStatic<IMethodClone, MethodDeclarationSyntax>,
+                                        IPartial<IMethodClone,MethodDeclarationSyntax>
         {
         }
 
@@ -24,7 +27,10 @@ namespace CodeGen.CSharp.Context
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
             public BlockSyntax Body { get; set; }
             public ITarget<MethodDeclarationSyntax> Target { get; set ; }
-            public SyntaxTokenList Modifiers { get ; set ; }
+            public SyntaxToken Modifiers { get ; set ; }
+            public SyntaxToken Abstract { get ; set ; }
+            public SyntaxToken Static { get ; set ; }
+            public SyntaxToken Partial { get ; set ; }
         }
         
     }

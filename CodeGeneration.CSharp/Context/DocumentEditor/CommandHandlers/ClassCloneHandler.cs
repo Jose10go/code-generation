@@ -1,5 +1,5 @@
 ﻿using CodeGen.Attributes;
-using CodeGen.Core;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
@@ -20,7 +20,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 documentEditor.InsertAfter(node,
                                            node.WithIdentifier(SyntaxFactory.ParseToken(Command.NewName(node)))
                                                .WithAttributeLists(Command.Attributes)
-                                               .WithModifiers(Command.Modifiers));
+                                               .WithModifiers(new SyntaxTokenList() { Command.Modifiers,Command.Abstract,Command.Static,Command.Partial }));
             }
         }
     }

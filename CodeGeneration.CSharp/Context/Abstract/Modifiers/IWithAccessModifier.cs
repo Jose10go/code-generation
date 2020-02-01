@@ -11,25 +11,25 @@ namespace CodeGen.CSharp.Context
             where TCommandBuilder:Core.ICommandBuilder
             where TNode:CSharpSyntaxNode                    
         {
-            SyntaxTokenList Modifiers { get; set; }
+            SyntaxToken Modifiers { get; set; }
             TCommandBuilder MakePublic() 
             {
-                Modifiers.Add(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+                Modifiers=SyntaxFactory.Token(SyntaxKind.PublicKeyword);
                 return (TCommandBuilder)this;
             }
             TCommandBuilder MakeInternal()
             {
-                Modifiers.Add(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
+                Modifiers=SyntaxFactory.Token(SyntaxKind.InternalKeyword);
                 return (TCommandBuilder)this;
             }
             TCommandBuilder MakePrivate()
             {
-                Modifiers.Add(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
+                Modifiers=SyntaxFactory.Token(SyntaxKind.PrivateKeyword);
                 return (TCommandBuilder)this;
             }
             TCommandBuilder MakeProtected()
             {
-                Modifiers.Add(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
+                Modifiers=SyntaxFactory.Token(SyntaxKind.ProtectedKeyword);
                 return (TCommandBuilder)this;
             }
         }
