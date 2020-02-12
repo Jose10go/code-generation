@@ -13,4 +13,8 @@
     <Copyright>Copyrigth 2020 Jose Diego Menendez del Cueto</Copyright>
   </PropertyGroup>
 
+  <Target Name="PostBuild" AfterTargets="Pack">
+    <Exec Command="..\tools\nuget.exe init bin\$(Configuration) C:\Users\Jose10go\.nuget\packages" />
+  </Target>
+  
 </Project>
