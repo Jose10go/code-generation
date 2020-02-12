@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+  <UsingTask AssemblyFile="$(MSBuildProjectDirectory)\$(OutDir)CodeGeneration.CSharp.dll" TaskName="Generator"/>
+  <Target Name="Precomplie">
+    <Message Importance="high" Text="Precompiling Before: @(Compile)"/>
+    <Generator Compiles="@(Compile)">
+      <Output TaskParameter="Compiles" ItemName="Compile"/>
+    </Generator>
+    <Message Importance="high" Text="Precompiling After: @(Compile)"/>
+  </Target>
+</Project> 
