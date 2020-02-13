@@ -10,6 +10,7 @@
     <Copyright>Copyright 2020 Jose Diego Menendez del Cueto</Copyright>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <!--<BuildOutputTargetFolder>lib;build;buildTransitive</BuildOutputTargetFolder>-->
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,7 +39,8 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="Pack">
-    <Exec Command="..\tools\nuget.exe init bin\$(Configuration) C:\Users\Jose10go\.nuget\packages" />
+    <RemoveDir Directories="$(UserProfile)\.nuget\packages\codegeneration.csharp"/>
+    <Copy SourceFiles="bin\$(Configuration)\$(ProductName).$(Version).nupkg" DestinationFolder=" $(UserProfile)\.nuget\codegen"/>
   </Target>
 
 </Project>
