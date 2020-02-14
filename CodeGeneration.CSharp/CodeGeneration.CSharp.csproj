@@ -11,8 +11,8 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <!--<BuildOutputTargetFolder>lib;build;buildTransitive</BuildOutputTargetFolder>-->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="CodeGeneration.CSharp.props" />
     <None Remove="CodeGeneration.CSharp.targets" />
@@ -43,4 +43,16 @@
     <Copy SourceFiles="bin\$(Configuration)\$(ProductName).$(Version).nupkg" DestinationFolder=" $(UserProfile)\.nuget\codegen"/>
   </Target>
 
+  <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
+    <!--
+    The include needs to happen after output has been copied to build output folder
+    but before NuGet generates a nuspec. See https://github.com/NuGet/Home/issues/4704.
+    -->
+    <ItemGroup>
+      <_PackageFiles Include="bin\$(Configuration)\*\*.dll">
+        <PackagePath>build;buildTransitive</PackagePath>
+        <BuildAction>Content</BuildAction>
+      </_PackageFiles>
+    </ItemGroup>
+  </Target>
 </Project>
