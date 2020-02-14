@@ -8,8 +8,8 @@ namespace CodeGeneration.CSharp
         public override bool Execute()
         {
             var file =Path.Combine("obj", "A.cs");
-            Compiles += ";" + file;
-            File.WriteAllText(file,"jerigonza");
+            Compiles = file;
+            File.WriteAllText(file,"namespace something{class A{}}");
             return true;
         }
 

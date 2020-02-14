@@ -14,14 +14,10 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="CodeGeneration.CSharp.props" />
     <None Remove="CodeGeneration.CSharp.targets" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="CodeGeneration.CSharp.props">
-      <PackagePath>build;buildTransitive</PackagePath> <!--TODO: Check this-->
-    </Content>
     <Content Include="CodeGeneration.CSharp.targets">
       <PackagePath>build;buildTransitive</PackagePath> <!--TODO: Check this-->
     </Content>
@@ -39,8 +35,8 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="Pack">
-    <RemoveDir Directories="$(UserProfile)\.nuget\packages\codegeneration.csharp"/>
-    <Copy SourceFiles="bin\$(Configuration)\$(ProductName).$(Version).nupkg" DestinationFolder=" $(UserProfile)\.nuget\codegen"/>
+    <RemoveDir Directories="$(UserProfile)\.nuget\packages\codegeneration.csharp" />
+    <Copy SourceFiles="bin\$(Configuration)\$(ProductName).$(Version).nupkg" DestinationFolder=" $(UserProfile)\.nuget\codegen" />
   </Target>
 
   <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
