@@ -1,19 +1,15 @@
-﻿using Microsoft.Build.Framework;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
+
 namespace CodeGeneration.CSharp
 {
-    public class Generator : Microsoft.Build.Utilities.Task
+    public class Generator : CodeGenerationTask
     {
-        public override bool Execute()
+        public override void DoWork()
         {
-            var file =Path.Combine("obj", "A.cs");
+            var file = Path.Combine("obj", "A.cs");
             Compiles = file;
-            File.WriteAllText(file,"namespace something{class A{}}");
-            return true;
+            File.WriteAllText(file, "namespace something{class A{}}");
         }
 
-        [Output]
-        public string Compiles { get; set; }
     }
 }
