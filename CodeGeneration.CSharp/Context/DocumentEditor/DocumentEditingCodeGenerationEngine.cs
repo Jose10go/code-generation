@@ -8,30 +8,25 @@ namespace CodeGen.CSharp.Context.DocumentEdit
     {
         public class DocumentEditingCodeGenerationEngine : ICSharpCodeGenerationEngine
         {
-            public Solution CurrentSolution { get; private set; }
+            public Project CurrentProject { get; private set; }
 
-            public DocumentEditingCodeGenerationEngine(Solution solution)
+            public DocumentEditingCodeGenerationEngine(Project Project)
             {
-                CurrentSolution=solution;
+                CurrentProject=Project;
                 Resolver.RegisterEngine(this);
                 Resolver.BuildContainer();
             }
 
             public void ApplyChanges<TSyntaxNode>(ICommandHandler<TSyntaxNode> commandHandler)
-                where TSyntaxNode:CSharpSyntaxNode
+                where TSyntaxNode : CSharpSyntaxNode
             {
-                foreach (var projectId in CurrentSolution.ProjectIds)
+                foreach (var documentid in CurrentProject.DocumentIds)
                 {
-                    var project = CurrentSolution.GetProject(projectId);
-                    foreach (var documentid in project.DocumentIds)
-                    {
-                        var document = project.GetDocument(documentid);
-                        var documentEditor = DocumentEditor.CreateAsync(document).Result;////TODO: make async???
-                        commandHandler.ProcessDocument(documentEditor);
-                        document = documentEditor.GetChangedDocument();
-                        project = document.Project;
-                    }
-                    CurrentSolution = project.Solution;
+                    var document = CurrentProject.GetDocument(documentid);
+                    var documentEditor = DocumentEditor.CreateAsync(document).Result;////TODO: make async???
+                    commandHandler.ProcessDocument(documentEditor);
+                    document = documentEditor.GetChangedDocument();
+                    CurrentProject = document.Project;
                 }
             }
 

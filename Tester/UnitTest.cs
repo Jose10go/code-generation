@@ -3,11 +3,11 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Linq;
-using Microsoft.Build.Locator;
 using Xunit;
 using System.IO;
 using Microsoft.CodeAnalysis.MSBuild;
 using static CodeGen.CSharp.Context.DocumentEdit.CSharpContextDocumentEditor;
+using Microsoft.Build.Locator;
 
 namespace Tests
 {
@@ -18,19 +18,19 @@ namespace Tests
         Solution solution;
         DocumentEditingCodeGenerationEngine engine;
         CSharpContextDocumentEditor.CSharpAutofacResolver resolver;
-
+        
         public UnitTest()
         {
-            var instance = MSBuildLocator.QueryVisualStudioInstances().First();
-            MSBuildLocator.RegisterInstance(instance);
+            var instance = MSBuildLocator.RegisterDefaults();
 
             workspace = MSBuildWorkspace.Create();
             workspace.WorkspaceFailed += (sender, args) =>
                                             workspace.Diagnostics.Add(args.Diagnostic);
+
             slnPath = Path.GetFullPath(Path.Combine("..", "..", "..", "Examples"));
             solution = workspace.OpenSolutionAsync(Path.Combine(slnPath, "Examples.sln")).Result;
             resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
-            engine = new DocumentEditingCodeGenerationEngine(solution);
+            engine = new DocumentEditingCodeGenerationEngine(solution.Projects.First());
         }
 
         private SyntaxTree ParseFile(string path)
@@ -57,7 +57,7 @@ namespace Tests
                             .WithNewName(m => m.Identifier.Text + "_generated")
                   .Go();
 
-            engine.CurrentSolution.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1); 
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1); 
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));
         }
@@ -77,7 +77,7 @@ namespace Tests
                             //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever
                     .Go();
 
-            engine.CurrentSolution.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));
         }
@@ -106,7 +106,7 @@ namespace Tests
                   })
                   .Go();
 
-            engine.CurrentSolution.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));
         }

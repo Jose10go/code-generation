@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, ISymbol,TProcessEntity>
+    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, ISymbol,TProcessEntity>
     {
         public class CSharpAutofacResolver : ICodeGenerationResolver
         {
@@ -59,7 +59,7 @@ namespace CodeGen.CSharp.Context
             {
                 var cmdbuildertype = commandBuilder.GetType().GetInterfaces().First();
                 var syntaxtype = typeof(TSyntaxNode);
-                var handlertype = typeof(ICommandHandler<,>).MakeGenericType(new[] { typeof(Solution), typeof(CSharpSyntaxNode),typeof(ISymbol), typeof(TProcessEntity), cmdbuildertype, syntaxtype });
+                var handlertype = typeof(ICommandHandler<,>).MakeGenericType(new[] { typeof(Project), typeof(CSharpSyntaxNode),typeof(ISymbol), typeof(TProcessEntity), cmdbuildertype, syntaxtype });
                 return (ICommandHandler<TSyntaxNode>)_container.Resolve(handlertype, new[] { new PositionalParameter(0, commandBuilder) });
             }
             protected void DoAutomaticRegister(ContainerBuilder builder)

@@ -11,7 +11,7 @@ namespace CodeGeneration.CSharp
     {
         [Output]
         public string Compiles { get; set; }
-        public string SolutionPath { get; set; }
+        public string ProjectPath { get; set; }
         protected DocumentEditingCodeGenerationEngine Engine { get; set; }
 
         public CodeGenerationTask():base()
@@ -20,8 +20,8 @@ namespace CodeGeneration.CSharp
             workspace.WorkspaceFailed += (sender, args) =>
                                             workspace.Diagnostics.Add(args.Diagnostic);
 
-            var solution = workspace.CurrentSolution;
-            Engine = new DocumentEditingCodeGenerationEngine(solution);
+            var Project = workspace.OpenProjectAsync(ProjectPath).Result;
+            Engine = new DocumentEditingCodeGenerationEngine(Project);
         }
 
         public override bool Execute()

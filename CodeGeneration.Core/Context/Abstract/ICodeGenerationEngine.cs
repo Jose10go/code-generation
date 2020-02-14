@@ -4,7 +4,7 @@
     {
         public interface ICodeGenerationEngine:Core.ICodeGenerationEngine
         {
-            TProject CurrentSolution { get; }
+            TProject CurrentProject { get; }
 
             ChainTargetBuilder<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TRootNode;
 

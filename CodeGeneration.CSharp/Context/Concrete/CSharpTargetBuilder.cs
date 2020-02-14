@@ -5,7 +5,7 @@ using System;
 
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Solution, CSharpSyntaxNode, ISymbol, TProcessEntity>
+    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, ISymbol, TProcessEntity>
     {
         public class CSharpTargetBuilder<TNode> : TargetBuilder<TNode>
             where TNode : CSharpSyntaxNode
