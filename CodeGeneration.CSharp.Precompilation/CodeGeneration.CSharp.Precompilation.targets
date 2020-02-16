@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+  <Target Name="Precompile" BeforeTargets="CoreCompile">
+    <!--<Message Importance="high" Text="Precompiling Before: @(References)"/>-->
+    <Message Importance="high" Text="Precompiling Before: @(Compile)"/>
+    <Exec ConsoleToMSBuild="true" Command="dotnet $(MSBuildThisFileDirectory)netcoreapp3.0\CodeGeneration.CSharp.Precompilation.dll --project $(MSBuildProjectFullPath) --compiles @(Compile) --transformers @(TransformerAssemblies) ">
+      <Output TaskParameter="ConsoleOutput" ItemName="Compile"/>
+    </Exec>
+    <!--<Message Importance="high" Text="Precompiling After: @(References)"/>-->
+    <Message Importance="high" Text="Precompiling After: @(Compile)"/>
+  </Target>
+</Project> 
