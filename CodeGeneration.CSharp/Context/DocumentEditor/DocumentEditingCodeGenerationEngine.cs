@@ -1,7 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
-
+using System.Collections.Generic;
+using System.Linq;
 namespace CodeGen.CSharp.Context.DocumentEdit
 {
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
@@ -9,9 +10,11 @@ namespace CodeGen.CSharp.Context.DocumentEdit
         public class DocumentEditingCodeGenerationEngine : ICSharpCodeGenerationEngine
         {
             public Project CurrentProject { get; private set; }
+            public IList<Document> ModifiedDocuments { get; private set; }
 
             public DocumentEditingCodeGenerationEngine(Project Project)
             {
+                ModifiedDocuments = new List<Document>();
                 CurrentProject=Project;
                 Resolver.RegisterEngine(this);
                 Resolver.BuildContainer();
@@ -24,9 +27,12 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 {
                     var document = CurrentProject.GetDocument(documentid);
                     var documentEditor = DocumentEditor.CreateAsync(document).Result;////TODO: make async???
-                    commandHandler.ProcessDocument(documentEditor);
-                    document = documentEditor.GetChangedDocument();
-                    CurrentProject = document.Project;
+                    if (commandHandler.ProcessDocument(documentEditor))
+                    {
+                        document = documentEditor.GetChangedDocument();
+                        ModifiedDocuments.Add(document);
+                        CurrentProject = document.Project;
+                    }
                 }
             }
 

@@ -7,7 +7,7 @@ namespace CodeGen.Context
         public interface ICommandHandler<TSyntaxNode> : ICommandHandler
             where TSyntaxNode:TRootNode
         {
-            void ProcessDocument(TProcessEntity processEntity);
+            bool ProcessDocument(TProcessEntity processEntity);
         }
 
         //keyInterface

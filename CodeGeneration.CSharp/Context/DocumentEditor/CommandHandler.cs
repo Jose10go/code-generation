@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
+using System.Linq;
 
 namespace CodeGen.CSharp.Context.DocumentEdit
 {
@@ -17,13 +18,16 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 this.Command = (TCommandBuilder)command;
             }
 
-            public void ProcessDocument(DocumentEditor processEntity)
+            public bool ProcessDocument(DocumentEditor processEntity)
             {
                 var syntaxTreeroot= (CSharpSyntaxNode)processEntity.GetChangedRoot();
                 var semantic=processEntity.SemanticModel;
                 var nodes = Command.Target.Select(syntaxTreeroot,(node)=>semantic.GetSymbolInfo(node).Symbol);
+                if (nodes.FirstOrDefault() is null)
+                    return false;
                 foreach (var item in nodes)
                     ProccesNode(item,processEntity);
+                return true;
             }
 
             public abstract void ProccesNode(TSyntaxNode node,DocumentEditor documentEditor);
