@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CodeGen.Attributes
 {
-    public class CommandBuilderModifierAttribute : Attribute
+    public class CommandModifierAttribute : Attribute
     {
     }
 }

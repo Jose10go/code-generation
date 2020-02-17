@@ -9,7 +9,7 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, ISymbol, TProcessEntity>
     {
-        [CommandBuilderModifier]
+        [CommandModifier]
         public interface IWithNewName<TCommandBuilder,TNode>
             where TCommandBuilder:Core.ICommand
             where TNode:CSharpSyntaxNode                    
