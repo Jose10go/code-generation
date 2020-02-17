@@ -6,10 +6,13 @@
         {
             TProject CurrentProject { get; }
 
-            Target<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TRootNode;
+            ITarget<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TRootNode;
 
-            void ApplyChanges<TSyntaxNode>(ICommandHandler<TSyntaxNode> commandHandler)
-                where TSyntaxNode:TRootNode;
+            void ApplyChanges();
+           
+            TCommand Execute<TCommand,TNode>(ITarget<TNode> target) 
+                where TCommand : ICommand<TNode>
+                where TNode:TRootNode;
         }
     }
 }

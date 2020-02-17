@@ -30,7 +30,7 @@ namespace Tests
             slnPath = Path.GetFullPath(Path.Combine("..", "..", "..", "Examples"));
             solution = workspace.OpenSolutionAsync(Path.Combine(slnPath, "Examples.sln")).Result;
             resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
-            engine = new DocumentEditingCodeGenerationEngine(solution.Projects.First());
+            engine = new DocumentEditingCodeGenerationEngine(solution.Projects.First(),resolver);
         }
 
         private SyntaxTree ParseFile(string path)
@@ -50,13 +50,13 @@ namespace Tests
             string outpath = Path.Combine(slnPath, "CloneClass", "out.cs");
             DocumentId document_id = solution.GetDocumentIdsWithFilePath(inpath).First();
             Document document_in = solution.GetDocument(document_id);
-            
+
             engine.Select<ClassDeclarationSyntax>()
                     .Where(x => true)
                         .Execute<CSharpContextDocumentEditor.IClassClone>()
                             .WithNewName(m => m.Identifier.Text + "_generated")
-                            .MakePublic()
-                  .Go();
+                            .MakePublic();
+            engine.ApplyChanges();
 
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1); 
             var st2 = ParseFile(outpath);
@@ -70,14 +70,15 @@ namespace Tests
             string outpath = Path.Combine(slnPath,"CloneMethod","out.cs");
             DocumentId document_id = solution.GetDocumentIdsWithFilePath(inpath).First();
             Document document_in = solution.GetDocument(document_id);
+            
             engine.Select<MethodDeclarationSyntax>()
                     .Where(x => true)
                         .Execute<CSharpContextDocumentEditor.IMethodClone>()
                             .WithNewName(m => m.Identifier.Text + "_generated")
                             .MakePublic()
-                            .WithBody("{Console.WriteLine(\"hello my friend.\");}")
-                            //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever
-                    .Go();
+                            .WithBody("{Console.WriteLine(\"hello my friend.\");}");
+                          //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever
+            engine.ApplyChanges();
 
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
@@ -91,6 +92,7 @@ namespace Tests
             string outpath = Path.Combine(slnPath, "ReplaceInvocation", "out.cs");
             DocumentId document_id = solution.GetDocumentIdsWithFilePath(inpath).First();
             Document document_in = solution.GetDocument(document_id);
+            
             engine.Select<InvocationExpressionSyntax>()
                   .Where((symbol, node) =>
                   {
@@ -105,8 +107,8 @@ namespace Tests
                       var lambda = x.ArgumentList.Arguments[0].Expression as ParenthesizedLambdaExpressionSyntax;
                       var bodycode = SyntaxFactory.Literal(lambda.Body.ToString().Replace("@this", "this"));
                       return SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, bodycode));
-                  })
-                  .Go();
+                  });
+            engine.ApplyChanges();
 
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);

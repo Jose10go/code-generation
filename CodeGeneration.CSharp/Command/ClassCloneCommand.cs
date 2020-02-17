@@ -20,8 +20,12 @@ namespace CodeGen.CSharp.Context
         }
 
         [CommandBuilder]
-        public class ClassCloneCommand : IClassClone
+        public class ClassCloneCommand : CSharpTarget<ClassDeclarationSyntax>,IClassClone
         {
+            public ClassCloneCommand(ICodeGenerationEngine engine):base(engine)
+            {
+            }
+
             public Func<ClassDeclarationSyntax, string> NewName { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
             public Target<ClassDeclarationSyntax> Target { get; set; }

@@ -21,7 +21,7 @@ namespace CodeGen.CSharp.Context
         }
 
         [CommandBuilder]
-        public class MethodCloneCommand : IMethodClone
+        public class MethodCloneCommand : CSharpTarget<MethodDeclarationSyntax>, IMethodClone
         {
             public Func<MethodDeclarationSyntax, string> NewName { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
@@ -31,6 +31,11 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Abstract { get ; set ; }
             public SyntaxToken Static { get ; set ; }
             public SyntaxToken Partial { get ; set ; }
+
+            public MethodCloneCommand(ICodeGenerationEngine engine):base(engine)
+            {
+
+            }
         }
         
     }

@@ -16,11 +16,12 @@ namespace CodeGen.CSharp.Context
         }
 
         [CommandBuilder]
-        public class ReplaceInvocationCommand : IReplaceInvocation
+        public class ReplaceInvocationCommand : CSharpTarget<InvocationExpressionSyntax>, IReplaceInvocation
         {
             public Target<InvocationExpressionSyntax> Target { get ; set ; }
             public IList<(Func<InvocationExpressionSyntax, ArgumentSyntax>, int)> NewArguments { get ; set ; }
-            public ReplaceInvocationCommand()
+
+            public ReplaceInvocationCommand(ICodeGenerationEngine engine):base(engine)
             {
                 NewArguments = new List<(Func<InvocationExpressionSyntax, ArgumentSyntax>, int)>();
             }

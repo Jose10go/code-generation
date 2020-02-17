@@ -5,40 +5,47 @@ namespace CodeGen.Context
 {
     public abstract partial class CodeGenContext<TProject, TRootNode,TSemanticModel,TProcessEntity> 
     {
-        public abstract class Target<TNode> : ITarget
+        public interface ITarget<TNode> : ITarget 
             where TNode:TRootNode
         {
-            protected Func<TSemanticModel,TNode, bool> WhereSelector{ get;set; }
-            public ICodeGenerationEngine CodeGenerationEngine { get; protected set; }
-            
-            protected Target(ICodeGenerationEngine codeGenerationEngine)
-            {
-                this.CodeGenerationEngine = codeGenerationEngine;
-                this.WhereSelector = (semantic,node) =>true;
-            }
+            Func<TSemanticModel, TNode, bool> WhereSelector { get; set; }
+            ICodeGenerationEngine CodeGenerationEngine { get; set; }
 
-            public abstract IEnumerable<TNode> Select(TRootNode root, Func<TNode, TSemanticModel> semanticModel); 
-            
-            public Target<TNode> Where(Func<TSemanticModel, TNode, bool> filter)
+            public ITarget<TNode> Where(Func<TSemanticModel, TNode, bool> filter)
             {
                 this.WhereSelector = filter;
                 return this;
             }
 
-            public Target<TNode> Where(Func<TNode, bool> filter)
+            public ITarget<TNode> Where(Func<TNode, bool> filter)
             {
                 this.WhereSelector = (_, node) => filter(node);
                 return this;
             }
 
-            public TCommandBuilder Execute<TCommandBuilder>()
-                where TCommandBuilder : ICommand<TNode>
+            TCommand Execute<TCommand>()
+                where TCommand : ICommand<TNode>;
+            
+        }
+
+        public abstract class Target<TNode> : ITarget<TNode>
+            where TNode:TRootNode
+        {
+            public Func<TSemanticModel, TNode, bool> WhereSelector { get ; set ; }
+            public ICodeGenerationEngine CodeGenerationEngine { get; set; }
+
+            protected Target(ICodeGenerationEngine engine)
             {
-                var commandBuilder = Resolver.ResolveCommandBuilder<TCommandBuilder, TNode>();
-                commandBuilder.Target = this;
-                return commandBuilder;
+                this.CodeGenerationEngine = engine;
+                (this as ITarget<TNode>).Where((semantic,node) =>true);
             }
 
+            public abstract IEnumerable<TNode> Select(TRootNode root, Func<TNode, TSemanticModel> semanticModel);
+
+            public TCommand Execute<TCommand>() where TCommand : ICommand<TNode>
+            {
+                return CodeGenerationEngine.Execute<TCommand, TNode>(this);
+            }
         }
     }
 }

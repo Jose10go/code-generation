@@ -26,7 +26,7 @@ namespace CodeGeneration.CSharp.Precompilation
                 throw new Exception($"Project is null. ({project})");
 
             var resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
-            var Engine = new DocumentEditingCodeGenerationEngine(Project);
+            var Engine = new DocumentEditingCodeGenerationEngine(Project,resolver);
 
             foreach (var item in transformers)
             {

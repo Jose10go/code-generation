@@ -10,7 +10,7 @@ namespace CodeGen.CSharp.Context
     {
         public class CSharpTarget<TSyntaxNode> : Target<TSyntaxNode> where TSyntaxNode : CSharpSyntaxNode
         {
-            public CSharpTarget(ICodeGenerationEngine codeGenerationEngine) : base(codeGenerationEngine)
+            public CSharpTarget(ICodeGenerationEngine engine) : base(engine)
             {
             }
             public override IEnumerable<TSyntaxNode> Select(CSharpSyntaxNode root,Func<TSyntaxNode,ISymbol> semanticModelSelector)

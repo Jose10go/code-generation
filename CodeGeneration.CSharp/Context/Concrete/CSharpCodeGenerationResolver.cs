@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Linq;
 using System.Reflection;
+using static CodeGen.CSharp.Context.DocumentEdit.CSharpContextDocumentEditor;
 
 namespace CodeGen.CSharp.Context
 {
@@ -13,26 +14,22 @@ namespace CodeGen.CSharp.Context
         public class CSharpAutofacResolver : ICodeGenerationResolver
         {
             protected IContainer _container { get; set; }
-            protected ICodeGenerationEngine _engine;
+            private ContainerBuilder builder;
+            
             public CSharpAutofacResolver()
             {
-                Resolver = this;
+                builder = new ContainerBuilder();
             }
+
+            public void RegisterEngine(ICodeGenerationEngine engine) 
+            {
+                builder.RegisterInstance(engine).As<ICodeGenerationEngine>();
+            }
+
             public virtual void BuildContainer()
             {
-                var builder = new ContainerBuilder();
                 DoAutomaticRegister(builder);
                 _container = builder.Build();
-            }
-
-            public void RegisterEngine(ICodeGenerationEngine engine)
-            {
-                _engine = engine;
-            }
-
-            public ICodeGenerationEngine ResolveEngine()
-            {
-                return _engine;
             }
 
             public TCommandBuilder ResolveCommandBuilder<TCommandBuilder, TSyntaxNode>()
@@ -42,31 +39,26 @@ namespace CodeGen.CSharp.Context
                 return _container.Resolve<TCommandBuilder>();
             }
 
-            public ICommandHandler<TSyntaxNode> ResolveCommandHandler<TSyntaxNode>(ICommand<TSyntaxNode> commandBuilder)
-                where TSyntaxNode : CSharpSyntaxNode
+            public ICommandHandler ResolveCommandHandler(Core.ICommand commandBuilder)
             {
-                var cmdbuildertype = commandBuilder.GetType().GetInterfaces().First();
-                var syntaxtype = typeof(TSyntaxNode);
-                var handlertype = typeof(ICommandHandler<,>).MakeGenericType(new[] { typeof(Project), typeof(CSharpSyntaxNode),typeof(ISymbol), typeof(TProcessEntity), cmdbuildertype, syntaxtype });
-                return (ICommandHandler<TSyntaxNode>)_container.Resolve(handlertype, new[] { new PositionalParameter(0, commandBuilder) });
+                var cmdtype = commandBuilder.GetType();
+                var handlertype = typeof(ICommandHandler<>).MakeGenericType(new[] { typeof(Project), typeof(CSharpSyntaxNode),typeof(ISymbol), typeof(TProcessEntity), cmdtype });
+                return (ICommandHandler)_container.Resolve(handlertype, new[] { new PositionalParameter(0, commandBuilder) });
             }
             
             protected void DoAutomaticRegister(ContainerBuilder builder)
             {
-                builder.RegisterGeneric(typeof(CSharpTarget<>)).As(typeof(Target<>));
-
                 var coreAssembly = Assembly.GetExecutingAssembly();
 
                 ////Register Command Builders only as generic services
-                foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandBuilderAttribute))))
-                    builder.RegisterGeneric(t).As(t.GetInterfaces().First());//TODO: fix here only explicit interfaces
+                //foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandBuilderAttribute))))
+                //    builder.RegisterType(t).As(t.GetInterfaces().First());//TODO: fix here only explicit interfaces
+                builder.RegisterType<ClassCloneCommand>().As<IClassClone>();
 
                 //Register Command Handlers only as generic services
                 foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandHandlerAttribute))))
                     builder.RegisterType(t).As(t.GetInterfaces().First());//TODO: fix here only explicit interfaces
 
-                // register the engine as singleton
-                builder.RegisterInstance(_engine).As<ICodeGenerationEngine>().ExternallyOwned();
             }
 
         }
