@@ -6,7 +6,7 @@
         {
             TProject CurrentProject { get; }
 
-            ChainTargetBuilder<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TRootNode;
+            Target<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TRootNode;
 
             void ApplyChanges<TSyntaxNode>(ICommandHandler<TSyntaxNode> commandHandler)
                 where TSyntaxNode:TRootNode;

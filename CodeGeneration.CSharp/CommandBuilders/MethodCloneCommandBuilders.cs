@@ -26,7 +26,7 @@ namespace CodeGen.CSharp.Context
             public Func<MethodDeclarationSyntax, string> NewName { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
             public BlockSyntax Body { get; set; }
-            public ITarget<MethodDeclarationSyntax> Target { get; set ; }
+            public Target<MethodDeclarationSyntax> Target { get; set ; }
             public SyntaxToken Modifiers { get ; set ; }
             public SyntaxToken Abstract { get ; set ; }
             public SyntaxToken Static { get ; set ; }

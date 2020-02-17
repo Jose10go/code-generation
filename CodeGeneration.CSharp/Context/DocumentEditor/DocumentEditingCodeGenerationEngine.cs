@@ -2,12 +2,11 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
 using System.Collections.Generic;
-using System.Linq;
 namespace CodeGen.CSharp.Context.DocumentEdit
 {
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
-        public class DocumentEditingCodeGenerationEngine : ICSharpCodeGenerationEngine
+        public class DocumentEditingCodeGenerationEngine : ICodeGenerationEngine
         {
             public Project CurrentProject { get; private set; }
             public IList<Document> ModifiedDocuments { get; private set; }
@@ -36,15 +35,9 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 }
             }
 
-            public ChainCSharpTargetBuilder<TSyntaxNode> Select<TSyntaxNode>()where TSyntaxNode :CSharpSyntaxNode
+            public Target<TSyntaxNode> Select<TSyntaxNode>()where TSyntaxNode:CSharpSyntaxNode
             {
-                var result= Resolver.ResolveTargetBuilder<TSyntaxNode>() as ChainCSharpTargetBuilder<TSyntaxNode>;
-                return result;
-            }
-
-            ChainTargetBuilder<TSyntaxNode> ICodeGenerationEngine.Select<TSyntaxNode>()
-            {
-                var result= Resolver.ResolveTargetBuilder<TSyntaxNode>();
+                var result = new CSharpTarget<TSyntaxNode>(this);
                 return result;
             }
 

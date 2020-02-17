@@ -8,7 +8,7 @@ namespace CodeGen.Context
         public interface ICommandBuilder<TSyntaxNode> : Core.ICommandBuilder
             where TSyntaxNode:TRootNode
         {
-            ITarget<TSyntaxNode> Target { get; set; }
+            Target<TSyntaxNode> Target { get; set; }
 
             void Go()
             {

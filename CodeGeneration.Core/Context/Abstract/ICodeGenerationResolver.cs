@@ -8,10 +8,6 @@ namespace CodeGen.Context
         public interface ICodeGenerationResolver
         {
             void BuildContainer();
-            ChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>()
-                where TNode : TRootNode;
-            ITarget<TSyntaxNode> ResolveTarget<TSyntaxNode>()
-                where TSyntaxNode : TRootNode;
             TCommandBuilder ResolveCommandBuilder<TCommandBuilder,TSyntaxNode>()
                 where TCommandBuilder :ICommandBuilder<TSyntaxNode>
                 where TSyntaxNode:TRootNode;

@@ -35,18 +35,6 @@ namespace CodeGen.CSharp.Context
                 return _engine;
             }
 
-            public ChainTargetBuilder<TNode> ResolveTargetBuilder<TNode>()
-                where TNode : CSharpSyntaxNode
-            {
-                return _container.Resolve<ChainTargetBuilder<TNode>>();
-            }
-
-            public ITarget<TSyntaxNode> ResolveTarget<TSyntaxNode>()
-                where TSyntaxNode:CSharpSyntaxNode
-            {
-                return _container.Resolve<ITarget<TSyntaxNode>>();
-            }
-
             public TCommandBuilder ResolveCommandBuilder<TCommandBuilder, TSyntaxNode>()
                 where TCommandBuilder : ICommandBuilder<TSyntaxNode>
                 where TSyntaxNode : CSharpSyntaxNode
@@ -62,12 +50,10 @@ namespace CodeGen.CSharp.Context
                 var handlertype = typeof(ICommandHandler<,>).MakeGenericType(new[] { typeof(Project), typeof(CSharpSyntaxNode),typeof(ISymbol), typeof(TProcessEntity), cmdbuildertype, syntaxtype });
                 return (ICommandHandler<TSyntaxNode>)_container.Resolve(handlertype, new[] { new PositionalParameter(0, commandBuilder) });
             }
+            
             protected void DoAutomaticRegister(ContainerBuilder builder)
             {
-                builder.RegisterGeneric(typeof(CSharpTarget<>)).As(typeof(ICSharpTarget<>));
-                builder.RegisterGeneric(typeof(CSharpTarget<>)).As(typeof(ITarget<>));
-                builder.RegisterGeneric(typeof(CSharpTargetBuilder<>)).As(typeof(TargetBuilder<>));
-                builder.RegisterGeneric(typeof(ChainCSharpTargetBuilder<>)).As(typeof(ChainTargetBuilder<>));
+                builder.RegisterGeneric(typeof(CSharpTarget<>)).As(typeof(Target<>));
 
                 var coreAssembly = Assembly.GetExecutingAssembly();
 
