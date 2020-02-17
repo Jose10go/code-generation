@@ -55,6 +55,7 @@ namespace Tests
                     .Where(x => true)
                         .Execute<CSharpContextDocumentEditor.IClassClone>()
                             .WithNewName(m => m.Identifier.Text + "_generated")
+                            .MakePublic()
                   .Go();
 
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1); 
@@ -73,6 +74,7 @@ namespace Tests
                     .Where(x => true)
                         .Execute<CSharpContextDocumentEditor.IMethodClone>()
                             .WithNewName(m => m.Identifier.Text + "_generated")
+                            .MakePublic()
                             .WithBody("{Console.WriteLine(\"hello my friend.\");}")
                             //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever
                     .Go();
