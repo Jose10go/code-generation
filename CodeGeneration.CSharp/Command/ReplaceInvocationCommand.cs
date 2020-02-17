@@ -15,7 +15,7 @@ namespace CodeGen.CSharp.Context
         {
         }
 
-        [CommandBuilder]
+        [Command]
         public class ReplaceInvocationCommand : CSharpTarget<InvocationExpressionSyntax>, IReplaceInvocation
         {
             public Target<InvocationExpressionSyntax> Target { get ; set ; }

@@ -20,7 +20,7 @@ namespace CodeGen.CSharp.Context
         {
         }
 
-        [CommandBuilder]
+        [Command]
         public class MethodCloneCommand : CSharpTarget<MethodDeclarationSyntax>, IMethodClone
         {
             public Func<MethodDeclarationSyntax, string> NewName { get; set; }
