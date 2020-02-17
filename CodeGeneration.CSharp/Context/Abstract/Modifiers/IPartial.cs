@@ -8,7 +8,7 @@ namespace CodeGen.CSharp.Context
     {
         [CommandBuilderModifier]
         public interface IPartial<TCommandBuilder,TNode>
-            where TCommandBuilder:Core.ICommandBuilder
+            where TCommandBuilder:Core.ICommand
             where TNode:CSharpSyntaxNode                    
         {
             SyntaxToken Partial { get; set; }

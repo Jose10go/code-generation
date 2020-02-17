@@ -36,13 +36,13 @@ namespace CodeGen.CSharp.Context
             }
 
             public TCommandBuilder ResolveCommandBuilder<TCommandBuilder, TSyntaxNode>()
-                where TCommandBuilder : ICommandBuilder<TSyntaxNode>
+                where TCommandBuilder : ICommand<TSyntaxNode>
                 where TSyntaxNode : CSharpSyntaxNode
             {
                 return _container.Resolve<TCommandBuilder>();
             }
 
-            public ICommandHandler<TSyntaxNode> ResolveCommandHandler<TSyntaxNode>(ICommandBuilder<TSyntaxNode> commandBuilder)
+            public ICommandHandler<TSyntaxNode> ResolveCommandHandler<TSyntaxNode>(ICommand<TSyntaxNode> commandBuilder)
                 where TSyntaxNode : CSharpSyntaxNode
             {
                 var cmdbuildertype = commandBuilder.GetType().GetInterfaces().First();

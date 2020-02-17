@@ -11,7 +11,7 @@ namespace CodeGen.CSharp.Context
     {
         [CommandBuilderModifier]
         public interface IWithNewName<TCommandBuilder,TNode>
-            where TCommandBuilder:Core.ICommandBuilder
+            where TCommandBuilder:Core.ICommand
             where TNode:CSharpSyntaxNode                    
         {
             Func<TNode, string> NewName { get; set; }

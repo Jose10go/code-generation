@@ -10,17 +10,17 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode,ISymbol, TProcessEntity>
     {
-        public interface IReplaceInvocation : ICommandBuilder<InvocationExpressionSyntax>,
+        public interface IReplaceInvocation : ICommand<InvocationExpressionSyntax>,
                                               IWithNewArgument<IReplaceInvocation, InvocationExpressionSyntax>
         {
         }
 
         [CommandBuilder]
-        public class ReplaceInvocationCommandBuilder : IReplaceInvocation
+        public class ReplaceInvocationCommand : IReplaceInvocation
         {
             public Target<InvocationExpressionSyntax> Target { get ; set ; }
             public IList<(Func<InvocationExpressionSyntax, ArgumentSyntax>, int)> NewArguments { get ; set ; }
-            public ReplaceInvocationCommandBuilder()
+            public ReplaceInvocationCommand()
             {
                 NewArguments = new List<(Func<InvocationExpressionSyntax, ArgumentSyntax>, int)>();
             }

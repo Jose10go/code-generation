@@ -9,11 +9,11 @@ namespace CodeGen.Context
         {
             void BuildContainer();
             TCommandBuilder ResolveCommandBuilder<TCommandBuilder,TSyntaxNode>()
-                where TCommandBuilder :ICommandBuilder<TSyntaxNode>
+                where TCommandBuilder :ICommand<TSyntaxNode>
                 where TSyntaxNode:TRootNode;
             ICodeGenerationEngine ResolveEngine();
             void RegisterEngine(ICodeGenerationEngine engine);
-            ICommandHandler<TSyntaxNode> ResolveCommandHandler<TSyntaxNode>(ICommandBuilder<TSyntaxNode> commandBuilder)
+            ICommandHandler<TSyntaxNode> ResolveCommandHandler<TSyntaxNode>(ICommand<TSyntaxNode> commandBuilder)
                 where TSyntaxNode : TRootNode;
         }
     }

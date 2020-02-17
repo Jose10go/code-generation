@@ -13,7 +13,7 @@ namespace CodeGen.CSharp.Context
     {
         [CommandBuilderModifier]
         public interface IWithNewArgument<TCommandBuilder,TNode>
-            where TCommandBuilder:Core.ICommandBuilder
+            where TCommandBuilder:Core.ICommand
             where TNode:CSharpSyntaxNode                    
         {
             IList<(Func<TNode,ArgumentSyntax>, int)> NewArguments { get; set; }

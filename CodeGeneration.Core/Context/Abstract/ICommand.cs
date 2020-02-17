@@ -5,7 +5,7 @@ namespace CodeGen.Context
 {
     public partial class CodeGenContext<TProject, TRootNode, TSemanticModel, TProcessEntity>
     {
-        public interface ICommandBuilder<TSyntaxNode> : Core.ICommandBuilder
+        public interface ICommand<TSyntaxNode> : Core.ICommand
             where TSyntaxNode:TRootNode
         {
             Target<TSyntaxNode> Target { get; set; }

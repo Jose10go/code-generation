@@ -11,7 +11,7 @@ namespace CodeGen.CSharp.Context
     {
         [CommandBuilderModifier]
         public interface IAbstract<TCommandBuilder,TNode>
-            where TCommandBuilder:Core.ICommandBuilder
+            where TCommandBuilder:Core.ICommand
             where TNode:CSharpSyntaxNode                    
         {
             SyntaxToken Abstract { get; set; }

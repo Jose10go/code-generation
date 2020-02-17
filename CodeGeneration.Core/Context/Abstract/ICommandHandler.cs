@@ -12,7 +12,7 @@ namespace CodeGen.Context
 
         //keyInterface
         public interface ICommandHandler<TCommandBuilder,TSyntaxNode> : ICommandHandler<TSyntaxNode>
-            where TCommandBuilder:ICommandBuilder<TSyntaxNode>
+            where TCommandBuilder:ICommand<TSyntaxNode>
             where TSyntaxNode : TRootNode
         {
         }

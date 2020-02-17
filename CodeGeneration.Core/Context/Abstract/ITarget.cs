@@ -32,7 +32,7 @@ namespace CodeGen.Context
             }
 
             public TCommandBuilder Execute<TCommandBuilder>()
-                where TCommandBuilder : ICommandBuilder<TNode>
+                where TCommandBuilder : ICommand<TNode>
             {
                 var commandBuilder = Resolver.ResolveCommandBuilder<TCommandBuilder, TNode>();
                 commandBuilder.Target = this;

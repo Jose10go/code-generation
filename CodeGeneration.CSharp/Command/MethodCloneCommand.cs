@@ -9,7 +9,7 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode,ISymbol, TProcessEntity>
 {
-        public interface IMethodClone : ICommandBuilder<MethodDeclarationSyntax>,
+        public interface IMethodClone : ICommand<MethodDeclarationSyntax>,
                                         IWithNewName<IMethodClone,MethodDeclarationSyntax>,
                                         IWithAttribute<IMethodClone, MethodDeclarationSyntax>,
                                         IWithBody<IMethodClone,MethodDeclarationSyntax>,
@@ -21,7 +21,7 @@ namespace CodeGen.CSharp.Context
         }
 
         [CommandBuilder]
-        public class MethodCloneCommandBuilder : IMethodClone
+        public class MethodCloneCommand : IMethodClone
         {
             public Func<MethodDeclarationSyntax, string> NewName { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
