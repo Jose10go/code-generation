@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CodeGen.Attributes
+namespace CodeGen.Core.Attributes
 {
     public class CommandAttribute : Attribute
     {

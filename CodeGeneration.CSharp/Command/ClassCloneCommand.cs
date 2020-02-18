@@ -1,5 +1,5 @@
-﻿using CodeGen.Attributes;
-using CodeGen.Context;
+﻿using CodeGen.Context;
+using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
