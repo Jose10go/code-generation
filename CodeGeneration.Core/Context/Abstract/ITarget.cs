@@ -41,7 +41,7 @@ namespace CodeGen.Context
                 (this as ITarget<TNode>).Where((semantic,node) =>true);
             }
 
-            public abstract IEnumerable<TNode> Select(TBaseNode root, Func<TNode, TSemanticModel> semanticModel);
+            public abstract IEnumerable<TNode> Select(TBaseNode root, Func<TNode, TSemanticModel> semanticModelSelector);
 
             public TCommand Execute<TCommand>() where TCommand : ICommand<TNode>
             {

@@ -1,8 +1,11 @@
 ﻿using CodeGen.Core;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using System.Collections.Generic;
+using System.IO;
+
 namespace CodeGen.CSharp.Context.DocumentEdit
 {
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
@@ -60,6 +63,18 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                     }
                 }
             }
+
+            public ITarget<CompilationUnitSyntax> SelectNew(string path)
+            {
+                var filename=Path.GetFileName(path);
+                var annotation = new SyntaxAnnotation();
+                var compilationUnit = SyntaxFactory.CompilationUnit().WithAdditionalAnnotations(annotation);
+                CurrentProject = CurrentProject.AddDocument(filename,compilationUnit, filePath: "path").Project;
+                ITarget<CompilationUnitSyntax> result = new CSharpTarget<CompilationUnitSyntax>(this);
+                result.Where(x => x.HasAnnotation(annotation));
+                return result;
+            }
+
         }
     }
 }

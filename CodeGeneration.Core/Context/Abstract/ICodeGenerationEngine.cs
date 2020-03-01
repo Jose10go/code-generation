@@ -9,7 +9,7 @@
 
             ITarget<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TBaseNode;
 
-            ITarget<TRootNode> SelectNew();
+            ITarget<TRootNode> SelectNew(string path);
 
             void ApplyChanges();
            

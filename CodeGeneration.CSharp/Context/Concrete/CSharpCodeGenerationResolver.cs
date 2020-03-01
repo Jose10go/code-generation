@@ -4,18 +4,18 @@ using CodeGen.Context;
 using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using System;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Linq;
 using System.Reflection;
 
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, ISymbol,TProcessEntity>
+    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode,CompilationUnitSyntax,ISymbol,TProcessEntity>
     {
         public class CSharpAutofacResolver : ICodeGenerationResolver
         {
             protected IContainer _container { get; set; }
-            private ContainerBuilder builder;
+            private readonly ContainerBuilder builder;
             
             public CSharpAutofacResolver()
             {

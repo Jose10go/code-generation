@@ -7,7 +7,7 @@ using System;
 
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode,ISymbol, TProcessEntity>
+    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol, TProcessEntity>
 {
         public interface IMethodClone : ICommand<MethodDeclarationSyntax>,
                                         IWithNewName<IMethodClone,MethodDeclarationSyntax>,

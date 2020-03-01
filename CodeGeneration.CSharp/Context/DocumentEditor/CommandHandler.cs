@@ -12,7 +12,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
             where TSyntaxNode : CSharpSyntaxNode
         {
             public TCommandBuilder Command { get; }
-            public CommandHandler(ICommand<TSyntaxNode> command)
+            protected CommandHandler(ICommand<TSyntaxNode> command)
             {
                 this.Command = (TCommandBuilder)command;
             }
