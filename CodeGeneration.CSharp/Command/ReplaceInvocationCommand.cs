@@ -10,7 +10,7 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol, TProcessEntity>
     {
-        public interface IReplaceInvocation : ICommand<InvocationExpressionSyntax>,
+        public interface IReplaceInvocation : ICommand<InvocationExpressionSyntax, InvocationExpressionSyntax>,
                                               IWithNewArgument<IReplaceInvocation, InvocationExpressionSyntax>
         {
         }

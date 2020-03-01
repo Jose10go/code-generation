@@ -9,7 +9,7 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol, TProcessEntity>
 {
-        public interface IMethodClone : ICommand<MethodDeclarationSyntax>,
+        public interface IMethodClone : ICommand<MethodDeclarationSyntax, MethodDeclarationSyntax>,
                                         IWithNewName<IMethodClone,MethodDeclarationSyntax>,
                                         IWithAttribute<IMethodClone, MethodDeclarationSyntax>,
                                         IWithBody<IMethodClone,MethodDeclarationSyntax>,
