@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 namespace CodeGen.Context
 {
-    public abstract partial class CodeGenContext<TProject, TRootNode,TSemanticModel,TProcessEntity> 
+    public abstract partial class CodeGenContext<TProject, TBaseNode,TRootNode,TSemanticModel,TProcessEntity> 
+        where TRootNode:TBaseNode
     {
         public interface ITarget<TNode> : ITarget 
-            where TNode:TRootNode
+            where TNode:TBaseNode
         {
             Func<TSemanticModel, TNode, bool> WhereSelector { get; set; }
             ICodeGenerationEngine CodeGenerationEngine { get; set; }
@@ -29,7 +30,7 @@ namespace CodeGen.Context
         }
 
         public abstract class Target<TNode> : ITarget<TNode>
-            where TNode:TRootNode
+            where TNode:TBaseNode
         {
             public Func<TSemanticModel, TNode, bool> WhereSelector { get ; set ; }
             public ICodeGenerationEngine CodeGenerationEngine { get; set; }
@@ -40,7 +41,7 @@ namespace CodeGen.Context
                 (this as ITarget<TNode>).Where((semantic,node) =>true);
             }
 
-            public abstract IEnumerable<TNode> Select(TRootNode root, Func<TNode, TSemanticModel> semanticModel);
+            public abstract IEnumerable<TNode> Select(TBaseNode root, Func<TNode, TSemanticModel> semanticModel);
 
             public TCommand Execute<TCommand>() where TCommand : ICommand<TNode>
             {

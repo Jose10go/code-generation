@@ -2,7 +2,8 @@
 
 namespace CodeGen.Context
 {
-    public abstract partial class CodeGenContext<TProject, TRootNode, TSemanticModel, TProcessEntity>
+    public abstract partial class CodeGenContext<TProject, TBaseNode, TRootNode, TSemanticModel, TProcessEntity>
+        where TRootNode:TBaseNode
     {
         public interface ICodeGenerationResolver
         {
@@ -10,7 +11,7 @@ namespace CodeGen.Context
             void RegisterEngine(ICodeGenerationEngine engine);
             TCommandBuilder ResolveCommandBuilder<TCommandBuilder,TSyntaxNode>()
                 where TCommandBuilder :ICommand<TSyntaxNode>
-                where TSyntaxNode:TRootNode;
+                where TSyntaxNode:TBaseNode;
             ICommandHandler ResolveCommandHandler(ICommand commandBuilder);
         }
     }

@@ -2,21 +2,17 @@
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.MSBuild;
 using System;
-using System.Collections.Generic;
-using System.CommandLine;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using static CodeGen.CSharp.Context.DocumentEdit.CSharpContextDocumentEditor;
 
 namespace CodeGeneration.CSharp.Precompilation
 {
-    class Program
+    static class Program
     {
         static void Main(string project,string[] compiles,string[] transformers)
         {
-            var instance = MSBuildLocator.RegisterDefaults();
-
+            MSBuildLocator.RegisterDefaults();
             var workspace = MSBuildWorkspace.Create();
             workspace.WorkspaceFailed += (sender, args) =>
                                             workspace.Diagnostics.Add(args.Diagnostic);

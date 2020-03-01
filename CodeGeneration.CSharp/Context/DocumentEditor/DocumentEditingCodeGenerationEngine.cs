@@ -10,8 +10,8 @@ namespace CodeGen.CSharp.Context.DocumentEdit
         public class DocumentEditingCodeGenerationEngine : ICodeGenerationEngine
         {
             public IList<Document> ModifiedDocuments { get; private set; }
-            private ICodeGenerationResolver Resolver;
-            private List<ICommand> CommandsToApply;
+            private readonly ICodeGenerationResolver Resolver;
+            private readonly List<ICommand> CommandsToApply;
 
             public Project CurrentProject { get; private set; }
             

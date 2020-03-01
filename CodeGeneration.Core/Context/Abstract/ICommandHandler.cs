@@ -2,7 +2,8 @@
 
 namespace CodeGen.Context
 {
-    public abstract partial class CodeGenContext<TProject, TRootNode,TSemanticModel, TProcessEntity> 
+    public abstract partial class CodeGenContext<TProject, TBaseNode,TRootNode,TSemanticModel, TProcessEntity> 
+        where TRootNode:TBaseNode
     {
         public interface ICommandHandler : Core.ICommandHandler
         {

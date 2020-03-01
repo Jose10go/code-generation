@@ -1,12 +1,11 @@
-﻿using CodeGen.Attributes;
-using System.Linq;
-
+﻿
 namespace CodeGen.Context
 {
-    public partial class CodeGenContext<TProject, TRootNode, TSemanticModel, TProcessEntity>
+    public partial class CodeGenContext<TProject, TBaseNode, TRootNode, TSemanticModel, TProcessEntity>
+        where TRootNode:TBaseNode
     {
         public interface ICommand<TSyntaxNode> : Core.ICommand,ITarget<TSyntaxNode>
-            where TSyntaxNode:TRootNode
+            where TSyntaxNode:TBaseNode
         {
             Target<TSyntaxNode> Target { get; set; }
         }
