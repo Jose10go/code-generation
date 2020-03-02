@@ -25,11 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CodeGeneration.CSharp" Version="1.0.0" />
+    <PackageReference Include="CodeGeneration.CSharp.Precompilation" Version="1.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.3.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\CodeGeneration.CSharp\CodeGeneration.CSharp.csproj" />
+    <PackageReference Include="WithBodyTransformer" Version="1.0.0" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="Pack">
