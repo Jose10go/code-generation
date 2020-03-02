@@ -14,13 +14,25 @@ namespace CodeGen.Context
 
             public ITarget<TNode> Where(Func<TSemanticModel, TNode, bool> filter)
             {
-                this.WhereSelector = (model,node) => this.WhereSelector(model,node) && filter(model,node);
+                if (WhereSelector == null)
+                    this.WhereSelector = filter;
+                else 
+                {
+                    var previous = this.WhereSelector;
+                    this.WhereSelector = (model,node) => previous(model,node) && filter(model,node);
+                }
                 return this;
             }
 
             public ITarget<TNode> Where(Func<TNode, bool> filter)
             {
-                this.WhereSelector = (model, node)=> this.WhereSelector(model,node) && filter(node);
+                if(WhereSelector == null)
+                    this.WhereSelector = (model, node) => filter(node);
+                else
+                {
+                    var previous = this.WhereSelector;
+                    this.WhereSelector = (model, node) => previous(model, node) && filter(node);
+                }
                 return this;
             }
 
