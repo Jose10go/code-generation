@@ -44,7 +44,7 @@ namespace CodeGen.CSharp.Context
             {
                 var cmdtype = commandBuilder.GetType();
                 var abstractcommand = cmdtype.GetInterfaces().FirstOrDefault(i => i.IsAssignableTo<Core.ICommand>());
-                var handlertype = typeof(ICommandHandler<>).MakeGenericType(new[] { typeof(Project), typeof(CSharpSyntaxNode),typeof(ISymbol), typeof(TProcessEntity), abstractcommand });
+                var handlertype = typeof(ICommandHandler<>).MakeGenericType(new[] { typeof(Project), typeof(CSharpSyntaxNode),typeof(CompilationUnitSyntax),typeof(ISymbol), typeof(TProcessEntity), abstractcommand });
                 return (ICommandHandler)_container.Resolve(handlertype, new[] { new PositionalParameter(0, commandBuilder) });
             }
             
