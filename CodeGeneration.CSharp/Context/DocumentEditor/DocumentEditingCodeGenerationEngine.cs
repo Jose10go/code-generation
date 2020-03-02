@@ -12,15 +12,12 @@ namespace CodeGen.CSharp.Context.DocumentEdit
     {
         public class DocumentEditingCodeGenerationEngine : ICodeGenerationEngine
         {
-            public IList<Document> ModifiedDocuments { get; private set; }
             private readonly ICodeGenerationResolver Resolver;
             private readonly List<ICommand> CommandsToApply;
-
             public Project CurrentProject { get; private set; }
             
             public DocumentEditingCodeGenerationEngine(Project project,ICodeGenerationResolver resolver)
             {
-                ModifiedDocuments = new List<Document>();
                 CommandsToApply = new List<ICommand>();
                 CurrentProject=project;
                 Resolver = resolver;
@@ -56,8 +53,9 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                         var handler = Resolver.ResolveCommandHandler(cmd);
                         if (handler.ProcessDocument(documentEditor))
                         {
-                            document = documentEditor.GetChangedDocument();
-                            ModifiedDocuments.Add(document);
+                            var relativePath = Path.GetRelativePath(Path.GetDirectoryName(CurrentProject.FilePath), document.FilePath);
+                            var newPath = Path.Combine(Path.GetDirectoryName(CurrentProject.FilePath),"obj","Transformers","CSharp",relativePath);
+                            document = documentEditor.GetChangedDocument().WithFilePath(newPath);
                             CurrentProject = document.Project;
                         }
                     }
