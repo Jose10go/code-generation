@@ -3,6 +3,8 @@ using CodeGeneration.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
+using System.Linq;
 
 namespace WithBodyTransformer
 {
@@ -16,7 +18,7 @@ namespace WithBodyTransformer
                       var s = (IMethodSymbol)symbol;
                       if (s is null)
                           return false;
-                      return s.Name == "WithBody" && symbol.ContainingType.Name == "IWithBody";
+                      return s.Name == "WithBody" && symbol.ContainingType.Name == "IWithBody" && !s.Parameters.Any(x=>x.Type.Name=="string");
                   })
                   .Execute<CSharpContextDocumentEditor.IReplaceInvocation>()
                       .WithNewArgument(0, (x) =>
