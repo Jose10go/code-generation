@@ -18,22 +18,19 @@ namespace CodeGeneration.CSharp.Precompilation
             MSBuildLocator.RegisterDefaults();
             var workspace = MSBuildWorkspace.Create();
             workspace.WorkspaceFailed += (sender, args) =>
-                                            workspace.Diagnostics.Add(args.Diagnostic);
+                                                workspace.Diagnostics.Add(args.Diagnostic);
 
             var Project = workspace.OpenProjectAsync(project).Result;
-            if (Project == null)
-                throw new Exception($"Project is null. ({project})");
-
+            if (Project is null)
+                throw new ArgumentException($"Project is null. ({project})");
             var resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
             var Engine = new DocumentEditingCodeGenerationEngine(Project,resolver);
-
             foreach (var item in transformers)
             {
                 var assembly=LoadAssembly(item);
                 var transformer = LoadTransformer(assembly,Engine);
                 transformer.Transform();
             }
-
             var changes = Engine.CurrentProject.GetChanges(Project);
             foreach (var docId in changes.GetAddedDocuments().Union(changes.GetChangedDocuments(true)))
             {
@@ -43,17 +40,16 @@ namespace CodeGeneration.CSharp.Precompilation
                 File.WriteAllText(doc.FilePath, text.ToString());
                 Console.WriteLine(Path.GetRelativePath(Path.GetDirectoryName(Engine.CurrentProject.FilePath), doc.FilePath));
             }
-
         }
 
         private static CodeGenerationTransformer LoadTransformer(Assembly assembly,DocumentEditingCodeGenerationEngine Engine)
         {
             var type=assembly.GetTypes().First(x => x.IsSubclassOf(typeof(CodeGenerationTransformer)));//TODO: Why only one transformer by assembly
             if (type is null) 
-                throw new Exception($"There is no transformer on assembly {assembly.FullName}.");
+                throw new ArgumentException($"There is no transformer on assembly {assembly.FullName}.");
             var transformer = Activator.CreateInstance(type);
             if (transformer is null)
-                throw new Exception($"Cant get instance of {type.Name}.");
+                throw new ArgumentException($"Cant get instance of {type.Name}.");
 
             CodeGenerationTransformer trans = transformer as CodeGenerationTransformer;
             trans.Engine = Engine;
@@ -62,9 +58,9 @@ namespace CodeGeneration.CSharp.Precompilation
 
         private static Assembly LoadAssembly(string path)
         {
-            var asembly = Assembly.LoadFrom(path);
+            var asembly = Assembly.Load(path);
             if (asembly is null)
-                throw new Exception($"Cant load assembly from {path}.");
+                throw new ArgumentException($"Cant load assembly from {path}.");
             return asembly;
         }
 
