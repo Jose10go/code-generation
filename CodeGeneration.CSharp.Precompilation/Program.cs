@@ -1,6 +1,7 @@
 ﻿using CodeGen.CSharp.Context.DocumentEdit;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.MSBuild;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -38,7 +39,7 @@ namespace CodeGeneration.CSharp.Precompilation
                 var text = doc.GetTextAsync().Result;//TODO: make async
                 Directory.CreateDirectory(Path.GetDirectoryName(doc.FilePath));
                 File.WriteAllText(doc.FilePath, text.ToString());
-                Console.WriteLine(Path.GetRelativePath(Path.GetDirectoryName(Engine.CurrentProject.FilePath), doc.FilePath));
+                Console.WriteLine(JsonConvert.SerializeObject(new OutputData() {Kind="Compile",FilePath=doc.FilePath,Status="Added or Updated"},Formatting.Indented));
             }
         }
 
