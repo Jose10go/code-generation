@@ -2,7 +2,7 @@
 namespace CodeGeneration.CSharp.Precompilation
 {
     [Serializable]
-    public class OutputData 
+    public class TaskData 
     {
         public string FilePath { get; set; }
         public string Status { get; set; }

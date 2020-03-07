@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
-  <UsingTask AssemblyName="$(MSBuildThisFileDirectory)netcoreapp3.0\CodeGeneration.CSharp.Precompilation.dll" 
-             TaskName="CodeGeneration.CSharp.Precompilation.PrecompilationTask"/>
+  <UsingTask AssemblyName="$(MSBuildThisFileDirectory)netcoreapp3.0\CodeGeneration.CSharp.PrecompilationTask.dll" 
+             TaskName="PrecompilationTask"/>
   <Target Name="Precompile" BeforeTargets="CoreCompile">
     <PrecompilationTask ProjectFilePath="$(MSBuildProjectFullPath)" TransformerAssemblies="@(TransformerAssemblies)">
       <Output TaskParameter="CompileFiles" ItemName="Compile"/>

@@ -77,7 +77,13 @@ namespace CodeGeneration.CSharp.Precompilation
 
         private void ParseAndAnalyzeOutput(string data)
         {
-            var output = JsonConvert.DeserializeObject<OutputData>(data);
+            var definition = new {
+                Status = "",
+                Kind = "",
+                FilePath = ""
+            };
+
+            var output = JsonConvert.DeserializeAnonymousType(data,definition);
             
             switch (output.Kind)
             {

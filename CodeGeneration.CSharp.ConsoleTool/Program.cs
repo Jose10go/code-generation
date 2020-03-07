@@ -14,7 +14,7 @@ namespace CodeGeneration.CSharp.Precompilation
     static class Program
     {
         [SuppressMessage("Major Code Smell", "S1144:Unused private types or members should be removed", Justification = "System.CommandLine.DragonFruits")]
-        static void Main(string project,string[] compiles,string[] transformers)
+        static void Main(string project,string[] transformers,bool fromMsBuild)
         {
             MSBuildLocator.RegisterDefaults();
             var workspace = MSBuildWorkspace.Create();
@@ -39,7 +39,7 @@ namespace CodeGeneration.CSharp.Precompilation
                 var text = doc.GetTextAsync().Result;//TODO: make async
                 Directory.CreateDirectory(Path.GetDirectoryName(doc.FilePath));
                 File.WriteAllText(doc.FilePath, text.ToString());
-                Console.WriteLine(JsonConvert.SerializeObject(new OutputData() {Kind="Compile",FilePath=doc.FilePath,Status="Added or Updated"},Formatting.Indented));
+                Console.WriteLine(JsonConvert.SerializeObject(new TaskData() {Kind="Compile",FilePath=doc.FilePath,Status="Added or Updated"},Formatting.Indented));
             }
         }
 
