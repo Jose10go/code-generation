@@ -5,51 +5,50 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.Linq;
 using Xunit;
 using System.IO;
-using Microsoft.CodeAnalysis.MSBuild;
 using static CodeGen.CSharp.Context.DocumentEdit.CSharpContextDocumentEditor;
-using Microsoft.Build.Locator;
+using Buildalyzer;
+using Buildalyzer.Workspaces;
 
 namespace Tests
 {
     public class UnitTest
     {
-        MSBuildWorkspace workspace;
-        string slnPath;
-        Solution solution;
-        DocumentEditingCodeGenerationEngine engine;
-        CSharpContextDocumentEditor.CSharpAutofacResolver resolver;
-        
+        readonly AdhocWorkspace workspace;
+        readonly string projectPath;
+        readonly Project project;
+        readonly DocumentEditingCodeGenerationEngine engine;
+        readonly CSharpContextDocumentEditor.CSharpAutofacResolver resolver;
+
         public UnitTest()
         {
-            var instance = MSBuildLocator.RegisterDefaults();
+            projectPath = Path.GetFullPath(Path.Combine("..", "..", "..", "Examples","Commands","Commands.csproj"));
+            AnalyzerManager manager = new AnalyzerManager();
+            ProjectAnalyzer analyzer = manager.GetProject(projectPath);
+            workspace = new AdhocWorkspace();
+            //workspace.WorkspaceFailed += (sender, args) =>
+            //                                workspace.Diagnostics.Add(args.Diagnostic);
 
-            workspace = MSBuildWorkspace.Create();
-            workspace.WorkspaceFailed += (sender, args) =>
-                                            workspace.Diagnostics.Add(args.Diagnostic);
-
-            slnPath = Path.GetFullPath(Path.Combine("..", "..", "..", "Examples"));
-            solution = workspace.OpenSolutionAsync(Path.Combine(slnPath, "Examples.sln")).Result;
+            project = analyzer.AddToWorkspace(workspace);
             resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
-            engine = new DocumentEditingCodeGenerationEngine(solution.Projects.First(),resolver);
+            engine = new DocumentEditingCodeGenerationEngine(project, resolver);
         }
 
         private SyntaxTree ParseFile(string path)
         {
             using (FileStream f = new FileStream(path, FileMode.Open))
-                using (StreamReader reader = new StreamReader(f))
-                {
-                    var text = reader.ReadToEnd();
-                    return SyntaxFactory.ParseSyntaxTree(text);
-                }
+            using (StreamReader reader = new StreamReader(f))
+            {
+                var text = reader.ReadToEnd();
+                return SyntaxFactory.ParseSyntaxTree(text);
+            }
         }
 
         [Fact]
         public void CloneClass()
         {
-            string inpath = Path.Combine(slnPath, "CloneClass", "in.cs");
-            string outpath = Path.Combine(slnPath, "CloneClass", "out.cs");
-            DocumentId document_id = solution.GetDocumentIdsWithFilePath(inpath).First();
-            Document document_in = solution.GetDocument(document_id);
+            string inpath = Path.Combine(projectPath, "CloneClass", "in.cs");
+            string outpath = Path.Combine(projectPath, "CloneClass", "out.cs");
+            Document document_in = project.Documents.First(x=>x.FilePath==inpath);
 
             engine.Select<ClassDeclarationSyntax>()
                     .Where(x => true)
@@ -58,7 +57,7 @@ namespace Tests
                             .MakePublic();
             engine.ApplyChanges();
 
-            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1); 
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));
         }
@@ -66,10 +65,9 @@ namespace Tests
         [Fact]
         public void CloneMethod()
         {
-            string inpath = Path.Combine(slnPath,"CloneMethod","in.cs");
-            string outpath = Path.Combine(slnPath,"CloneMethod","out.cs");
-            DocumentId document_id = solution.GetDocumentIdsWithFilePath(inpath).First();
-            Document document_in = solution.GetDocument(document_id);
+            string inpath = Path.Combine(projectPath, "CloneMethod", "in.cs");
+            string outpath = Path.Combine(projectPath, "CloneMethod", "out.cs");
+            Document document_in = project.Documents.First(x => x.FilePath == inpath); 
             
             engine.Select<MethodDeclarationSyntax>()
                     .Where(x => true)
@@ -77,7 +75,7 @@ namespace Tests
                             .WithNewName(m => m.Identifier.Text + "_generated")
                             .MakePublic()
                             .WithBody("{Console.WriteLine(\"hello my friend.\");}");
-                          //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever
+            //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever
             engine.ApplyChanges();
 
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
@@ -88,11 +86,10 @@ namespace Tests
         [Fact]
         public void ReplaceInvocation()
         {
-            string inpath = Path.Combine(slnPath, "ReplaceInvocation", "in.cs");
-            string outpath = Path.Combine(slnPath, "ReplaceInvocation", "out.cs");
-            DocumentId document_id = solution.GetDocumentIdsWithFilePath(inpath).First();
-            Document document_in = solution.GetDocument(document_id);
-            
+            string inpath = Path.Combine(projectPath, "ReplaceInvocation", "in.cs");
+            string outpath = Path.Combine(projectPath, "ReplaceInvocation", "out.cs");
+            Document document_in = project.Documents.First(x => x.FilePath == inpath); 
+
             engine.Select<InvocationExpressionSyntax>()
                   .Where((symbol, node) =>
                   {
