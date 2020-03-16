@@ -31,8 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CodeGeneration.Core\CodeGeneration.Core.csproj" />
-    <ProjectReference Include="..\CodeGeneration.CSharp\CodeGeneration.CSharp.csproj" />
+    <ProjectReference Include="..\..\src\CSharp\CodeGeneration.CSharp\CodeGeneration.CSharp.csproj" />
   </ItemGroup>
 
 </Project>

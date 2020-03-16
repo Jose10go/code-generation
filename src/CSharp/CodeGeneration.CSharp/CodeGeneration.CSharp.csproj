@@ -5,31 +5,25 @@
     <Version>1.0.0</Version>
     <Company />
     <Authors>Jose Diego Menendez del Cueto</Authors>
-    <Description>A precompile time transformer to allow CodeGeneration Expresions.</Description>
-    <ProductName>WithBodyTransformer</ProductName>
+    <Description>A roslyn based code generator</Description>
+    <ProductName>CodeGeneration.CSharp</ProductName>
     <Copyright>Copyright 2020 Jose Diego Menendez del Cueto</Copyright>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <BuildOutputTargetFolder>build</BuildOutputTargetFolder>
   </PropertyGroup>
-
+  
   <ItemGroup>
-    <None Remove="WithBodyTransformer.props" />
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.4.0" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <Content Include="WithBodyTransformer.props">
-      <PackagePath>build</PackagePath>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\CodeGeneration.CSharp\CodeGeneration.CSharp.csproj" />
+    <ProjectReference Include="..\..\CodeGeneration.Core\CodeGeneration.Core.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="Pack">
-    <RemoveDir Directories="$(UserProfile)\.nuget\packages\withbodytransformer" />
+    <RemoveDir Directories="$(UserProfile)\.nuget\packages\codegeneration.csharp" />
     <Copy SourceFiles="bin\$(Configuration)\$(ProductName).$(Version).nupkg" DestinationFolder=" $(UserProfile)\.nuget\codegen" />
   </Target>
-  
+
 </Project>

@@ -3,25 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration.Core", "CodeGeneration.Core\CodeGeneration.Core.csproj", "{40F2673C-7B02-4D65-B724-5C72ED4ED79A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration.Core", "src\CodeGeneration.Core\CodeGeneration.Core.csproj", "{40F2673C-7B02-4D65-B724-5C72ED4ED79A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tester", "Tester\Tester.csproj", "{B699A3E9-6ACD-400B-A729-3AA97A7701B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tester", "test\Tester\Tester.csproj", "{B699A3E9-6ACD-400B-A729-3AA97A7701B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration.CSharp", "CodeGeneration.CSharp\CodeGeneration.CSharp.csproj", "{E80A910C-4227-4DCF-8705-DB88B9B904CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration.CSharp", "src\CSharp\CodeGeneration.CSharp\CodeGeneration.CSharp.csproj", "{E80A910C-4227-4DCF-8705-DB88B9B904CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration.CSharp.PrecompilationTask", "CodeGeneration.CSharp.Precompilation\CodeGeneration.CSharp.PrecompilationTask.csproj", "{5D9DA873-0CD4-414E-87F1-403A849DC39A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration.CSharp.PrecompilationTask", "src\CSharp\CodeGeneration.CSharp.Precompilation\CodeGeneration.CSharp.PrecompilationTask.csproj", "{5D9DA873-0CD4-414E-87F1-403A849DC39A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorldTransformer", "Transformers\HelloWorldTransformer\HelloWorldTransformer.csproj", "{5B732F9F-9D4C-4895-A9F4-0B9B009C15CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorldTransformer", "src\CSharp\Transformers\Examples\HelloWorldTransformer\HelloWorldTransformer.csproj", "{5B732F9F-9D4C-4895-A9F4-0B9B009C15CE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{DB6F3D20-2A40-4493-91AC-2D3606F297AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WithBodyTransformer", "WithBodyTransformer\WithBodyTransformer.csproj", "{D1023D17-1B02-4049-B886-12438E60BD78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WithBodyTransformer", "src\CSharp\Transformers\WithBodyTransformer\WithBodyTransformer.csproj", "{D1023D17-1B02-4049-B886-12438E60BD78}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "CSharp", "{9405D120-BFEE-4CEF-A47E-BF19EF5859A1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Transformers", "Transformers", "{CFE386FF-F0E2-484B-A3EE-9A6CA287B540}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration.CSharp.Precompilation", "CodeGeneration.CSharp.ConsoleTool\CodeGeneration.CSharp.Precompilation.csproj", "{8DDC80C9-B294-4071-8612-379003F41621}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration.CSharp.Precompilation", "src\CSharp\CodeGeneration.CSharp.ConsoleTool\CodeGeneration.CSharp.Precompilation.csproj", "{8DDC80C9-B294-4071-8612-379003F41621}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B220E9AF-C150-43EF-83DC-21CB71EF8003}"
 EndProject
@@ -30,6 +30,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{9704FE0F-8DE3-4AFA-8DF2-2C68A66CD974}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{BBCFF22F-ACD6-46FA-9338-683E89F9E07A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommandTests", "test\Examples\CommandTests\CommandTests.csproj", "{6AC9D1CA-D079-4EC4-A489-D272D8072EC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +66,9 @@ Global
 		{8DDC80C9-B294-4071-8612-379003F41621}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DDC80C9-B294-4071-8612-379003F41621}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DDC80C9-B294-4071-8612-379003F41621}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AC9D1CA-D079-4EC4-A489-D272D8072EC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AC9D1CA-D079-4EC4-A489-D272D8072EC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AC9D1CA-D079-4EC4-A489-D272D8072EC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +85,7 @@ Global
 		{CFE386FF-F0E2-484B-A3EE-9A6CA287B540} = {9405D120-BFEE-4CEF-A47E-BF19EF5859A1}
 		{8DDC80C9-B294-4071-8612-379003F41621} = {9405D120-BFEE-4CEF-A47E-BF19EF5859A1}
 		{BBCFF22F-ACD6-46FA-9338-683E89F9E07A} = {B220E9AF-C150-43EF-83DC-21CB71EF8003}
+		{6AC9D1CA-D079-4EC4-A489-D272D8072EC3} = {BBCFF22F-ACD6-46FA-9338-683E89F9E07A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1CC1CDFE-F4BB-4F31-8205-236B07274925}

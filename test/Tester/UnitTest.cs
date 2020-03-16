@@ -21,7 +21,7 @@ namespace Tests
 
         public UnitTest()
         {
-            projectPath = Path.GetFullPath(Path.Combine("..", "..", "..", "Examples","Commands","Commands.csproj"));
+            projectPath = Path.GetFullPath(Path.Combine("..", "..", "..","..", "Examples","CommandTests", "CommandTests.csproj"));
             AnalyzerManager manager = new AnalyzerManager();
             ProjectAnalyzer analyzer = manager.GetProject(projectPath);
             workspace = new AdhocWorkspace();
@@ -46,8 +46,8 @@ namespace Tests
         [Fact]
         public void CloneClass()
         {
-            string inpath = Path.Combine(projectPath, "CloneClass", "in.cs");
-            string outpath = Path.Combine(projectPath, "CloneClass", "out.cs");
+            string inpath = Path.Combine(Path.GetDirectoryName(projectPath), "CloneClass", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(projectPath), "CloneClass", "out.cs");
             Document document_in = project.Documents.First(x=>x.FilePath==inpath);
 
             engine.Select<ClassDeclarationSyntax>()
@@ -65,8 +65,8 @@ namespace Tests
         [Fact]
         public void CloneMethod()
         {
-            string inpath = Path.Combine(projectPath, "CloneMethod", "in.cs");
-            string outpath = Path.Combine(projectPath, "CloneMethod", "out.cs");
+            string inpath = Path.Combine(Path.GetDirectoryName(projectPath), "CloneMethod", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(projectPath), "CloneMethod", "out.cs");
             Document document_in = project.Documents.First(x => x.FilePath == inpath); 
             
             engine.Select<MethodDeclarationSyntax>()
@@ -86,8 +86,8 @@ namespace Tests
         [Fact]
         public void ReplaceInvocation()
         {
-            string inpath = Path.Combine(projectPath, "ReplaceInvocation", "in.cs");
-            string outpath = Path.Combine(projectPath, "ReplaceInvocation", "out.cs");
+            string inpath = Path.Combine(Path.GetDirectoryName(projectPath), "ReplaceInvocation", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(projectPath), "ReplaceInvocation", "out.cs");
             Document document_in = project.Documents.First(x => x.FilePath == inpath); 
 
             engine.Select<InvocationExpressionSyntax>()
