@@ -53,9 +53,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                         var handler = Resolver.ResolveCommandHandler(cmd);
                         if (handler.ProcessDocument(documentEditor))
                         {
-                            var relativePath = Path.GetRelativePath(Path.GetDirectoryName(CurrentProject.FilePath), document.FilePath);
-                            var newPath = Path.Combine(Path.GetDirectoryName(CurrentProject.FilePath),"obj","Transformers","CSharp",relativePath);
-                            document = documentEditor.GetChangedDocument().WithFilePath(newPath);
+                            document = documentEditor.GetChangedDocument();
                             CurrentProject = document.Project;
                         }
                     }

@@ -4,10 +4,24 @@
              TaskName="CodeGeneration.CSharp.Precompilation.PrecompilationTask"/>
   <Target Name="Precompile" BeforeTargets="BeforeCompile" Condition="'$(DesignTimeBuild)' != 'true'">
     <PrecompilationTask ProjectFilePath="$(MSBuildProjectFullPath)" TransformerAssemblies="@(TransformerAssemblies)">
-      <Output TaskParameter="CompileFiles" ItemName="Compile"/>
-      <!--Output <TaskParameter="NoneFiles" ItemName="None"/>
-      <Output TaskParameter="ContentFiles" ItemName="Content"/>
-      <Output TaskParameter="EmbeddedResourceFiles" ItemName="EmbeddedResource"/>-->
+      <Output TaskParameter="AddedCompileFiles" ItemName="AddedCompile"/>
+      <Output TaskParameter="AddedNoneFiles" ItemName="AddedNone"/>
+      <Output TaskParameter="AddedContentFiles" ItemName="AddedContent"/>
+      <Output TaskParameter="AddedEmbeddedResourceFiles" ItemName="AddedEmbeddedResource"/>
+      <Output TaskParameter="RemovedCompileFiles" ItemName="RemovedCompile"/>
+      <Output TaskParameter="RemovedNoneFiles" ItemName="RemovedNone"/>
+      <Output TaskParameter="RemovedContentFiles" ItemName="RemovedContent"/>
+      <Output TaskParameter="RemovedEmbeddedResourceFiles" ItemName="RemovedEmbeddedResource"/>
     </PrecompilationTask>
+    <ItemGroup>
+      <Compile Remove="@(RemovedCompile)"/>
+      <Compile Include="@(AddedCompile)"/>
+      <None Remove="@(RemovedNone)"/>
+      <None Include="@(AddedNone)"/>
+      <Content Remove="@(RemovedContent)"/>
+      <Content Include="@(AddedContent)"/>
+      <EmbeddedResource Remove="@(RemovedEmbeddedResource)"/>
+      <EmbeddedResource Include="@(AddedEmbeddedResource)"/>
+    </ItemGroup>
   </Target>
 </Project> 

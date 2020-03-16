@@ -3,6 +3,7 @@ using Buildalyzer.Workspaces;
 using CodeGen.CSharp.Context.DocumentEdit;
 using Microsoft.CodeAnalysis;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -36,13 +37,21 @@ namespace CodeGeneration.CSharp.Precompilation
                 transformer.Transform();
             }
             var changes = Engine.CurrentProject.GetChanges(Project);
-            foreach (var docId in changes.GetAddedDocuments().Union(changes.GetChangedDocuments(true)))
+            Procces(Engine,project,changes.GetAddedDocuments(), "Added");
+            Procces(Engine,project,changes.GetChangedDocuments(), "Updated");
+        }
+
+        private static void Procces(DocumentEditingCodeGenerationEngine engine, string project, IEnumerable<DocumentId> docs, string status)
+        {
+            foreach (var docId in docs)
             {
-                var doc = Engine.CurrentProject.GetDocument(docId);
+                var doc = engine.CurrentProject.GetDocument(docId);
                 var text = doc.GetTextAsync().Result;//TODO: make async
-                Directory.CreateDirectory(Path.GetDirectoryName(doc.FilePath));
-                File.WriteAllText(doc.FilePath, text.ToString());
-                Console.WriteLine(new TaskData() { Kind = "Compile", FilePath = doc.FilePath, Status = "Added or Updated" });
+                var relativePath = Path.GetRelativePath(Path.GetDirectoryName(project), doc.FilePath);
+                var newPath = Path.Combine(Path.GetDirectoryName(project), "obj", "Transformers", "CSharp", relativePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(newPath));
+                File.WriteAllText(newPath, text.ToString());
+                Console.WriteLine(new TaskData() { Kind = "Compile", FilePath = relativePath, Status = status });
             }
         }
 

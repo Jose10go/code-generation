@@ -11,10 +11,14 @@ namespace CodeGeneration.CSharp.Precompilation
 {
     public class PrecompilationTask : Task
     {
-        private readonly List<ITaskItem> _noneFiles = new List<ITaskItem>();
-        private readonly List<ITaskItem> _compileFiles = new List<ITaskItem>();
-        private readonly List<ITaskItem> _contentFiles = new List<ITaskItem>();
-        private readonly List<ITaskItem> _embeddedResourceFiles = new List<ITaskItem>();
+        private readonly List<ITaskItem> _addedNoneFiles = new List<ITaskItem>();
+        private readonly List<ITaskItem> _addedCompileFiles = new List<ITaskItem>();
+        private readonly List<ITaskItem> _addedContentFiles = new List<ITaskItem>();
+        private readonly List<ITaskItem> _addedEmbeddedResourceFiles = new List<ITaskItem>();
+        private readonly List<ITaskItem> _removedNoneFiles = new List<ITaskItem>();
+        private readonly List<ITaskItem> _removedCompileFiles = new List<ITaskItem>();
+        private readonly List<ITaskItem> _removedContentFiles = new List<ITaskItem>();
+        private readonly List<ITaskItem> _removedEmbeddedResourceFiles = new List<ITaskItem>();
 
         [Required]
         public string ProjectFilePath { get; set; }
@@ -23,16 +27,28 @@ namespace CodeGeneration.CSharp.Precompilation
         public ITaskItem[] TransformerAssemblies { get; set; }
 
         [Output]
-        public ITaskItem[] NoneFiles => _noneFiles.ToArray();
+        public ITaskItem[] AddedNoneFiles => _addedNoneFiles.ToArray();
 
         [Output]
-        public ITaskItem[] CompileFiles => _compileFiles.ToArray();
+        public ITaskItem[] AddedCompileFiles => _addedCompileFiles.ToArray();
 
         [Output]
-        public ITaskItem[] ContentFiles => _contentFiles.ToArray();
+        public ITaskItem[] AddedContentFiles => _addedContentFiles.ToArray();
 
         [Output]
-        public ITaskItem[] EmbeddedResourceFiles => _embeddedResourceFiles.ToArray();
+        public ITaskItem[] AddedEmbeddedResourceFiles => _addedEmbeddedResourceFiles.ToArray();
+
+        [Output]
+        public ITaskItem[] RemovedNoneFiles => _removedNoneFiles.ToArray();
+
+        [Output]
+        public ITaskItem[] RemovedCompileFiles => _removedCompileFiles.ToArray();
+
+        [Output]
+        public ITaskItem[] RemovedContentFiles => _removedContentFiles.ToArray();
+
+        [Output]
+        public ITaskItem[] RemovedEmbeddedResourceFiles => _removedEmbeddedResourceFiles.ToArray();
 
         public override bool Execute()
         {
@@ -84,7 +100,7 @@ namespace CodeGeneration.CSharp.Precompilation
             var error_str = error.ToString();
             if(!string.IsNullOrEmpty(error_str))
                 Log.LogError(error_str);
-            ParseAndAnalyzeOutput(output.ToString());
+            ParseAndAnalyzeOutputs(output.ToString());
 
             if (process.ExitCode == 0)
                 Log.LogMessage("Finished script evaluation");
@@ -93,7 +109,7 @@ namespace CodeGeneration.CSharp.Precompilation
             return process.ExitCode == 0;
         }
 
-        private void ParseAndAnalyzeOutput(string data)
+        private void ParseAndAnalyzeOutputs(string data)
         {
             var outputs = data.Split(new[] {Environment.NewLine},StringSplitOptions.None)
                               .Select(x=>TaskData.FromString(x));
@@ -101,22 +117,34 @@ namespace CodeGeneration.CSharp.Precompilation
                 switch (output.Kind)
                 {
                     case "Compile":
-                        this._compileFiles.Add(new TaskItem(output.FilePath));
-                            break;
+                        ParseAndAnalyzeOutput(this._addedCompileFiles,this._removedCompileFiles, output);
+                        break;
                     case "None":
-                        this._noneFiles.Add(new TaskItem(output.FilePath));
+                        ParseAndAnalyzeOutput(this._addedNoneFiles,this._removedNoneFiles, output);
                         break;
                     case "Content":
-                        this._contentFiles.Add(new TaskItem(output.FilePath));
+                        ParseAndAnalyzeOutput(this._addedContentFiles,this._removedContentFiles, output);
                         break;
                     case "EmbeddedResource":
-                        this._embeddedResourceFiles.Add(new TaskItem(output.FilePath));
+                        ParseAndAnalyzeOutput(this._addedEmbeddedResourceFiles,this._removedEmbeddedResourceFiles, output);
                         break;
                     default:
                         Log.LogWarning($"Invalid output Kind on {data}");
                         break;
                 }
             }
+
+        private void ParseAndAnalyzeOutput(List<ITaskItem> list,List<ITaskItem> removeList, TaskData taskdata) 
+        {
+            if (taskdata.Status == "Updated") 
+            {
+                Log.LogMessage($"Removing {taskdata.FilePath} from {taskdata.Kind}.");
+                removeList.Add(new TaskItem(taskdata.FilePath));
+            }
+            var newPath = Path.Combine("obj", "Transformers", "CSharp", taskdata.FilePath);
+            Log.LogMessage($"Adding {newPath} to {taskdata.Kind}.");
+            list.Add(new TaskItem(newPath));
+        }
 
     }
 
