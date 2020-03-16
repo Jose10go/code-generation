@@ -1,7 +1,7 @@
-﻿using CodeGen.CSharp.Context.DocumentEdit;
-using Microsoft.Build.Locator;
-using Microsoft.CodeAnalysis.MSBuild;
-using Newtonsoft.Json;
+﻿using Buildalyzer;
+using Buildalyzer.Workspaces;
+using CodeGen.CSharp.Context.DocumentEdit;
+using Microsoft.CodeAnalysis;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -14,16 +14,19 @@ namespace CodeGeneration.CSharp.Precompilation
     static class Program
     {
         [SuppressMessage("Major Code Smell", "S1144:Unused private types or members should be removed", Justification = "System.CommandLine.DragonFruits")]
-        static void Main(string project,string[] transformers,bool fromMsBuild)
+        static void Main(string project,string[] transformers)
         {
-            MSBuildLocator.RegisterDefaults();
-            var workspace = MSBuildWorkspace.Create();
-            workspace.WorkspaceFailed += (sender, args) =>
-                                                workspace.Diagnostics.Add(args.Diagnostic);
+            AnalyzerManager manager = new AnalyzerManager();
+            ProjectAnalyzer analyzer = manager.GetProject(project);
+            AdhocWorkspace workspace = new AdhocWorkspace();
 
-            var Project = workspace.OpenProjectAsync(project).Result;
+            //workspace.WorkspaceFailed += (sender, args) => throw new Exception("Aleluya");
+            //TODO:should be loading project references???
+
+            var Project = analyzer.AddToWorkspace(workspace);
             if (Project is null)
                 throw new ArgumentException($"Project is null. ({project})");
+
             var resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
             var Engine = new DocumentEditingCodeGenerationEngine(Project,resolver);
             foreach (var item in transformers)
@@ -39,7 +42,7 @@ namespace CodeGeneration.CSharp.Precompilation
                 var text = doc.GetTextAsync().Result;//TODO: make async
                 Directory.CreateDirectory(Path.GetDirectoryName(doc.FilePath));
                 File.WriteAllText(doc.FilePath, text.ToString());
-                Console.WriteLine(JsonConvert.SerializeObject(new TaskData() {Kind="Compile",FilePath=doc.FilePath,Status="Added or Updated"},Formatting.Indented));
+                Console.WriteLine(new TaskData() { Kind = "Compile", FilePath = doc.FilePath, Status = "Added or Updated" });
             }
         }
 
@@ -59,7 +62,7 @@ namespace CodeGeneration.CSharp.Precompilation
 
         private static Assembly LoadAssembly(string path)
         {
-            var asembly = Assembly.Load(path);
+            var asembly = Assembly.LoadFrom(path);
             if (asembly is null)
                 throw new ArgumentException($"Cant load assembly from {path}.");
             return asembly;

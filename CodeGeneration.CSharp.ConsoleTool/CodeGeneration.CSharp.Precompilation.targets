@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
-  <UsingTask AssemblyName="$(MSBuildThisFileDirectory)netcoreapp3.0\CodeGeneration.CSharp.PrecompilationTask.dll" 
-             TaskName="PrecompilationTask"/>
-  <Target Name="Precompile" BeforeTargets="CoreCompile">
+  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)netcoreapp3.0\CodeGeneration.CSharp.PrecompilationTask.dll" 
+             TaskName="CodeGeneration.CSharp.Precompilation.PrecompilationTask"/>
+  <Target Name="Precompile" BeforeTargets="BeforeCompile" Condition="'$(DesignTimeBuild)' != 'true'">
     <PrecompilationTask ProjectFilePath="$(MSBuildProjectFullPath)" TransformerAssemblies="@(TransformerAssemblies)">
       <Output TaskParameter="CompileFiles" ItemName="Compile"/>
-      <!--<Output TaskParameter="NoneFiles" ItemName="None"/>
+      <!--Output <TaskParameter="NoneFiles" ItemName="None"/>
       <Output TaskParameter="ContentFiles" ItemName="Content"/>
       <Output TaskParameter="EmbeddedResourceFiles" ItemName="EmbeddedResource"/>-->
     </PrecompilationTask>
