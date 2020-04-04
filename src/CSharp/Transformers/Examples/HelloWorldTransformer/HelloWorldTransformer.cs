@@ -8,17 +8,16 @@ namespace HelloWorldTransformer
         public override void Transform()
         {
             Engine.SelectNew("Program.cs")
-                  .Execute<CSharpContextDocumentEditor.ICreateNamespace>()
-                    .WithName("HelloWorld")
-                    .Execute<CSharpContextDocumentEditor.ICreateClass>()
-                      .WithName("Program")
-                      .MakeStatic()
-                      .Execute<CSharpContextDocumentEditor.ICreateMethod>()
-                        .WithName("Main")
-                        .MakeStatic()
-                        .WithBody((dynamic @this) => { Console.WriteLine("Hello World!!!"); });
+                  .Execute<CSharpContextDocumentEditor.ICreateNamespace>(
+                    cmd => cmd.WithName("HelloWorld"))
+                  .Execute<CSharpContextDocumentEditor.ICreateClass>(
+                    cmd => cmd.WithName("Program")
+                            .MakeStatic())
+                  .Execute<CSharpContextDocumentEditor.ICreateMethod>(
+                    cmd => cmd.WithName("Main")
+                            .MakeStatic()
+                            .WithBody((dynamic @this) => { Console.WriteLine("Hello World!!!"); }));
             
-            Engine.ApplyChanges();
         }
     }
 }

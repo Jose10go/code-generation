@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using CodeGen.Attributes;
 using CodeGen.Context;
+using CodeGen.Core;
 using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -40,12 +41,11 @@ namespace CodeGen.CSharp.Context
                 return _container.Resolve<TCommandBuilder>();
             }
 
-            public ICommandHandler ResolveCommandHandler(Core.ICommand commandBuilder)
+            public ICommandHandler<TCommand,TSyntaxNode> ResolveCommandHandler<TCommand, TSyntaxNode>(TCommand commandBuilder)
+                where TCommand : ICommand<TSyntaxNode>
+                where TSyntaxNode : CSharpSyntaxNode
             {
-                var cmdtype = commandBuilder.GetType();
-                var abstractcommand = cmdtype.GetInterfaces().FirstOrDefault(i => i.IsAssignableTo<Core.ICommand>());
-                var handlertype = typeof(ICommandHandler<>).MakeGenericType(new[] { typeof(Project), typeof(CSharpSyntaxNode),typeof(CompilationUnitSyntax),typeof(ISymbol), typeof(TProcessEntity), abstractcommand });
-                return (ICommandHandler)_container.Resolve(handlertype, new[] { new PositionalParameter(0, commandBuilder) });
+                return (ICommandHandler<TCommand, TSyntaxNode>)_container.Resolve(typeof(ICommandHandler<TCommand, TSyntaxNode>), new[] { new PositionalParameter(0, commandBuilder) });
             }
             
             protected void DoAutomaticRegister(ContainerBuilder builder)

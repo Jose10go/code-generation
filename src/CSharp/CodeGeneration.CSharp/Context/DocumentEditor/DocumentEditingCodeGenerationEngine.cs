@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -13,71 +14,85 @@ namespace CodeGen.CSharp.Context.DocumentEdit
         public class DocumentEditingCodeGenerationEngine : ICodeGenerationEngine
         {
             private readonly ICodeGenerationResolver Resolver;
-            private readonly List<ICommand> CommandsToApply;
             public Project CurrentProject { get; private set; }
             
             public DocumentEditingCodeGenerationEngine(Project project,ICodeGenerationResolver resolver)
             {
-                CommandsToApply = new List<ICommand>();
                 CurrentProject=project;
                 Resolver = resolver;
                 Resolver.RegisterEngine(this);
                 Resolver.BuildContainer();
             }
 
-            public TCommandBuilder Execute<TCommandBuilder,TNode>(ITarget<TNode> target)
-                where TCommandBuilder : ICommand<TNode>
+            public TCommand Execute<TCommand,TNode>(ITarget<TNode> target,Func<TCommand, TCommand> commandModifiers)
+                where TCommand : ICommand<TNode>
                 where TNode : CSharpSyntaxNode
             {
-                var command = Resolver.ResolveCommandBuilder<TCommandBuilder, TNode>();
-                command.Target = (Target<TNode>)target;
-                this.CommandsToApply.Add(command);
+                var command = Resolver.ResolveCommandBuilder<TCommand, TNode>();
+                command.Target = target;
+                command = commandModifiers(command);
+                ApplyChanges(command,command.Target);
                 return command;
             }
 
-            public void ApplyChanges()
+            private void ApplyChanges<TCommand,TNode>(TCommand command,ITarget<TNode> target)
+                where TCommand : ICommand<TNode>
+                where TNode : CSharpSyntaxNode
             {
-                foreach (var documentid in CurrentProject.DocumentIds)
+                var handler = Resolver.ResolveCommandHandler<TCommand,TNode>(command);
+                if (target is ISingleTarget<TNode>) 
                 {
-                    var document = CurrentProject.GetDocument(documentid);
+                    var singleTarget = target as ISingleTarget<TNode>;
+                    var documentId = CurrentProject.GetDocumentId(singleTarget.Node.SyntaxTree);
+                    var document = CurrentProject.GetDocument(documentId);
                     var documentEditor = DocumentEditor.CreateAsync(document).Result;////TODO: make async???
-                    foreach (var cmd in CommandsToApply)
-                    {
-                        var handler = Resolver.ResolveCommandHandler(cmd);
-                        if (handler.ProcessDocument(documentEditor))
-                        {
-                            document = documentEditor.GetChangedDocument();
-                            CurrentProject = document.Project;
-                        }
-                    }
+                    handler.ProccessNode(singleTarget.Node, documentEditor);
+                    document = documentEditor.GetChangedDocument();
+                    CurrentProject = document.Project;
+                    return;
                 }
+
+                Dictionary<DocumentId,DocumentEditor> memoized=new Dictionary<DocumentId, DocumentEditor>();
+                foreach (var singleTarget in target as Target<TNode>)
+                {
+                    var documentId = CurrentProject.GetDocumentId(singleTarget.Node.SyntaxTree);
+                    var document = CurrentProject.GetDocument(documentId);
+                    DocumentEditor documentEditor;
+                    if (!memoized.ContainsKey(documentId))
+                        memoized.Add(documentId, DocumentEditor.CreateAsync(document).Result);////TODO: make async???
+                    documentEditor = memoized[documentId];
+                    handler.ProccessNode(singleTarget.Node, documentEditor);
+                }
+
+                foreach (var item in memoized)
+                    CurrentProject = item.Value.GetChangedDocument().Project;
             }
 
-            public ITarget<CompilationUnitSyntax> SelectNew(string path)
+            public Target<CompilationUnitSyntax> SelectNew(string path)
             {
                 var filename=Path.GetFileName(path);
                 var annotation = new SyntaxAnnotation();
                 var compilationUnit = SyntaxFactory.CompilationUnit().WithAdditionalAnnotations(annotation);
                 CurrentProject = CurrentProject.AddDocument(filename,compilationUnit, filePath: "path").Project;
-                ITarget<CompilationUnitSyntax> result = new CSharpTarget<CompilationUnitSyntax>(this);
-                result.Where(x => x.HasAnnotation(annotation));
+                var result = new CSharpTarget<CompilationUnitSyntax>(this);
+                result.Where(x => x.Node.HasAnnotation(annotation));
                 return result;
             }
 
-            public ITarget<TSyntaxNode> Select<TSyntaxNode>()
+            public Target<TSyntaxNode> Select<TSyntaxNode>()
                 where TSyntaxNode : CSharpSyntaxNode
             {
                 return new CSharpTarget<TSyntaxNode>(this);
             }
 
-            public ITarget<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1>()
+            public Target<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1>()
                 where TSyntaxNode0 : CSharpSyntaxNode
                 where TSyntaxNode1 : CSharpSyntaxNode
             {
                 return new CSharpTarget<TSyntaxNode0, TSyntaxNode1>(this);
             }
 
-            public ITarget<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>()
+            public Target<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>()
                 where TSyntaxNode0 : CSharpSyntaxNode
                 where TSyntaxNode1 : CSharpSyntaxNode
                 where TSyntaxNode2 : CSharpSyntaxNode

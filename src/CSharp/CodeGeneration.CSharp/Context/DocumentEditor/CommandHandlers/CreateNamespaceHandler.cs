@@ -15,7 +15,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
             {
             }
 
-            public override void ProccesNode(CompilationUnitSyntax node, DocumentEditor documentEditor)
+            public override void ProccessNode(CompilationUnitSyntax node, DocumentEditor documentEditor)
             {
                 documentEditor.InsertMembers(node,0,
                                                 new[]{SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(Command.Name))});

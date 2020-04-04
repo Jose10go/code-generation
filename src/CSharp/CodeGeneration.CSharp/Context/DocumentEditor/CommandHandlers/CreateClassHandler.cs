@@ -15,7 +15,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
             {
             }
 
-            public override void ProccesNode(NamespaceDeclarationSyntax node, DocumentEditor documentEditor)
+            public override void ProccessNode(NamespaceDeclarationSyntax node, DocumentEditor documentEditor)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)

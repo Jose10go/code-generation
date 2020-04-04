@@ -51,11 +51,10 @@ namespace Tests
             Document document_in = project.Documents.First(x=>x.FilePath==inpath);
 
             engine.Select<ClassDeclarationSyntax>()
-                    .Where(x => true)
-                        .Execute<CSharpContextDocumentEditor.IClassClone>()
-                            .WithNewName(m => m.Identifier.Text + "_generated")
-                            .MakePublic();
-            engine.ApplyChanges();
+                    .Where(x => x.DocumentPath == inpath)
+                        .Execute<CSharpContextDocumentEditor.IClassClone>(
+                            cmd=>cmd.WithNewName(m => m.Identifier.Text + "_generated")
+                                    .MakePublic());
 
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
@@ -70,13 +69,14 @@ namespace Tests
             Document document_in = project.Documents.First(x => x.FilePath == inpath); 
             
             engine.Select<MethodDeclarationSyntax>()
-                    .Where(x => true)
-                        .Execute<CSharpContextDocumentEditor.IMethodClone>()
-                            .WithNewName(m => m.Identifier.Text + "_generated")
-                            .MakePublic()
-                            .WithBody("{Console.WriteLine(\"hello my friend.\");}");
-            //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever
-            engine.ApplyChanges();
+                    .Where(x => x.DocumentPath==inpath)
+                        .Execute<CSharpContextDocumentEditor.IMethodClone>(
+                            cmd=>cmd.WithNewName(m => m.Identifier.Text + "_generated")
+                                    .MakePublic()
+                                    .WithBody("{Console.WriteLine(\"hello my friend.\");}"));
+
+            //This Comment is preserved to mark the moment :)
+            //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever...
 
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
@@ -91,21 +91,20 @@ namespace Tests
             Document document_in = project.Documents.First(x => x.FilePath == inpath); 
 
             engine.Select<InvocationExpressionSyntax>()
-                  .Where((symbol, node) =>
+                  .Where(x => x.DocumentPath == inpath)
+                  .Where(target =>
                   {
-                      var s = (IMethodSymbol)symbol;
+                      var s = (IMethodSymbol)target.SemanticSymbol;
                       if (s is null)
                           return false;
-                      return s.Name == "f" && symbol.ContainingType.Name == "A";
+                      return s.Name == "f" && s.ContainingType.Name == "A";
                   })
-                  .Execute<CSharpContextDocumentEditor.IReplaceInvocation>()
-                  .WithNewArgument(0, (x) =>
-                  {
-                      var lambda = x.ArgumentList.Arguments[0].Expression as ParenthesizedLambdaExpressionSyntax;
-                      var bodycode = SyntaxFactory.Literal(lambda.Body.ToString().Replace("@this", "this"));
-                      return SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, bodycode));
-                  });
-            engine.ApplyChanges();
+                  .Execute<CSharpContextDocumentEditor.IReplaceInvocation>( cmd=> cmd.WithNewArgument(0, (x) =>
+                    {
+                        var lambda = x.ArgumentList.Arguments[0].Expression as ParenthesizedLambdaExpressionSyntax;
+                        var bodycode = SyntaxFactory.Literal(lambda.Body.ToString().Replace("@this", "this"));
+                        return SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, bodycode));
+                    }));
 
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);

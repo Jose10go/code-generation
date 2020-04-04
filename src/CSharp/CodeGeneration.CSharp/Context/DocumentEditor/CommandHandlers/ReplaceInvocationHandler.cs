@@ -13,7 +13,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
             {
             }
 
-            public override void ProccesNode(InvocationExpressionSyntax node, DocumentEditor documentEditor)
+            public override void ProccessNode(InvocationExpressionSyntax node, DocumentEditor documentEditor)
             {
                 foreach (var (gen, pos) in Command.NewArguments) 
                 {

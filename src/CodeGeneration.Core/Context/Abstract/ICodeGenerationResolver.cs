@@ -1,6 +1,4 @@
-﻿using CodeGen.Core;
-
-namespace CodeGen.Context
+﻿namespace CodeGen.Context
 {
     public abstract partial class CodeGenContext<TProject, TBaseNode, TRootNode, TSemanticModel, TProcessEntity>
         where TRootNode:TBaseNode
@@ -12,7 +10,9 @@ namespace CodeGen.Context
             TCommandBuilder ResolveCommandBuilder<TCommandBuilder,TSyntaxNode>()
                 where TCommandBuilder :ICommand<TSyntaxNode>
                 where TSyntaxNode:TBaseNode;
-            ICommandHandler ResolveCommandHandler(ICommand commandBuilder);
+            ICommandHandler<TCommand, TSyntaxNode> ResolveCommandHandler<TCommand,TSyntaxNode>(TCommand commandBuilder)
+                where TCommand :ICommand<TSyntaxNode>
+                where TSyntaxNode:TBaseNode;
         }
     }
 }

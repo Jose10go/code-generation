@@ -33,7 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{BB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommandTests", "test\Examples\CommandTests\CommandTests.csproj", "{6AC9D1CA-D079-4EC4-A489-D272D8072EC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyDecoTransformer", "src\CSharp\Transformers\FancyDecoTransformer\FancyDecoTransformer.csproj", "{FC091100-6A36-437F-ABBF-5DD5CB44B0BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyDecoTransformer", "src\CSharp\Transformers\FancyDecoTransformer\FancyDecoTransformer.csproj", "{FC091100-6A36-437F-ABBF-5DD5CB44B0BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,7 +72,6 @@ Global
 		{6AC9D1CA-D079-4EC4-A489-D272D8072EC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AC9D1CA-D079-4EC4-A489-D272D8072EC3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FC091100-6A36-437F-ABBF-5DD5CB44B0BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FC091100-6A36-437F-ABBF-5DD5CB44B0BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC091100-6A36-437F-ABBF-5DD5CB44B0BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC091100-6A36-437F-ABBF-5DD5CB44B0BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

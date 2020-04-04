@@ -29,6 +29,10 @@
     <PackageReference Include="WithBodyTransformer" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CodeGeneration.CSharp\CodeGeneration.CSharp.csproj" />
+  </ItemGroup>
+
 
   <Target Name="PostBuild" AfterTargets="Pack">
     <RemoveDir Directories="$(UserProfile)\.nuget\packages\helloworldtransformer" />

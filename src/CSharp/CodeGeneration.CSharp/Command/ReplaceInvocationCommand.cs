@@ -18,7 +18,7 @@ namespace CodeGen.CSharp.Context
         [Command]
         public class ReplaceInvocationCommand : CSharpTarget<InvocationExpressionSyntax>, IReplaceInvocation
         {
-            public Target<InvocationExpressionSyntax> Target { get ; set ; }
+            public ITarget<InvocationExpressionSyntax> Target { get ; set ; }
             public IList<(Func<InvocationExpressionSyntax, ArgumentSyntax>, int)> NewArguments { get ; set ; }
 
             public ReplaceInvocationCommand(ICodeGenerationEngine engine):base(engine)

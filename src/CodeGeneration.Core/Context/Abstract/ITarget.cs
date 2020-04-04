@@ -1,6 +1,5 @@
 ﻿using CodeGen.Core;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 namespace CodeGen.Context
 {
@@ -10,57 +9,75 @@ namespace CodeGen.Context
         public interface ITarget<TNode> : ITarget
             where TNode:TBaseNode
         {
-            Func<TSemanticModel, TNode, bool> WhereSelector { get; set; }
-            ICodeGenerationEngine CodeGenerationEngine { get; set; }
+            ICodeGenerationEngine CodeGenerationEngine { get;}
 
-            public ITarget<TNode> Where(Func<TSemanticModel, TNode, bool> filter)
-            {
-                if (WhereSelector == null)
-                    this.WhereSelector = filter;
-                else 
-                {
-                    var previous = this.WhereSelector;
-                    this.WhereSelector = (model,node) => previous(model,node) && filter(model,node);
-                }
-                return this;
-            }
-
-            public ITarget<TNode> Where(Func<TNode, bool> filter)
-            {
-                if(WhereSelector == null)
-                    this.WhereSelector = (model, node) => filter(node);
-                else
-                {
-                    var previous = this.WhereSelector;
-                    this.WhereSelector = (model, node) => previous(model, node) && filter(node);
-                }
-                return this;
-            }
-
-            TCommand Execute<TCommand>()
+            TCommand Execute<TCommand>(Func<TCommand,TCommand> commandModifiers)
                 where TCommand : ICommand<TNode>;
             
+        }
+
+        public interface ISingleTarget<TNode> : ITarget<TNode> 
+            where TNode:TBaseNode
+        {
+            public TNode Node { get; }
+            public TSemanticModel SemanticSymbol { get; }
+            public string DocumentPath { get; }
+        }
+
+        public abstract class SingleTarget<TNode> : ISingleTarget<TNode>
+            where TNode:TBaseNode
+        {
+            protected SingleTarget(ICodeGenerationEngine engine,TNode node)
+            {
+                this.CodeGenerationEngine = engine;
+                this.Node = node;
+            }
+            public ICodeGenerationEngine CodeGenerationEngine { get;}
+            public TNode Node { get; }
+            public abstract TSemanticModel SemanticSymbol { get; }
+            public abstract string DocumentPath { get; }
+
+            public TCommand Execute<TCommand>(Func<TCommand, TCommand> commandModifiers)
+                where TCommand : ICommand<TNode>
+            {
+                return CodeGenerationEngine.Execute(this,commandModifiers);
+            }
         }
 
         public abstract class Target<TNode> : ITarget<TNode>
             where TNode:TBaseNode
         {
-            public Func<TSemanticModel, TNode, bool> WhereSelector { get ; set ; }
+            public Func<SingleTarget<TNode>, bool> WhereSelector { get ; set ; }
             public ICodeGenerationEngine CodeGenerationEngine { get; set; }
 
             protected Target(ICodeGenerationEngine engine)
             {
                 this.CodeGenerationEngine = engine;
-                (this as ITarget<TNode>).Where((semantic,node) =>true);
+                this.Where(singleTarget =>true);
             }
 
-            public TCommand Execute<TCommand>() where TCommand : ICommand<TNode>
+            public TCommand Execute<TCommand>(Func<TCommand, TCommand> commandModifiers)
+                where TCommand : ICommand<TNode>
             {
-                return CodeGenerationEngine.Execute<TCommand, TNode>(this);
+                return CodeGenerationEngine.Execute(this,commandModifiers);
             }
 
-            public abstract IEnumerator<TNode> GetEnumerator();
+            public Target<TNode> Where(Func<SingleTarget<TNode>,bool> filter)
+            {
+                if (WhereSelector == null)
+                    WhereSelector = filter;
+                else
+                {
+                    var previous = this.WhereSelector;
+                    WhereSelector = (single) => previous(single) && filter(single);
+                }
+                return this;
+            }
 
+            //Not need to implement IEnumerable to use in a foreach statement.
+            //Only need to have a public GetEnumeratorMethod().
+            //Wich allows to avoid the unwanted use of linq in Targets
+            public abstract IEnumerator<ISingleTarget<TNode>> GetEnumerator();
         }
     }
 }

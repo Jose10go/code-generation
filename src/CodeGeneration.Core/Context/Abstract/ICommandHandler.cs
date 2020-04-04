@@ -5,15 +5,12 @@ namespace CodeGen.Context
     public abstract partial class CodeGenContext<TProject, TBaseNode,TRootNode,TSemanticModel, TProcessEntity> 
         where TRootNode:TBaseNode
     {
-        public interface ICommandHandler : Core.ICommandHandler
-        {
-            bool ProcessDocument(TProcessEntity processEntity);
-        }
-
         //keyInterface
-        public interface ICommandHandler<TCommand> : ICommandHandler
-            where TCommand:ICommand
+        public interface ICommandHandler<TCommand,TSyntaxNode> : ICommandHandler
+            where TCommand :ICommand<TSyntaxNode>
+            where TSyntaxNode : TBaseNode
         {
+            void ProccessNode(TSyntaxNode node, TProcessEntity documentEditor);
         }
     }
 }

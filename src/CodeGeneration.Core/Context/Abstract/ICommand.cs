@@ -7,7 +7,7 @@ namespace CodeGen.Context
         public interface ICommand<TExecuteOnNode> : Core.ICommand
             where TExecuteOnNode : TBaseNode
         {
-            Target<TExecuteOnNode> Target { get; set; }
+            ITarget<TExecuteOnNode> Target { get; set; }
         }
 
         public interface ICommand<TExecuteOnNode, TAllowExecuteOnNode> : ICommand<TExecuteOnNode>, ITarget<TAllowExecuteOnNode>

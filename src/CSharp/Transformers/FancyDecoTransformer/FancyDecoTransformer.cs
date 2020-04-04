@@ -11,11 +11,16 @@ namespace FancyDecoTransformer
         public override void Transform()
         {
             var decorators = Engine.Select<ClassDeclarationSyntax>()
-                                   .Where((s, x) => IsFancyDecorator(s, x))
-                                   .Execute<CSharpContextDocumentEditor.ICreateMethod>()
-                                   .ForEach;
+                                   .Where(target => IsFancyDecorator(target.SemanticSymbol, target.Node));
 
-            Engine.ApplyChanges();
+            foreach (var decorator in decorators)
+            {
+                var x = 5;
+                for (int i = 0; i < x; i++)
+                    decorator.Execute<CSharpContextDocumentEditor.ICreateMethod>(cmd=>cmd);
+            }
+             
+
         }
 
         [A]
