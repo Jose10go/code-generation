@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CodeGen.Context;
 using Microsoft.CodeAnalysis;
@@ -15,12 +14,29 @@ namespace CodeGen.CSharp.Context
             public CSharpTarget(ICodeGenerationEngine engine) : base(engine)
             {
             }
-            public override IEnumerable<TSyntaxNode> Select(CSharpSyntaxNode root,Func<TSyntaxNode,ISymbol> semanticModelSelector)
+
+            public override IEnumerator<TSyntaxNode> GetEnumerator()
+            {
+                var project = this.CodeGenerationEngine.CurrentProject;
+                var result = Enumerable.Empty<TSyntaxNode>();
+                foreach (var documentid in project.DocumentIds)
+                {
+                    var document = project.GetDocument(documentid);
+                    var root = document.GetSyntaxRootAsync().Result as CSharpSyntaxNode;
+                    var semanticModel = document.GetSemanticModelAsync().Result;
+                    result = result.Concat(SelectedNodes(root, semanticModel));
+                }
+
+                return  result.GetEnumerator();
+            }
+
+            virtual protected IEnumerable<TSyntaxNode> SelectedNodes(CSharpSyntaxNode root,SemanticModel semanticModel) 
             {
                 return root.DescendantNodes()
-                           .OfType<TSyntaxNode>()
-                           .Where(x=>WhereSelector(semanticModelSelector(x),x));
+                                   .OfType<TSyntaxNode>()
+                                   .Where(x => WhereSelector(semanticModel.GetSymbolInfo(x).Symbol, x));
             }
+
         }
 
         public class CSharpTarget<TSyntaxNode0,TSyntaxNode1> : CSharpTarget<TSyntaxNode0> 
@@ -31,14 +47,11 @@ namespace CodeGen.CSharp.Context
             {
             }
 
-            public override IEnumerable<TSyntaxNode0> Select(CSharpSyntaxNode root, Func<TSyntaxNode0, ISymbol> semanticModelSelector)
+            protected override IEnumerable<TSyntaxNode0> SelectedNodes(CSharpSyntaxNode root, SemanticModel semanticModel)
             {
                 return root.DescendantNodes()
                            .OfType<TSyntaxNode1>()//TODO: here parent filter
-                           .SelectMany(
-                                parent => parent.DescendantNodes()
-                                                .OfType<TSyntaxNode0>()
-                                                .Where(x => WhereSelector(semanticModelSelector(x), x)));
+                           .SelectMany(parent=>base.SelectedNodes(parent,semanticModel));
             }
         }
 
@@ -51,17 +64,11 @@ namespace CodeGen.CSharp.Context
             {
             }
 
-            public override IEnumerable<TSyntaxNode0> Select(CSharpSyntaxNode root, Func<TSyntaxNode0, ISymbol> semanticModelSelector)
+            protected override IEnumerable<TSyntaxNode0> SelectedNodes(CSharpSyntaxNode root, SemanticModel semanticModel)
             {
                 return root.DescendantNodes()
                            .OfType<TSyntaxNode2>()//TODO: here grand parent filter
-                           .SelectMany(
-                                grandparent => grandparent.DescendantNodes()
-                                                          .OfType<TSyntaxNode1>()
-                                                          .SelectMany(
-                                                             parent => parent.DescendantNodes()//TODO: here parent filter
-                                                                             .OfType<TSyntaxNode0>()
-                                                                             .Where(x => WhereSelector(semanticModelSelector(x), x))));
+                           .SelectMany(grandparent => base.SelectedNodes(grandparent,semanticModel));
             }
         }
     }

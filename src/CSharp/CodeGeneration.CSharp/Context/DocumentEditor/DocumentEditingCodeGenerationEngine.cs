@@ -25,13 +25,6 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 Resolver.BuildContainer();
             }
 
-            public ITarget<TSyntaxNode> Select<TSyntaxNode>()
-                where TSyntaxNode:CSharpSyntaxNode
-            {
-                var result = new CSharpTarget<TSyntaxNode>(this);
-                return result;
-            }
-
             public TCommandBuilder Execute<TCommandBuilder,TNode>(ITarget<TNode> target)
                 where TCommandBuilder : ICommand<TNode>
                 where TNode : CSharpSyntaxNode
@@ -71,6 +64,26 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 return result;
             }
 
+            public ITarget<TSyntaxNode> Select<TSyntaxNode>()
+                where TSyntaxNode : CSharpSyntaxNode
+            {
+                return new CSharpTarget<TSyntaxNode>(this);
+            }
+
+            public ITarget<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1>()
+                where TSyntaxNode0 : CSharpSyntaxNode
+                where TSyntaxNode1 : CSharpSyntaxNode
+            {
+                return new CSharpTarget<TSyntaxNode0, TSyntaxNode1>(this);
+            }
+
+            public ITarget<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>()
+                where TSyntaxNode0 : CSharpSyntaxNode
+                where TSyntaxNode1 : CSharpSyntaxNode
+                where TSyntaxNode2 : CSharpSyntaxNode
+            {
+                return new CSharpTarget<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>(this);
+            }
         }
     }
 }

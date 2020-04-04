@@ -1,7 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Editing;
-using System.Linq;
 
 namespace CodeGen.CSharp.Context.DocumentEdit
 {
@@ -19,14 +17,17 @@ namespace CodeGen.CSharp.Context.DocumentEdit
 
             public bool ProcessDocument(DocumentEditor processEntity)
             {
-                var syntaxTreeroot= (CSharpSyntaxNode)processEntity.GetChangedRoot();
-                var semantic=processEntity.SemanticModel;
-                var nodes = Command.Target.Select(syntaxTreeroot,(node)=>semantic.GetSymbolInfo(node).Symbol);
-                if (nodes.FirstOrDefault() is null)
-                    return false;
-                foreach (var item in nodes)
-                    ProccesNode(item,processEntity);
-                return true;
+                bool hasAny = false;
+                //Not need to implement IEnumerable to use in a foreach statement.
+                //Only need to have a public GetEnumeratorMethod().
+                //Wich allows to avoid the unwanted use of linq in Targets
+                foreach (var item in Command.Target)
+                {
+                    hasAny = true;
+                    ProccesNode(item, processEntity);
+                }
+
+                return hasAny;
             }
 
             public abstract void ProccesNode(TSyntaxNode node,DocumentEditor documentEditor);

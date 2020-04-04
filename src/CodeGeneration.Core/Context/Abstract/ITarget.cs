@@ -1,12 +1,13 @@
 ﻿using CodeGen.Core;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 namespace CodeGen.Context
 {
     public abstract partial class CodeGenContext<TProject, TBaseNode,TRootNode,TSemanticModel,TProcessEntity> 
         where TRootNode:TBaseNode
     {
-        public interface ITarget<TNode> : ITarget 
+        public interface ITarget<TNode> : ITarget
             where TNode:TBaseNode
         {
             Func<TSemanticModel, TNode, bool> WhereSelector { get; set; }
@@ -53,12 +54,13 @@ namespace CodeGen.Context
                 (this as ITarget<TNode>).Where((semantic,node) =>true);
             }
 
-            public abstract IEnumerable<TNode> Select(TBaseNode root, Func<TNode, TSemanticModel> semanticModelSelector);
-
             public TCommand Execute<TCommand>() where TCommand : ICommand<TNode>
             {
                 return CodeGenerationEngine.Execute<TCommand, TNode>(this);
             }
+
+            public abstract IEnumerator<TNode> GetEnumerator();
+
         }
     }
 }
