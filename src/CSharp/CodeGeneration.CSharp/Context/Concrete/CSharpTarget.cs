@@ -17,7 +17,51 @@ namespace CodeGen.CSharp.Context
             }
             public override IEnumerable<TSyntaxNode> Select(CSharpSyntaxNode root,Func<TSyntaxNode,ISymbol> semanticModelSelector)
             {
-                return root.DescendantNodes().OfType<TSyntaxNode>().Where(x=>WhereSelector(semanticModelSelector(x),x));
+                return root.DescendantNodes()
+                           .OfType<TSyntaxNode>()
+                           .Where(x=>WhereSelector(semanticModelSelector(x),x));
+            }
+        }
+
+        public class CSharpTarget<TSyntaxNode0,TSyntaxNode1> : CSharpTarget<TSyntaxNode0> 
+            where TSyntaxNode0 : CSharpSyntaxNode
+            where TSyntaxNode1 : CSharpSyntaxNode
+        {
+            public CSharpTarget(ICodeGenerationEngine engine) : base(engine)
+            {
+            }
+
+            public override IEnumerable<TSyntaxNode0> Select(CSharpSyntaxNode root, Func<TSyntaxNode0, ISymbol> semanticModelSelector)
+            {
+                return root.DescendantNodes()
+                           .OfType<TSyntaxNode1>()//TODO: here parent filter
+                           .SelectMany(
+                                parent => parent.DescendantNodes()
+                                                .OfType<TSyntaxNode0>()
+                                                .Where(x => WhereSelector(semanticModelSelector(x), x)));
+            }
+        }
+
+        public class CSharpTarget<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2> : CSharpTarget<TSyntaxNode0,TSyntaxNode1>
+            where TSyntaxNode0 : CSharpSyntaxNode
+            where TSyntaxNode1 : CSharpSyntaxNode
+            where TSyntaxNode2 : CSharpSyntaxNode
+        {
+            public CSharpTarget(ICodeGenerationEngine engine) : base(engine)
+            {
+            }
+
+            public override IEnumerable<TSyntaxNode0> Select(CSharpSyntaxNode root, Func<TSyntaxNode0, ISymbol> semanticModelSelector)
+            {
+                return root.DescendantNodes()
+                           .OfType<TSyntaxNode2>()//TODO: here grand parent filter
+                           .SelectMany(
+                                grandparent => grandparent.DescendantNodes()
+                                                          .OfType<TSyntaxNode1>()
+                                                          .SelectMany(
+                                                             parent => parent.DescendantNodes()//TODO: here parent filter
+                                                                             .OfType<TSyntaxNode0>()
+                                                                             .Where(x => WhereSelector(semanticModelSelector(x), x))));
             }
         }
     }

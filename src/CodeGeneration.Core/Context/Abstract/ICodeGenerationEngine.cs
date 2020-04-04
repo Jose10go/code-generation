@@ -7,7 +7,15 @@
         {
             TProject CurrentProject { get; }
 
-            ITarget<TSyntaxNode> Select<TSyntaxNode>() where TSyntaxNode : TBaseNode;
+            ITarget<TSyntaxNode> Select<TSyntaxNode>() 
+                where TSyntaxNode : TBaseNode;
+            ITarget<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1>() 
+                where TSyntaxNode0 : TBaseNode
+                where TSyntaxNode1 : TBaseNode;
+            ITarget<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2>()
+                where TSyntaxNode0 : TBaseNode
+                where TSyntaxNode1 : TBaseNode
+                where TSyntaxNode2 : TBaseNode;
 
             ITarget<TRootNode> SelectNew(string path);
 
