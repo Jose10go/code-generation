@@ -20,7 +20,7 @@ namespace CodeGen.CSharp.Context
         }
 
         [Command]
-        public class CreateMethodCommand : CSharpTarget<MethodDeclarationSyntax>, ICreateMethod
+        public class CreateMethodCommand : CSharpMultipleTarget<MethodDeclarationSyntax>, ICreateMethod
         {
             public CreateMethodCommand(ICodeGenerationEngine engine):base(engine)
             {

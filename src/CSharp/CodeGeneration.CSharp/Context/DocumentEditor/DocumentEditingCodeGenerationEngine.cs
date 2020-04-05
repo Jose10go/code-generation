@@ -53,7 +53,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 }
 
                 Dictionary<DocumentId,DocumentEditor> memoized=new Dictionary<DocumentId, DocumentEditor>();
-                foreach (var singleTarget in target as Target<TNode>)
+                foreach (var singleTarget in target as CSharpMultipleTarget<TNode>)
                 {
                     var documentId = CurrentProject.GetDocumentId(singleTarget.Node.SyntaxTree);
                     var document = CurrentProject.GetDocument(documentId);
@@ -68,36 +68,36 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                     CurrentProject = item.Value.GetChangedDocument().Project;
             }
 
-            public Target<CompilationUnitSyntax> SelectNew(string path)
+            public CSharpSingleTarget<CompilationUnitSyntax> SelectNew(string path)
             {
                 var filename=Path.GetFileName(path);
-                var annotation = new SyntaxAnnotation();
-                var compilationUnit = SyntaxFactory.CompilationUnit().WithAdditionalAnnotations(annotation);
-                CurrentProject = CurrentProject.AddDocument(filename,compilationUnit, filePath: "path").Project;
-                var result = new CSharpTarget<CompilationUnitSyntax>(this);
-                result.Where(x => x.Node.HasAnnotation(annotation));
+                var compilationUnit = SyntaxFactory.CompilationUnit();
+                var document = CurrentProject.AddDocument(filename, compilationUnit, filePath: path);
+                var semanticModel = document.GetSemanticModelAsync().Result;
+                CurrentProject = document.Project;
+                var result = new CSharpSingleTarget<CompilationUnitSyntax>(this,semanticModel,compilationUnit);
                 return result;
             }
 
-            public Target<TSyntaxNode> Select<TSyntaxNode>()
+            public CSharpMultipleTarget<TSyntaxNode> Select<TSyntaxNode>()
                 where TSyntaxNode : CSharpSyntaxNode
             {
-                return new CSharpTarget<TSyntaxNode>(this);
+                return new CSharpMultipleTarget<TSyntaxNode>(this);
             }
 
-            public Target<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1>()
+            public CSharpMultipleTarget<TSyntaxNode0, TSyntaxNode1> Select<TSyntaxNode0,TSyntaxNode1>()
                 where TSyntaxNode0 : CSharpSyntaxNode
                 where TSyntaxNode1 : CSharpSyntaxNode
             {
-                return new CSharpTarget<TSyntaxNode0, TSyntaxNode1>(this);
+                return new CSharpMultipleTarget<TSyntaxNode0, TSyntaxNode1>(this);
             }
 
-            public Target<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>()
+            public CSharpMultipleTarget<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2> Select<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>()
                 where TSyntaxNode0 : CSharpSyntaxNode
                 where TSyntaxNode1 : CSharpSyntaxNode
                 where TSyntaxNode2 : CSharpSyntaxNode
             {
-                return new CSharpTarget<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>(this);
+                return new CSharpMultipleTarget<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>(this);
             }
         }
     }

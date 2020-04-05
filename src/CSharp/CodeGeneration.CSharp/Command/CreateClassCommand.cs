@@ -19,7 +19,7 @@ namespace CodeGen.CSharp.Context
         }
 
         [Command]
-        public class CreateClassCommand : CSharpTarget<ClassDeclarationSyntax>, ICreateClass
+        public class CreateClassCommand : CSharpMultipleTarget<ClassDeclarationSyntax>, ICreateClass
         {
             public CreateClassCommand(ICodeGenerationEngine engine):base(engine)
             {

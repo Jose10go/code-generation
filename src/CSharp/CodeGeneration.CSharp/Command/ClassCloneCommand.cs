@@ -20,7 +20,7 @@ namespace CodeGen.CSharp.Context
         }
 
         [Command]
-        public class ClassCloneCommand : CSharpTarget<ClassDeclarationSyntax>,IClassClone
+        public class ClassCloneCommand : CSharpMultipleTarget<ClassDeclarationSyntax>,IClassClone
         {
             public ClassCloneCommand(ICodeGenerationEngine engine):base(engine)
             {

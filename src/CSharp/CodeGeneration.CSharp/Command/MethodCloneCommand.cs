@@ -21,7 +21,7 @@ namespace CodeGen.CSharp.Context
         }
 
         [Command]
-        public class MethodCloneCommand : CSharpTarget<MethodDeclarationSyntax>, IMethodClone
+        public class MethodCloneCommand : CSharpMultipleTarget<MethodDeclarationSyntax>, IMethodClone
         {
             public Func<MethodDeclarationSyntax, string> NewName { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
