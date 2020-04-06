@@ -8,15 +8,15 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode,CompilationUnitSyntax, ISymbol, TProcessEntity>
     {
         [CommandModifier]
-        public interface IAbstract<TCommandBuilder,TNode>
-            where TCommandBuilder:Core.ICommand
+        public interface IAbstract<TCommand,TNode>
+            where TCommand:Core.ICommand
             where TNode:CSharpSyntaxNode                    
         {
             SyntaxToken Abstract { get; set; }
-            TCommandBuilder MakeAbstract() 
+            TCommand MakeAbstract() 
             {
                 SyntaxFactory.Token(SyntaxKind.AbstractKeyword);
-                return (TCommandBuilder)this;
+                return (TCommand)this;
             }
         }
     }

@@ -9,13 +9,13 @@ namespace CodeGen.CSharp.Context.DocumentEdit
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         [CommandHandler]
-        public class CreateMethodCommandHandler : CommandHandler<ICreateMethod,ClassDeclarationSyntax>
+        public class CreateMethodCommandHandler : CommandHandler<ICreateMethod,ClassDeclarationSyntax,MethodDeclarationSyntax>
         {
             public CreateMethodCommandHandler(ICreateMethod command) :base(command)
             {
             }
 
-            public override void ProccessNode(ClassDeclarationSyntax node, DocumentEditor documentEditor)
+            public override SingleTarget<MethodDeclarationSyntax> ProccessNode(SingleTarget<ClassDeclarationSyntax> target, DocumentEditor documentEditor,ICodeGenerationEngine engine)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -26,11 +26,13 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                     modifiers = modifiers.Add(Command.Static);
                 if (Command.Partial != default)
                     modifiers = modifiers.Add(Command.Partial);
-                documentEditor.InsertMembers(node,0,
-                                             new[]{ SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName("void"),Command.Name)
-                                                                 .WithAttributeLists(Command.Attributes)
-                                                                 .WithBody(Command.Body)
-                                                                 .WithModifiers(modifiers)});
+                var method = SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName("void"), Command.Name)
+                                          .WithAttributeLists(Command.Attributes)
+                                          .WithBody(Command.Body)
+                                          .WithModifiers(modifiers);
+
+                documentEditor.InsertMembers(target.Node,0,new[]{method});
+                return new CSharpSingleTarget<MethodDeclarationSyntax>(engine,documentEditor.SemanticModel,method);
             }
         }
     }

@@ -4,17 +4,27 @@ namespace CodeGen.CSharp.Context.DocumentEdit
 {
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
-        public abstract class CommandHandler<TCommandBuilder,TSyntaxNode> : ICommandHandler<TCommandBuilder,TSyntaxNode>
-            where TCommandBuilder : ICommand<TSyntaxNode>
+        public abstract class CommandHandler<TCommand,TSyntaxNode, TOutput> : ICommandHandler<TCommand,TSyntaxNode,TOutput>
+            where TCommand : ICommand<TSyntaxNode,TOutput>
             where TSyntaxNode : CSharpSyntaxNode
+            where TOutput : CSharpSyntaxNode
         {
-            public TCommandBuilder Command { get; }
-            protected CommandHandler(ICommand<TSyntaxNode> command)
+            public TCommand Command { get; }
+            protected CommandHandler(ICommand<TSyntaxNode,TOutput> command)
             {
-                this.Command = (TCommandBuilder)command;
+                this.Command = (TCommand)command;
             }
 
-            public abstract void ProccessNode(TSyntaxNode node,DocumentEditor documentEditor);
+            public abstract SingleTarget<TOutput> ProccessNode(SingleTarget<TSyntaxNode> target,DocumentEditor documentEditor,ICodeGenerationEngine engine);
+        }
+
+        public abstract class CommandHandler<TCommand, TNode> : CommandHandler<TCommand, TNode, TNode>
+            where TCommand : ICommand<TNode, TNode>
+            where TNode : CSharpSyntaxNode
+        {
+            protected CommandHandler(ICommand<TNode,TNode> command):base(command)
+            {
+            }
         }
     }
 }

@@ -13,62 +13,18 @@ namespace CodeGen.CSharp.Context.DocumentEdit
     {
         public class DocumentEditingCodeGenerationEngine : ICodeGenerationEngine
         {
-            private readonly ICodeGenerationResolver Resolver;
+            public ICodeGenerationResolver CodeGenerationResolver { get; }
             public Project CurrentProject { get; private set; }
             
             public DocumentEditingCodeGenerationEngine(Project project,ICodeGenerationResolver resolver)
             {
                 CurrentProject=project;
-                Resolver = resolver;
-                Resolver.RegisterEngine(this);
-                Resolver.BuildContainer();
+                CodeGenerationResolver = resolver;
+                CodeGenerationResolver.RegisterEngine(this);
+                CodeGenerationResolver.BuildContainer();
             }
 
-            public TCommand Execute<TCommand,TNode>(ITarget<TNode> target,Func<TCommand, TCommand> commandModifiers)
-                where TCommand : ICommand<TNode>
-                where TNode : CSharpSyntaxNode
-            {
-                var command = Resolver.ResolveCommandBuilder<TCommand, TNode>();
-                command.Target = target;
-                command = commandModifiers(command);
-                ApplyChanges(command,command.Target);
-                return command;
-            }
-
-            private void ApplyChanges<TCommand,TNode>(TCommand command,ITarget<TNode> target)
-                where TCommand : ICommand<TNode>
-                where TNode : CSharpSyntaxNode
-            {
-                var handler = Resolver.ResolveCommandHandler<TCommand,TNode>(command);
-                if (target is ISingleTarget<TNode>) 
-                {
-                    var singleTarget = target as ISingleTarget<TNode>;
-                    var documentId = CurrentProject.GetDocumentId(singleTarget.Node.SyntaxTree);
-                    var document = CurrentProject.GetDocument(documentId);
-                    var documentEditor = DocumentEditor.CreateAsync(document).Result;////TODO: make async???
-                    handler.ProccessNode(singleTarget.Node, documentEditor);
-                    document = documentEditor.GetChangedDocument();
-                    CurrentProject = document.Project;
-                    return;
-                }
-
-                Dictionary<DocumentId,DocumentEditor> memoized=new Dictionary<DocumentId, DocumentEditor>();
-                foreach (var singleTarget in target as CSharpMultipleTarget<TNode>)
-                {
-                    var documentId = CurrentProject.GetDocumentId(singleTarget.Node.SyntaxTree);
-                    var document = CurrentProject.GetDocument(documentId);
-                    DocumentEditor documentEditor;
-                    if (!memoized.ContainsKey(documentId))
-                        memoized.Add(documentId, DocumentEditor.CreateAsync(document).Result);////TODO: make async???
-                    documentEditor = memoized[documentId];
-                    handler.ProccessNode(singleTarget.Node, documentEditor);
-                }
-
-                foreach (var item in memoized)
-                    CurrentProject = item.Value.GetChangedDocument().Project;
-            }
-
-            public CSharpSingleTarget<CompilationUnitSyntax> SelectNew(string path)
+            public SingleTarget<CompilationUnitSyntax> SelectNew(string path)
             {
                 var filename=Path.GetFileName(path);
                 var compilationUnit = SyntaxFactory.CompilationUnit();
@@ -79,26 +35,38 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 return result;
             }
 
-            public CSharpMultipleTarget<TSyntaxNode> Select<TSyntaxNode>()
+            public MultipleTarget<TSyntaxNode> Select<TSyntaxNode>()
                 where TSyntaxNode : CSharpSyntaxNode
             {
                 return new CSharpMultipleTarget<TSyntaxNode>(this);
             }
 
-            public CSharpMultipleTarget<TSyntaxNode0, TSyntaxNode1> Select<TSyntaxNode0,TSyntaxNode1>()
+            public MultipleTarget<TSyntaxNode0, TSyntaxNode1> Select<TSyntaxNode0,TSyntaxNode1>()
                 where TSyntaxNode0 : CSharpSyntaxNode
                 where TSyntaxNode1 : CSharpSyntaxNode
             {
                 return new CSharpMultipleTarget<TSyntaxNode0, TSyntaxNode1>(this);
             }
 
-            public CSharpMultipleTarget<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2> Select<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>()
+            public MultipleTarget<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2> Select<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>()
                 where TSyntaxNode0 : CSharpSyntaxNode
                 where TSyntaxNode1 : CSharpSyntaxNode
                 where TSyntaxNode2 : CSharpSyntaxNode
             {
                 return new CSharpMultipleTarget<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>(this);
             }
+
+            public void UpdateProject(DocumentEditor processEntity)
+            {
+                this.CurrentProject = processEntity.GetChangedDocument().Project;
+            }
+
+            public DocumentEditor GetProccesEntity<TNode>(SingleTarget<TNode> target) where TNode : CSharpSyntaxNode
+            {
+                var document = CurrentProject.GetDocument(target.Node.SyntaxTree);
+                return DocumentEditor.CreateAsync(document).Result;////TODO: make async???
+            }
+        
         }
     }
 }

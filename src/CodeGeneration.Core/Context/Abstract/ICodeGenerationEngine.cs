@@ -8,21 +8,23 @@ namespace CodeGen.Context
         public interface ICodeGenerationEngine:Core.ICodeGenerationEngine
         {
             TProject CurrentProject { get; }
-
-            Target<TSyntaxNode> Select<TSyntaxNode>() 
+            ICodeGenerationResolver CodeGenerationResolver { get; }
+            //TODO: extract to a new interface
+            MultipleTarget<TSyntaxNode> Select<TSyntaxNode>()
                 where TSyntaxNode : TBaseNode;
-            Target<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1>() 
+            MultipleTarget<TSyntaxNode0,TSyntaxNode1> Select<TSyntaxNode0, TSyntaxNode1>()
                 where TSyntaxNode0 : TBaseNode
                 where TSyntaxNode1 : TBaseNode;
-            Target<TSyntaxNode0> Select<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2>()
+            MultipleTarget<TSyntaxNode0,TSyntaxNode1,TSyntaxNode2> Select<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>()
                 where TSyntaxNode0 : TBaseNode
                 where TSyntaxNode1 : TBaseNode
                 where TSyntaxNode2 : TBaseNode;
 
-            Target<TRootNode> SelectNew(string path);
+            SingleTarget<TRootNode> SelectNew(string path);
 
-            TCommand Execute<TCommand, TNode>(ITarget<TNode> target, Func<TCommand, TCommand> commandModifiers)
-                where TCommand : ICommand<TNode>
+            void UpdateProject(TProcessEntity processEntity);
+
+            TProcessEntity GetProccesEntity<TNode>(SingleTarget<TNode> target)
                 where TNode : TBaseNode;
         }
     }

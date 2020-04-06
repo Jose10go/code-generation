@@ -14,9 +14,9 @@ namespace CodeGen.CSharp.Context
         }
 
         [Command]
-        public class CreateNamespaceCommand : CSharpMultipleTarget<NamespaceDeclarationSyntax>, ICreateNamespace
+        public class CreateNamespaceCommand : ICreateNamespace
         {
-            public CreateNamespaceCommand(ICodeGenerationEngine engine):base(engine)
+            public CreateNamespaceCommand():base()
             {
             }
 

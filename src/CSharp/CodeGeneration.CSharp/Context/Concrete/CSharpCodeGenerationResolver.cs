@@ -34,18 +34,20 @@ namespace CodeGen.CSharp.Context
                 _container = builder.Build();
             }
 
-            public TCommandBuilder ResolveCommandBuilder<TCommandBuilder, TSyntaxNode>()
-                where TCommandBuilder : ICommand<TSyntaxNode>
+            public TCommandBuilder ResolveCommandBuilder<TCommandBuilder,TSyntaxNode,TOutput>()
+                where TCommandBuilder : ICommand<TSyntaxNode, TOutput>
                 where TSyntaxNode : CSharpSyntaxNode
+                where TOutput : CSharpSyntaxNode
             {
                 return _container.Resolve<TCommandBuilder>();
             }
 
-            public ICommandHandler<TCommand,TSyntaxNode> ResolveCommandHandler<TCommand, TSyntaxNode>(TCommand commandBuilder)
-                where TCommand : ICommand<TSyntaxNode>
+            public ICommandHandler<TCommand,TSyntaxNode, TOutput> ResolveCommandHandler<TCommand,TSyntaxNode,TOutput>(TCommand commandBuilder)
+                where TCommand : ICommand<TSyntaxNode, TOutput>
                 where TSyntaxNode : CSharpSyntaxNode
+                where TOutput : CSharpSyntaxNode
             {
-                return (ICommandHandler<TCommand, TSyntaxNode>)_container.Resolve(typeof(ICommandHandler<TCommand, TSyntaxNode>), new[] { new PositionalParameter(0, commandBuilder) });
+                return (ICommandHandler<TCommand,TSyntaxNode,TOutput>)_container.Resolve(typeof(ICommandHandler<TCommand, TSyntaxNode, TOutput>), new[] { new PositionalParameter(0, commandBuilder) });
             }
             
             protected void DoAutomaticRegister(ContainerBuilder builder)

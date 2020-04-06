@@ -9,13 +9,13 @@ namespace CodeGen.CSharp.Context.DocumentEdit
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         [CommandHandler]
-        public class CreateClassCommandHandler :CommandHandler<ICreateClass,NamespaceDeclarationSyntax> 
+        public class CreateClassCommandHandler :CommandHandler<ICreateClass,NamespaceDeclarationSyntax,ClassDeclarationSyntax> 
         {
             public CreateClassCommandHandler(ICreateClass command) : base(command)
             {
             }
 
-            public override void ProccessNode(NamespaceDeclarationSyntax node, DocumentEditor documentEditor)
+            public override SingleTarget<ClassDeclarationSyntax> ProccessNode(SingleTarget<NamespaceDeclarationSyntax> target, DocumentEditor documentEditor,ICodeGenerationEngine engine)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -26,10 +26,11 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                     modifiers = modifiers.Add(Command.Static);
                 if (Command.Partial != default)
                     modifiers = modifiers.Add(Command.Partial);
-                documentEditor.InsertMembers(node,0,
-                                                new[]{SyntaxFactory.ClassDeclaration(Command.Name)
-                                                   .WithAttributeLists(Command.Attributes)
-                                                   .WithModifiers(modifiers) });
+                var classNode = SyntaxFactory.ClassDeclaration(Command.Name)
+                                             .WithAttributeLists(Command.Attributes)
+                                             .WithModifiers(modifiers);
+                documentEditor.InsertMembers(target.Node,0,new[]{classNode});
+                return new CSharpSingleTarget<ClassDeclarationSyntax>(engine,documentEditor.SemanticModel,classNode);
             }
         }
     }

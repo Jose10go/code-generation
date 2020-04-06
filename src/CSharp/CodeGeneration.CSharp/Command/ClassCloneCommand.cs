@@ -9,20 +9,20 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol, TProcessEntity>
     {
-        public interface IClassClone : ICommand<ClassDeclarationSyntax, ClassDeclarationSyntax>,
+        public interface IClassClone : ICommand<ClassDeclarationSyntax,ClassDeclarationSyntax>,
                                        IWithNewName<IClassClone, ClassDeclarationSyntax>,
                                        IWithAttribute<IClassClone, ClassDeclarationSyntax>,
                                        IWithAccessModifier<IClassClone,ClassDeclarationSyntax>,
-                                       IAbstract<IMethodClone, ClassDeclarationSyntax>,
-                                       IStatic<IMethodClone, ClassDeclarationSyntax>,
-                                       IPartial<IMethodClone, ClassDeclarationSyntax>
+                                       IAbstract<IClassClone, ClassDeclarationSyntax>,
+                                       IStatic<IClassClone, ClassDeclarationSyntax>,
+                                       IPartial<IClassClone, ClassDeclarationSyntax>
         {
         }
 
         [Command]
-        public class ClassCloneCommand : CSharpMultipleTarget<ClassDeclarationSyntax>,IClassClone
+        public class ClassCloneCommand : IClassClone
         {
-            public ClassCloneCommand(ICodeGenerationEngine engine):base(engine)
+            public ClassCloneCommand():base()
             {
             }
 

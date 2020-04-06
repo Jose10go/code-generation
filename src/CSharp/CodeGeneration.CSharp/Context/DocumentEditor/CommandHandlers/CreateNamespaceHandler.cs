@@ -1,5 +1,4 @@
 ﻿using CodeGen.Attributes;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
@@ -9,16 +8,17 @@ namespace CodeGen.CSharp.Context.DocumentEdit
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         [CommandHandler]
-        public class CreateNamespaceCommandHandler :CommandHandler<ICreateNamespace,CompilationUnitSyntax> 
+        public class CreateNamespaceCommandHandler :CommandHandler<ICreateNamespace,CompilationUnitSyntax,NamespaceDeclarationSyntax> 
         {
             public CreateNamespaceCommandHandler(ICreateNamespace command) : base(command)
             {
             }
 
-            public override void ProccessNode(CompilationUnitSyntax node, DocumentEditor documentEditor)
+            public override SingleTarget<NamespaceDeclarationSyntax> ProccessNode(SingleTarget<CompilationUnitSyntax> target, DocumentEditor documentEditor,ICodeGenerationEngine engine)
             {
-                documentEditor.InsertMembers(node,0,
-                                                new[]{SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(Command.Name))});
+                var namespaceNode=SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(Command.Name));
+                documentEditor.InsertMembers(target.Node,0,new[]{namespaceNode});
+                return new CSharpSingleTarget<NamespaceDeclarationSyntax>(engine,documentEditor.SemanticModel,namespaceNode);
             }
         }
     }

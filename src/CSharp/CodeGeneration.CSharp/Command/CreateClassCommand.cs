@@ -8,7 +8,7 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol, TProcessEntity>
     {
-        public interface ICreateClass : ICommand<NamespaceDeclarationSyntax,ClassDeclarationSyntax>,
+        public interface ICreateClass: ICommand<NamespaceDeclarationSyntax, ClassDeclarationSyntax>,
                                        IWithName<ICreateClass>,
                                        IWithAttribute<ICreateClass, ClassDeclarationSyntax>,
                                        IWithAccessModifier<ICreateClass, ClassDeclarationSyntax>,
@@ -19,9 +19,9 @@ namespace CodeGen.CSharp.Context
         }
 
         [Command]
-        public class CreateClassCommand : CSharpMultipleTarget<ClassDeclarationSyntax>, ICreateClass
+        public class CreateClassCommand : ICreateClass
         {
-            public CreateClassCommand(ICodeGenerationEngine engine):base(engine)
+            public CreateClassCommand():base()
             {
             }
 

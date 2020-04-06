@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CodeGen.Context;
 using Microsoft.CodeAnalysis;
@@ -10,19 +9,17 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode,CompilationUnitSyntax,ISymbol, TProcessEntity>
     {
-        public abstract class CSharpMultipleTargeter<MultipleTarger, SingleTarget, TNode> : MultipleTargeter<MultipleTarger, SingleTarget, TNode> 
-            where MultipleTarger : ITarget<TNode>
-            where SingleTarget : ISingleTarget<TNode>
-            where TNode : CSharpSyntaxNode
+        public sealed class CSharpMultipleTarget<TSyntaxNode> : MultipleTarget<TSyntaxNode> 
+            where TSyntaxNode : CSharpSyntaxNode
         {
-            protected CSharpMultipleTargeter(ICodeGenerationEngine engine) : base(engine)
+            public CSharpMultipleTarget(ICodeGenerationEngine engine) : base(engine)
             {
             }
 
-            public override IEnumerator<SingleTarget> GetEnumerator()
+            public override IEnumerator<SingleTarget<TSyntaxNode>> GetEnumerator()
             {
                 var project = this.CodeGenerationEngine.CurrentProject;
-                var result = Enumerable.Empty<SingleTarget>();
+                var result = Enumerable.Empty<SingleTarget<TSyntaxNode>>();
                 foreach (var documentid in project.DocumentIds)
                 {
                     var document = project.GetDocument(documentid);
@@ -35,18 +32,7 @@ namespace CodeGen.CSharp.Context
                 return result.GetEnumerator();
             }
 
-            protected abstract IEnumerable<SingleTarget> SelectedNodes(CSharpSyntaxNode root, SemanticModel semanticModel);
-            
-        }
-        
-        public class CSharpMultipleTarget<TSyntaxNode> : CSharpMultipleTargeter<CSharpMultipleTarget<TSyntaxNode>,ISingleTarget<TSyntaxNode>,TSyntaxNode> 
-            where TSyntaxNode : CSharpSyntaxNode
-        {
-            public CSharpMultipleTarget(ICodeGenerationEngine engine) : base(engine)
-            {
-            }
-
-            protected override IEnumerable<ISingleTarget<TSyntaxNode>> SelectedNodes(CSharpSyntaxNode root, SemanticModel semanticModel)
+            private IEnumerable<SingleTarget<TSyntaxNode>> SelectedNodes(CSharpSyntaxNode root, SemanticModel semanticModel)
             {
                 return root.DescendantNodes()
                                    .OfType<TSyntaxNode>()
@@ -55,15 +41,31 @@ namespace CodeGen.CSharp.Context
             }
         }
 
-        public class CSharpMultipleTarget<TSyntaxNode0,TSyntaxNode1> : CSharpMultipleTargeter<CSharpMultipleTarget<TSyntaxNode0,TSyntaxNode1>, ISingleTarget<TSyntaxNode0,TSyntaxNode1>, TSyntaxNode0>
+        public sealed class CSharpMultipleTarget<TSyntaxNode0,TSyntaxNode1> : MultipleTarget<TSyntaxNode0,TSyntaxNode1>
             where TSyntaxNode0 : CSharpSyntaxNode
             where TSyntaxNode1 : CSharpSyntaxNode
         {
             public CSharpMultipleTarget(ICodeGenerationEngine engine) : base(engine)
             {
             }
-           
-            protected override IEnumerable<ISingleTarget<TSyntaxNode0,TSyntaxNode1>> SelectedNodes(CSharpSyntaxNode root,SemanticModel semanticModel)
+
+            public override IEnumerator<SingleTarget<TSyntaxNode0,TSyntaxNode1>> GetEnumerator()
+            {
+                var project = this.CodeGenerationEngine.CurrentProject;
+                var result = Enumerable.Empty<SingleTarget<TSyntaxNode0,TSyntaxNode1>>();
+                foreach (var documentid in project.DocumentIds)
+                {
+                    var document = project.GetDocument(documentid);
+                    var root = document.GetSyntaxRootAsync().Result as CSharpSyntaxNode;
+                    var semanticModel = document.GetSemanticModelAsync().Result;
+                    var nodes = SelectedNodes(root, semanticModel);
+                    result = result.Concat(nodes);
+                }
+
+                return result.GetEnumerator();
+            }
+
+            private IEnumerable<SingleTarget<TSyntaxNode0,TSyntaxNode1>> SelectedNodes(CSharpSyntaxNode root,SemanticModel semanticModel)
             {
                 return root.DescendantNodes()
                            .OfType<TSyntaxNode1>()
@@ -74,7 +76,7 @@ namespace CodeGen.CSharp.Context
             }
         }
 
-        public class CSharpMultipleTarget<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2> : CSharpMultipleTargeter<CSharpMultipleTarget<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2>, ISingleTarget<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2>, TSyntaxNode0>
+        public sealed class CSharpMultipleTarget<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2> : MultipleTarget<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2>
             where TSyntaxNode0 : CSharpSyntaxNode
             where TSyntaxNode1 : CSharpSyntaxNode
             where TSyntaxNode2 : CSharpSyntaxNode
@@ -84,7 +86,24 @@ namespace CodeGen.CSharp.Context
             {
             }
 
-            protected override IEnumerable<ISingleTarget<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>> SelectedNodes(CSharpSyntaxNode root, SemanticModel semanticModel)
+            public override IEnumerator<SingleTarget<TSyntaxNode0,TSyntaxNode1,TSyntaxNode2>> GetEnumerator()
+            {
+                var project = this.CodeGenerationEngine.CurrentProject;
+                var result = Enumerable.Empty<SingleTarget<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>>();
+                foreach (var documentid in project.DocumentIds)
+                {
+                    var document = project.GetDocument(documentid);
+                    var root = document.GetSyntaxRootAsync().Result as CSharpSyntaxNode;
+                    var semanticModel = document.GetSemanticModelAsync().Result;
+                    var nodes = SelectedNodes(root, semanticModel);
+                    result = result.Concat(nodes);
+                }
+
+                return result.GetEnumerator();
+            }
+
+
+            private IEnumerable<SingleTarget<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>> SelectedNodes(CSharpSyntaxNode root, SemanticModel semanticModel)
             {
                 return root.DescendantNodes()
                            .OfType<TSyntaxNode2>()
@@ -165,7 +184,7 @@ namespace CodeGen.CSharp.Context
         {
             public override ISymbol SemanticSymbol { get; }
             public override string DocumentPath { get; }
-            public override ISingleTarget<TSyntaxNode1> Parent { get; }
+            public override SingleTarget<TSyntaxNode1> Parent { get; }
 
             public CSharpSingleTarget(ICodeGenerationEngine engine, SemanticModel semanticModel, TSyntaxNode0 node0, TSyntaxNode1 node1) : base(engine,node0)
             {
@@ -182,7 +201,7 @@ namespace CodeGen.CSharp.Context
         {
             public override ISymbol SemanticSymbol { get; }
             public override string DocumentPath { get; }
-            public override ISingleTarget<TSyntaxNode1,TSyntaxNode2> Parent { get;}
+            public override SingleTarget<TSyntaxNode1,TSyntaxNode2> Parent { get;}
             public CSharpSingleTarget(ICodeGenerationEngine engine, SemanticModel semanticModel, TSyntaxNode0 node0, TSyntaxNode1 node1,TSyntaxNode2 node2) : base(engine, node0)
             {
                 this.SemanticSymbol = semanticModel.GetSymbolInfo(node0).Symbol;
