@@ -14,11 +14,11 @@ namespace CodeGen.CSharp.Context.DocumentEdit
             {
             }
 
-            public override SingleTarget<NamespaceDeclarationSyntax> ProccessNode(SingleTarget<CompilationUnitSyntax> target, DocumentEditor documentEditor,ICodeGenerationEngine engine)
+            public override NamespaceDeclarationSyntax ProccessNode(CompilationUnitSyntax targetNode, DocumentEditor documentEditor,ICodeGenerationEngine engine)
             {
                 var namespaceNode=SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(Command.Name));
-                documentEditor.InsertMembers(target.Node,0,new[]{namespaceNode});
-                return new CSharpSingleTarget<NamespaceDeclarationSyntax>(engine,documentEditor.SemanticModel,namespaceNode);
+                documentEditor.InsertMembers(targetNode,0,new[]{namespaceNode});
+                return namespaceNode;
             }
         }
     }

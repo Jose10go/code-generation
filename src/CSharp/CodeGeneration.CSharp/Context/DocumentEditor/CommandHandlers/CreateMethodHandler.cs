@@ -15,7 +15,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
             {
             }
 
-            public override SingleTarget<MethodDeclarationSyntax> ProccessNode(SingleTarget<ClassDeclarationSyntax> target, DocumentEditor documentEditor,ICodeGenerationEngine engine)
+            public override MethodDeclarationSyntax ProccessNode(ClassDeclarationSyntax targetNode, DocumentEditor documentEditor,ICodeGenerationEngine engine)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -31,8 +31,8 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                                           .WithBody(Command.Body)
                                           .WithModifiers(modifiers);
 
-                documentEditor.InsertMembers(target.Node,0,new[]{method});
-                return new CSharpSingleTarget<MethodDeclarationSyntax>(engine,documentEditor.SemanticModel,method);
+                documentEditor.InsertMembers(targetNode,0,new[]{method});
+                return method;
             }
         }
     }

@@ -12,7 +12,7 @@ namespace CodeGen.Context
             where TOutputNode : TBaseNode
         {
             TCommand Command { get; }
-            SingleTarget<TOutputNode> ProccessNode(SingleTarget<TSyntaxNode> target, TProcessEntity documentEditor, ICodeGenerationEngine engine);
+            TOutputNode ProccessNode(TSyntaxNode target, TProcessEntity documentEditor, ICodeGenerationEngine engine);
         }
     }
 }

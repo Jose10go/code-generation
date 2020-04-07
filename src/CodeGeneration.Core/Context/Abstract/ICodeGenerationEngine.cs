@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace CodeGen.Context
 {
@@ -24,7 +24,17 @@ namespace CodeGen.Context
 
             void UpdateProject(TProcessEntity processEntity);
 
-            TProcessEntity GetProccesEntity<TNode>(SingleTarget<TNode> target)
+            TProcessEntity GetProccesEntity<TNode>(ISingleTarget<TNode> target)
+                where TNode : TBaseNode;
+
+            IEnumerable<TBaseNode> GetDescendantNodes(TBaseNode node);
+
+            IEnumerable<TRootNode> GetRootNodes();
+
+            TSemanticModel GetSemantic<TNode>(TNode node)
+                where TNode : TBaseNode;
+
+            string GetFilePath<TNode>(TNode node)
                 where TNode : TBaseNode;
         }
     }

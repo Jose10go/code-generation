@@ -15,7 +15,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
             {
             }
 
-            public override SingleTarget<ClassDeclarationSyntax> ProccessNode(SingleTarget<NamespaceDeclarationSyntax> target, DocumentEditor documentEditor,ICodeGenerationEngine engine)
+            public override ClassDeclarationSyntax ProccessNode(NamespaceDeclarationSyntax targetNode, DocumentEditor documentEditor,ICodeGenerationEngine engine)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -29,8 +29,8 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 var classNode = SyntaxFactory.ClassDeclaration(Command.Name)
                                              .WithAttributeLists(Command.Attributes)
                                              .WithModifiers(modifiers);
-                documentEditor.InsertMembers(target.Node,0,new[]{classNode});
-                return new CSharpSingleTarget<ClassDeclarationSyntax>(engine,documentEditor.SemanticModel,classNode);
+                documentEditor.InsertMembers(targetNode,0,new[]{classNode});
+                return classNode;
             }
         }
     }

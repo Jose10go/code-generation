@@ -15,7 +15,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 this.Command = (TCommand)command;
             }
 
-            public abstract SingleTarget<TOutput> ProccessNode(SingleTarget<TSyntaxNode> target,DocumentEditor documentEditor,ICodeGenerationEngine engine);
+            public abstract TOutput ProccessNode(TSyntaxNode target,DocumentEditor documentEditor,ICodeGenerationEngine engine);
         }
 
         public abstract class CommandHandler<TCommand, TNode> : CommandHandler<TCommand, TNode, TNode>
