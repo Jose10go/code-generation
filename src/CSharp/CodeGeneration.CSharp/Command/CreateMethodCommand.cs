@@ -28,7 +28,7 @@ namespace CodeGen.CSharp.Context
 
             public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
-            public ITarget<ClassDeclarationSyntax> Target { get; set; }
+            public ISingleTarget<ClassDeclarationSyntax> SingleTarget { get; set; }
             public SyntaxToken Modifiers { get; set; }
             public SyntaxToken Abstract { get; set; }
             public SyntaxToken Static { get; set; }

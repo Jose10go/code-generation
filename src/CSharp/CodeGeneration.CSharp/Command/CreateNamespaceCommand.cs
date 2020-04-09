@@ -21,7 +21,7 @@ namespace CodeGen.CSharp.Context
             }
 
             public string Name { get; set; }
-            public ITarget<CompilationUnitSyntax> Target { get; set; }
+            public ISingleTarget<CompilationUnitSyntax> SingleTarget { get; set; }
         }
 
     }

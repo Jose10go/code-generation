@@ -58,15 +58,15 @@ namespace CodeGen.CSharp.Context
                 foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandAttribute))))
                 {
                     var abstractcommand = t.GetInterfaces().FirstOrDefault(i => i.IsAssignableTo<Core.ICommand>());
-                    if(abstractcommand!=null)
-                        builder.RegisterGeneric(t).As(abstractcommand);
+                    builder.RegisterGeneric(t).As(abstractcommand);
                 }
 
-                //Register Command Handlers only as generic services
                 foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandHandlerAttribute))))
                 {
                     var abstracthandler = t.GetInterfaces().FirstOrDefault(i => i.IsAssignableTo<Core.ICommandHandler>());
-                    if (abstracthandler != null)
+                    if (t.IsGenericType)
+                        builder.RegisterGeneric(t).As(abstracthandler);
+                    else 
                         builder.RegisterType(t).As(abstracthandler);
                 }
 

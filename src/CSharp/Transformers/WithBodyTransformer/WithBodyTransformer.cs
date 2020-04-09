@@ -12,7 +12,7 @@ namespace WithBodyTransformer
     {
         public override void Transform()
         {
-            Engine.Select<InvocationExpressionSyntax>()
+            Engine.Select<ParenthesizedLambdaExpressionSyntax, ArgumentSyntax, InvocationExpressionSyntax>()
                   .Where(single =>
                   {
                       var s = (IMethodSymbol)single.SemanticSymbol;
@@ -20,13 +20,9 @@ namespace WithBodyTransformer
                           return false;
                       return s.Name == "WithBody" && s.ContainingType.Name == "IWithBody" && !s.Parameters.Any(x=>x.Type.Name=="string");
                   })
-                  .Execute<CSharpContextDocumentEditor.IReplaceInvocation>(
-                    cmd=>cmd.WithNewArgument(0, (x) =>
-                      {
-                          var lambda = x.ArgumentList.Arguments[0].Expression as ParenthesizedLambdaExpressionSyntax;
-                          var bodycode = SyntaxFactory.Literal(lambda.Body.ToString().Replace("@this", "this"));
-                          return SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, bodycode));
-                      }));
+                  .Using(target => target.Node.Body.ToString().Replace("@this", "this"), out var bodyKey)
+                  .Execute((CSharpContextDocumentEditor.IReplaceExpression<ParenthesizedLambdaExpressionSyntax> cmd) => cmd.Get(bodyKey, out var stringBody)
+                                                                                                                         .With(SyntaxFactory.ParseExpression($"\"{stringBody}\"")));
         }
     }
 }

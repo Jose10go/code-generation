@@ -7,19 +7,17 @@ namespace CodeGen.CSharp.Context.DocumentEdit
     public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
     {
         [CommandHandler]
-        public class ReplaceInvocationCommandHandler :CommandHandler<IReplaceInvocation, InvocationExpressionSyntax> 
+        public class ReplaceExpressionCommandHandler<Exp> : CommandHandler<IReplaceExpression<Exp>,Exp,ExpressionSyntax>
+            where Exp:ExpressionSyntax
         {
-            public ReplaceInvocationCommandHandler(IReplaceInvocation command) : base(command)
+            public ReplaceExpressionCommandHandler(IReplaceExpression<Exp> command) : base(command)
             {
             }
 
-            public override void ProccessNode(InvocationExpressionSyntax node, DocumentEditor documentEditor)
+            public override ExpressionSyntax ProccessNode(Exp node, DocumentEditor documentEditor,ICodeGenerationEngine engine)
             {
-                foreach (var (gen, pos) in Command.NewArguments) 
-                {
-                    var arg = node.ArgumentList.Arguments[pos];
-                    documentEditor.ReplaceNode(arg,gen(node));
-                }
+                documentEditor.ReplaceNode(node,this.Command.NewExpression);
+                return this.Command.NewExpression;
             }
         }
     }

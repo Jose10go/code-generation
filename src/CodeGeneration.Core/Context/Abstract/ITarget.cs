@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeGen.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,55 +8,81 @@ namespace CodeGen.Context
     public abstract partial class CodeGenContext<TProject, TBaseNode, TRootNode, TSemanticModel, TProcessEntity>
         where TRootNode : TBaseNode
     {
-        public sealed class Key<T>
+        public interface IKey 
+        {
+            int Id { get;}
+        }
+
+        public sealed class Key<T>:IKey
             where T:class
         {
-            private readonly int id;
+            public int Id { get; }
             internal Key(int id)
             {
-                this.id = id;
+                Id = id;
             }
 
             public override int GetHashCode()
             {
-                return id;
+                return Id;
             }
 
             public override bool Equals(object obj)
             {
-                if (!(obj is Key<T>))
+                if (obj is null || !(obj is IKey))
                     return false;
-                var other = obj as Key<T>;
-                return id==other.id;
+                var other = obj as IKey;
+                return Id==other.Id;
             }
 
             public override string ToString()
             {
-                return $"Key<{typeof(T)}>-{id}";
+                return $"Key<{typeof(T)}>-{Id}";
             }
+        }
+
+        public interface IUsing<InTarget,OutTarget,TNode>
+            where InTarget:ITarget<TNode>
+            where OutTarget:ITarget<TNode>
+            where TNode:TBaseNode
+        {
+            OutTarget Using<T>(Func<InTarget,T> usingSelector, out Key<T> key)
+                where T : class;
+        }
+
+        public interface IGet 
+        {
+            Core.ISingleTarget Get<T>(Key<T> key, out T value)
+                where T : class;
+        }
+
+        public interface ITargetGet<OutTarget> 
+        {
+            OutTarget Get<T>(Key<T> key, out T value)
+                where T:class;
         }
 
         public interface ITarget<TNode> : Core.ITarget
             where TNode : TBaseNode
         {
-            ITarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand,TOutNode> commandModifiers)
+            ITarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
                 where TCommand : ICommand<TNode, TOutNode>
                 where TOutNode : TBaseNode;
 
         }
 
-        public interface ISingleTarget<TNode>:ITarget<TNode> 
+        public interface ISingleTarget<TNode>:ITarget<TNode>,Core.ISingleTarget,IGet 
             where TNode:TBaseNode
         {
             public TNode Node { get; }
             public abstract TSemanticModel SemanticSymbol { get; }
             public abstract string DocumentPath { get; }
-            new SingleTarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand, TOutNode> commandModifiers)
+            new SingleTarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand,ICommand<TNode, TOutNode>> commandModifiers)
                 where TCommand : ICommand<TNode, TOutNode>
                 where TOutNode : TBaseNode;
         }
 
-        public abstract class MultipleTargeter<MultipleTarget, SingleTarget, TNode> : ITarget<TNode>
+        public abstract class MultipleTargeter<MultipleTarget, SingleTarget, TNode> : ITarget<TNode>,IUsing<SingleTarget,MultipleTarget,TNode>
             where MultipleTarget : ITarget<TNode>
             where SingleTarget : ISingleTarget<TNode>
             where TNode : TBaseNode
@@ -99,18 +126,15 @@ namespace CodeGen.Context
 
             internal abstract IEnumerable<SingleTarget> SelectedNodes(TBaseNode root);
 
-            ITarget<TOutput> ITarget<TNode>.Execute<TCommand, TOutput>(Func<TCommand, TOutput> commandModifiers)
+            ITarget<TOutput> ITarget<TNode>.Execute<TCommand, TOutput>(Func<TCommand,ICommand<TNode, TOutput>> commandModifiers)
             {
                 return this.Execute(commandModifiers);
             }
 
-            public MultipleTarget<TOutput> Execute<TCommand,TOutput>(Func<TCommand,TOutput> commandModifiers)
+            public MultipleTarget<TOutput> Execute<TCommand,TOutput>(Func<TCommand,ICommand<TNode, TOutput>> commandModifiers)
                 where TCommand : ICommand<TNode, TOutput>
                 where TOutput : TBaseNode
             {
-                var command = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandBuilder<TCommand, TNode, TOutput>();
-                var handler = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandHandler<TCommand, TNode, TOutput>(command);
-                commandModifiers(command);
                 Dictionary<string, TProcessEntity> memoized = new Dictionary<string, TProcessEntity>();
                 IEnumerable<TOutput> outputNodes = Enumerable.Empty<TOutput>();
                 foreach (var singleTarget in this)
@@ -119,7 +143,11 @@ namespace CodeGen.Context
                     if (!memoized.ContainsKey(singleTarget.DocumentPath))
                         memoized.Add(singleTarget.DocumentPath, this.CodeGenerationEngine.GetProccesEntity(singleTarget));
                     documentEditor = memoized[singleTarget.DocumentPath];
-                    outputNodes=outputNodes.Append(handler.ProccessNode(singleTarget.Node, documentEditor, CodeGenerationEngine));
+                    var command = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandBuilder<TCommand, TNode, TOutput>();
+                    command.SingleTarget = singleTarget;
+                    var handler = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandHandler<TCommand, TNode, TOutput>(command);
+                    commandModifiers(command);
+                    outputNodes= outputNodes.Append(handler.ProccessNode(singleTarget.Node, documentEditor, CodeGenerationEngine));
                 }
 
                 foreach (var item in memoized)
@@ -137,8 +165,8 @@ namespace CodeGen.Context
             }
         }
 
-        public abstract class SingleTargeter<TSingleTarget,TNode>:ISingleTarget<TNode>
-            where TSingleTarget:ITarget<TNode>
+        public abstract class SingleTargeter<TSingleTarget,TNode>:ISingleTarget<TNode>,ITargetGet<TSingleTarget>,IUsing<TSingleTarget,TSingleTarget,TNode>
+            where TSingleTarget:ISingleTarget<TNode>
             where TNode:TBaseNode
         {
             public TNode Node { get; }
@@ -173,11 +201,12 @@ namespace CodeGen.Context
                 return self;
             }
 
-            public SingleTarget<TOutput> Execute<TCommand, TOutput>(Func<TCommand, TOutput> commandModifiers)
+            public SingleTarget<TOutput> Execute<TCommand, TOutput>(Func<TCommand, ICommand<TNode, TOutput>> commandModifiers)
                 where TCommand : ICommand<TNode, TOutput>
                 where TOutput : TBaseNode
             {
                 var command = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandBuilder<TCommand, TNode, TOutput>();
+                command.SingleTarget = this;
                 commandModifiers(command);
                 var handler = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandHandler<TCommand, TNode, TOutput>(command);
 
@@ -188,9 +217,14 @@ namespace CodeGen.Context
                 return new SingleTarget<TOutput>(this.CodeGenerationEngine,outputNode);
             }
 
-            ITarget<TOutNode> ITarget<TNode>.Execute<TCommand, TOutNode>(Func<TCommand, TOutNode> commandModifiers)
+            ITarget<TOutNode> ITarget<TNode>.Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
             {
                 return this.Execute(commandModifiers);
+            }
+
+            ISingleTarget IGet.Get<T>(Key<T> key, out T value)
+            {
+                return Get(key, out value);
             }
         }
 
@@ -242,7 +276,7 @@ namespace CodeGen.Context
                                    .Select(node => {
                                        var result = new SingleTarget<TNode>(this.CodeGenerationEngine, node);
                                        foreach (var usingSelector in this.UsingSelectors)
-                                           result = (SingleTarget<TNode>)usingSelector(result);
+                                           result = result.Using(usingSelector,out var _);
                                        return result;
                                    })
                                    .Where(x => WhereSelector(x));
@@ -268,7 +302,7 @@ namespace CodeGen.Context
                                                      .Select(node => {
                                                          var result = new SingleTarget<TNode0,TNode1>(this.CodeGenerationEngine, node, parent);
                                                          foreach (var usingSelector in this.UsingSelectors)
-                                                             result = (SingleTarget<TNode0, TNode1>)usingSelector(result);
+                                                            result = result.Using(usingSelector,out var _);
                                                          return result;
                                                      }))
                            .Where(x => WhereSelector(x));
@@ -298,7 +332,7 @@ namespace CodeGen.Context
                                                                                     .Select(node => {
                                                                                         var result = new SingleTarget<TNode0, TNode1, TNode2>(this.CodeGenerationEngine, node, parent, grandparent);
                                                                                         foreach (var usingSelector in this.UsingSelectors)
-                                                                                            result = (SingleTarget<TNode0, TNode1, TNode2>)usingSelector(result);
+                                                                                            result = result.Using(usingSelector,out var _);
                                                                                         return result;
                                                                                     })))
                            .Where(x => WhereSelector(x));
