@@ -15,8 +15,8 @@
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="Pack">
-    <RemoveDir Directories="$(UserProfile)\.nuget\packages\codegeneration.core"/>
-    <Copy SourceFiles="bin\$(Configuration)\$(ProductName).$(Version).nupkg" DestinationFolder=" $(UserProfile)\.nuget\codegen"/>
+    <RemoveDir Directories="$(UserProfile)\.nuget\packages\codegeneration.core" />
+    <Copy SourceFiles="bin\$(Configuration)\$(ProductName).$(Version).nupkg" DestinationFolder=" $(UserProfile)\.nuget\codegen" />
   </Target>
   
 </Project>
