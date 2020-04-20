@@ -28,7 +28,7 @@ namespace CodeGen.CSharp.Context
                     modifiers = modifiers.Add(Command.Static);
                 if (Command.Partial != default)
                     modifiers = modifiers.Add(Command.Partial);
-                var method = SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName("void"), Command.Name)
+                var method = SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(Command.ReturnType??"void"), Command.Name)
                                           .WithAttributeLists(Command.Attributes)
                                           .WithBody(Command.Body)
                                           .WithModifiers(modifiers)

@@ -15,7 +15,8 @@ namespace CodeGen.CSharp.Context
                                          IWithAccessModifier<ICreateMethod>,
                                          IAbstract<ICreateMethod>,
                                          IStatic<ICreateMethod>,
-                                         IPartial<ICreateMethod>
+                                         IPartial<ICreateMethod>,
+                                         IReturns<ICreateMethod>
         {
         }
 
@@ -27,6 +28,7 @@ namespace CodeGen.CSharp.Context
             }
 
             public string Name { get; set; }
+            public string ReturnType { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
             public ISingleTarget<ClassDeclarationSyntax> SingleTarget { get; set; }
             public SyntaxToken Modifiers { get; set; }

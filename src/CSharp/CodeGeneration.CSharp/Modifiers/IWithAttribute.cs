@@ -20,6 +20,11 @@ namespace CodeGen.CSharp.Context
                 this.Attributes = new SyntaxList<AttributeListSyntax>(SyntaxFactory.AttributeList().AddAttributes(attrs.ToArray()));
                 return (TCommandBuilder)this;
             }
+
+            TCommandBuilder WithAttributes(params string[] Attributes)
+            {
+                return this.WithAttributes(Attributes.AsEnumerable());
+            }
         }
     }
 }
