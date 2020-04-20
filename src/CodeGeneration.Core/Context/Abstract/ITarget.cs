@@ -50,10 +50,12 @@ namespace CodeGen.Context
                 where T : class;
         }
 
-        public interface IGet 
+        public interface IWhere<InTarget, OutTarget, TNode>
+            where InTarget : ITarget<TNode>
+            where OutTarget : ITarget<TNode>
+            where TNode : TBaseNode
         {
-            Core.ISingleTarget Get<T>(Key<T> key, out T value)
-                where T : class;
+            OutTarget Where(Func<InTarget, bool> whereSelector);
         }
 
         public interface ITargetGet<OutTarget> 
@@ -68,120 +70,53 @@ namespace CodeGen.Context
             ITarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
                 where TCommand : ICommand<TNode, TOutNode>
                 where TOutNode : TBaseNode;
-
         }
 
-        public interface ISingleTarget<TNode>:ITarget<TNode>,Core.ISingleTarget,IGet 
+        public interface ISingleTarget<TNode>:ITarget<TNode>,Core.ISingleTarget,IUsing<ISingleTarget<TNode>, ISingleTarget<TNode>,TNode>, ITargetGet<ISingleTarget<TNode>>
             where TNode:TBaseNode
         {
-            public TNode Node { get; }
-            public abstract TSemanticModel SemanticSymbol { get; }
-            public abstract string DocumentPath { get; }
-            new SingleTarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand,ICommand<TNode, TOutNode>> commandModifiers)
-                where TCommand : ICommand<TNode, TOutNode>
+            Guid Id {get; }
+            TNode Node { get; }
+            TSemanticModel SemanticSymbol { get; }
+            string DocumentPath { get; }
+            new ISingleTarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
+                where TCommand : ICommand<TNode,TOutNode>
                 where TOutNode : TBaseNode;
         }
 
-        public abstract class MultipleTargeter<MultipleTarget, SingleTarget, TNode> : ITarget<TNode>,IUsing<SingleTarget,MultipleTarget,TNode>
-            where MultipleTarget : ITarget<TNode>
-            where SingleTarget : ISingleTarget<TNode>
-            where TNode : TBaseNode
+        public interface ISingleTarget<TNode0,TNode1> : ISingleTarget<TNode0>, IUsing<ISingleTarget<TNode0,TNode1>, ISingleTarget<TNode0,TNode1>, TNode0>,ITargetGet<ISingleTarget<TNode0,TNode1>>
+            where TNode0 : TBaseNode
+            where TNode1 : TBaseNode
         {
-            protected MultipleTargeter(ICodeGenerationEngine engine, IEnumerable<SingleTarget> singleTargets)
-            {
-                this.CodeGenerationEngine = engine;
-                this.Where(singleTarget => true);
-                this.singleTargets = singleTargets;
-                this.UsingSelectors = new List<Func<SingleTarget, object>>();
-            }
-            
-            private readonly IEnumerable<SingleTarget> singleTargets;
-            protected readonly ICodeGenerationEngine CodeGenerationEngine;
-            protected Func<SingleTarget, bool> WhereSelector;
-            protected List<Func<SingleTarget,object>> UsingSelectors;
-            public MultipleTarget Where(Func<SingleTarget, bool> whereSelector)
-            {
-                if (WhereSelector == null)
-                    WhereSelector = whereSelector;
-                else
-                {
-                    var previous = this.WhereSelector;
-                    WhereSelector = (single) => previous(single) && whereSelector(single);
-                }
-                return (MultipleTarget)(ITarget<TNode>)this;
-            }
-            
-            //Not need to implement IEnumerable to use in a foreach statement.
-            //Only need to have a public GetEnumeratorMethod().
-            //Wich allows to avoid the unwanted use of linq in Targets.
-            public IEnumerator<SingleTarget> GetEnumerator()
-            {
-                if (this.singleTargets != null)
-                    return singleTargets.GetEnumerator();
-
-                return this.CodeGenerationEngine.GetRootNodes()
-                                                .SelectMany(root => SelectedNodes(root))
-                                                .GetEnumerator();
-            }
-
-            internal abstract IEnumerable<SingleTarget> SelectedNodes(TBaseNode root);
-
-            ITarget<TOutput> ITarget<TNode>.Execute<TCommand, TOutput>(Func<TCommand,ICommand<TNode, TOutput>> commandModifiers)
-            {
-                return this.Execute(commandModifiers);
-            }
-
-            public MultipleTarget<TOutput> Execute<TCommand,TOutput>(Func<TCommand,ICommand<TNode, TOutput>> commandModifiers)
-                where TCommand : ICommand<TNode, TOutput>
-                where TOutput : TBaseNode
-            {
-                Dictionary<string, TProcessEntity> memoized = new Dictionary<string, TProcessEntity>();
-                IEnumerable<TOutput> outputNodes = Enumerable.Empty<TOutput>();
-                foreach (var singleTarget in this)
-                {
-                    TProcessEntity documentEditor;
-                    if (!memoized.ContainsKey(singleTarget.DocumentPath))
-                        memoized.Add(singleTarget.DocumentPath, this.CodeGenerationEngine.GetProccesEntity(singleTarget));
-                    documentEditor = memoized[singleTarget.DocumentPath];
-                    var command = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandBuilder<TCommand, TNode, TOutput>();
-                    command.SingleTarget = singleTarget;
-                    var handler = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandHandler<TCommand, TNode, TOutput>(command);
-                    commandModifiers(command);
-                    outputNodes= outputNodes.Append(handler.ProccessNode(singleTarget.Node, documentEditor, CodeGenerationEngine));
-                }
-
-                foreach (var item in memoized)
-                    this.CodeGenerationEngine.UpdateProject(item.Value);
-
-                return new MultipleTarget<TOutput>(this.CodeGenerationEngine,outputNodes.Select(node=>new SingleTarget<TOutput>(this.CodeGenerationEngine,node)));
-            }
-
-            public MultipleTarget Using<T>(Func<SingleTarget, T> usingSelector, out Key<T> key)
-                where T:class
-            {
-                this.UsingSelectors.Add(usingSelector);
-                key = new Key<T>(usingSelector.GetHashCode());//TODO: another way to generate a key
-                return (MultipleTarget)(ITarget<TNode>)this;
-            }
+            ISingleTarget<TNode1> Parent { get; }
         }
 
-        public abstract class SingleTargeter<TSingleTarget,TNode>:ISingleTarget<TNode>,ITargetGet<TSingleTarget>,IUsing<TSingleTarget,TSingleTarget,TNode>
+        public interface ISingleTarget<TNode0, TNode1,TNode2> : ISingleTarget<TNode0,TNode1>, IUsing<ISingleTarget<TNode0, TNode1, TNode2>, ISingleTarget<TNode0,TNode1,TNode2>, TNode0>,ITargetGet<ISingleTarget<TNode0,TNode1,TNode2>>
+            where TNode0 : TBaseNode
+            where TNode1 : TBaseNode
+            where TNode2 : TBaseNode
+        {
+            new ISingleTarget<TNode1,TNode2> Parent { get; }
+            ISingleTarget<TNode2> Grandparent { get; }
+        }
+        
+        public abstract class SingleTargeter<TSingleTarget,TNode>:ITarget<TNode>,ITargetGet<TSingleTarget>,IUsing<TSingleTarget,TSingleTarget,TNode>
             where TSingleTarget:ISingleTarget<TNode>
             where TNode:TBaseNode
         {
-            public TNode Node { get; }
-            public TSemanticModel SemanticSymbol { get; }
-            public string DocumentPath { get; }
+            public abstract TNode Node { get; }
+            public abstract TSemanticModel SemanticSymbol { get; }
+            public string DocumentPath { get;}
+            
             protected ICodeGenerationEngine CodeGenerationEngine { get; }
             private readonly Dictionary<object, Func<TSingleTarget, object>> dictionary;
-            
-            protected SingleTargeter(ICodeGenerationEngine engine, TNode node)
+            public Guid Id { get; }
+            protected SingleTargeter(ICodeGenerationEngine engine, Guid id, string path)
             {
                 this.CodeGenerationEngine = engine;
-                this.Node = node;
-                this.DocumentPath = engine.GetFilePath(node);
-                this.SemanticSymbol = engine.GetSemantic(node);
+                this.DocumentPath = path;
                 this.dictionary = new Dictionary<object, Func<TSingleTarget, object>>();
+                this.Id = id;
             }
 
             public TSingleTarget Get<T>(Key<T> key, out T value)
@@ -201,143 +136,220 @@ namespace CodeGen.Context
                 return self;
             }
 
-            public SingleTarget<TOutput> Execute<TCommand, TOutput>(Func<TCommand, ICommand<TNode, TOutput>> commandModifiers)
-                where TCommand : ICommand<TNode, TOutput>
-                where TOutput : TBaseNode
-            {
-                var command = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandBuilder<TCommand, TNode, TOutput>();
-                command.SingleTarget = this;
-                commandModifiers(command);
-                var handler = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandHandler<TCommand, TNode, TOutput>(command);
-
-                var processEntity = this.CodeGenerationEngine.GetProccesEntity(this);
-                var outputNode = handler.ProccessNode(this.Node, processEntity, this.CodeGenerationEngine);
-                this.CodeGenerationEngine.UpdateProject(processEntity);
-
-                return new SingleTarget<TOutput>(this.CodeGenerationEngine,outputNode);
-            }
-
             ITarget<TOutNode> ITarget<TNode>.Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
             {
                 return this.Execute(commandModifiers);
             }
 
-            ISingleTarget IGet.Get<T>(Key<T> key, out T value)
+            public ISingleTarget<TOutput> Execute<TCommand, TOutput>(Func<TCommand, ICommand<TNode,TOutput>> commandModifiers)
+                where TCommand : ICommand<TNode,TOutput>
+                where TOutput : TBaseNode
             {
-                return Get(key, out value);
+                var command = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandBuilder<TCommand,TNode,TOutput>();
+                var handler = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandHandler<TCommand, TNode, TOutput>(command);
+                command.SingleTarget = (ISingleTarget<TNode>)this;
+                commandModifiers(command);
+
+                return handler.ProccessTarget(command.SingleTarget,this.CodeGenerationEngine);
             }
+
         }
 
-        public sealed class SingleTarget<TNode>:SingleTargeter<SingleTarget<TNode>,TNode>
+        public interface IMultipleTarget<TNode> : Core.IMultipleTarget,
+                                                  ITarget<TNode>,
+                                                  IUsing<ISingleTarget<TNode>,IMultipleTarget<TNode>,TNode>,
+                                                  IWhere<ISingleTarget<TNode>,IMultipleTarget<TNode>,TNode>
             where TNode : TBaseNode
         {
-            public SingleTarget(ICodeGenerationEngine engine, TNode node):base(engine,node)
-            {
-            }
+            new IMultipleTarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
+                where TCommand : ICommand<TNode,TOutNode>
+                where TOutNode : TBaseNode;
+
+            IEnumerator<ISingleTarget<TNode>> GetEnumerator();
         }
 
-        public sealed class SingleTarget<TNode0, TNode1> : SingleTargeter<SingleTarget<TNode0, TNode1>,TNode0>
+        public interface IMultipleTarget<TNode0,TNode1> : IMultipleTarget<TNode0>, 
+                                                          IUsing<ISingleTarget<TNode0,TNode1>,IMultipleTarget<TNode0,TNode1>,TNode0>,
+                                                          IWhere<ISingleTarget<TNode0,TNode1>,IMultipleTarget<TNode0,TNode1>,TNode0>
             where TNode0 : TBaseNode
             where TNode1 : TBaseNode
         {
-            public SingleTarget<TNode1> Parent { get; }
-            public SingleTarget(ICodeGenerationEngine engine, TNode0 node0,TNode1 node1):base(engine,node0)
-            {
-                Parent = new SingleTarget<TNode1>(engine, node1);
-            }
+            new IEnumerator<ISingleTarget<TNode0,TNode1>> GetEnumerator();
         }
 
-        public sealed class SingleTarget<TNode0, TNode1, TNode2> : SingleTargeter<SingleTarget<TNode0,TNode1,TNode2>,TNode0>
-            where TNode0 : TBaseNode
-            where TNode1 : TBaseNode
-            where TNode2 : TBaseNode
-        {
-            public SingleTarget<TNode1,TNode2> Parent { get; }
-            public SingleTarget<TNode2> Grandparent => Parent.Parent;
-
-            public SingleTarget(ICodeGenerationEngine engine, TNode0 node0, TNode1 node1, TNode2 node2) :base(engine,node0)
-            {
-                Parent = new SingleTarget<TNode1, TNode2>(engine, node1, node2);
-            }
-        }
-
-        public sealed class MultipleTarget<TNode> : MultipleTargeter<MultipleTarget<TNode>, SingleTarget<TNode>, TNode> 
-            where TNode:TBaseNode
-        {
-            public MultipleTarget(ICodeGenerationEngine codeGenerationEngine,IEnumerable<SingleTarget<TNode>> singleTargets=null)
-                :base(codeGenerationEngine,singleTargets)
-            {
-            }
-
-            internal override IEnumerable<SingleTarget<TNode>> SelectedNodes(TBaseNode root)
-            {
-                return this.CodeGenerationEngine.GetDescendantNodes(root)
-                                   .OfType<TNode>()
-                                   .Select(node => {
-                                       var result = new SingleTarget<TNode>(this.CodeGenerationEngine, node);
-                                       foreach (var usingSelector in this.UsingSelectors)
-                                           result = result.Using(usingSelector,out var _);
-                                       return result;
-                                   })
-                                   .Where(x => WhereSelector(x));
-            }
-        }
-
-        public sealed class MultipleTarget<TNode0,TNode1> : MultipleTargeter<MultipleTarget<TNode0, TNode1>, SingleTarget<TNode0, TNode1>, TNode0>
-            where TNode0 : TBaseNode
-            where TNode1 : TBaseNode
-        {
-            public MultipleTarget(ICodeGenerationEngine codeGenerationEngine,IEnumerable<SingleTarget<TNode0,TNode1>> singleTargets=null)
-                : base(codeGenerationEngine, singleTargets)
-            {
-            }
-
-            internal override IEnumerable<SingleTarget<TNode0, TNode1>> SelectedNodes(TBaseNode root)
-            {
-                return this.CodeGenerationEngine
-                           .GetDescendantNodes(root)
-                           .OfType<TNode1>()
-                           .SelectMany(parent => this.CodeGenerationEngine.GetDescendantNodes(parent)
-                                                     .OfType<TNode0>()
-                                                     .Select(node => {
-                                                         var result = new SingleTarget<TNode0,TNode1>(this.CodeGenerationEngine, node, parent);
-                                                         foreach (var usingSelector in this.UsingSelectors)
-                                                            result = result.Using(usingSelector,out var _);
-                                                         return result;
-                                                     }))
-                           .Where(x => WhereSelector(x));
-            }
-        }
-
-        public sealed class MultipleTarget<TNode0, TNode1, TNode2> : MultipleTargeter<MultipleTarget<TNode0, TNode1, TNode2>, SingleTarget<TNode0, TNode1, TNode2>, TNode0>
+        public interface IMultipleTarget<TNode0, TNode1,TNode2> : IMultipleTarget<TNode0,TNode1>,
+                                                                  IUsing<ISingleTarget<TNode0, TNode1,TNode2>, IMultipleTarget<TNode0, TNode1,TNode2>, TNode0>,
+                                                                  IWhere<ISingleTarget<TNode0, TNode1,TNode2>, IMultipleTarget<TNode0, TNode1,TNode2>, TNode0>
             where TNode0 : TBaseNode
             where TNode1 : TBaseNode
             where TNode2 : TBaseNode
         {
-            public MultipleTarget(ICodeGenerationEngine codeGenerationEngine,IEnumerable<SingleTarget<TNode0,TNode1,TNode2>> singleTargets=null)
-                : base(codeGenerationEngine,singleTargets)
+            new IEnumerator<ISingleTarget<TNode0,TNode1,TNode2>> GetEnumerator();
+        }
+
+        public abstract class MultipleTargeter<MultipleTarget, SingleTarget, TNode>:ITarget<TNode>, 
+                                                                                    IUsing<SingleTarget,MultipleTarget,TNode>,
+                                                                                    IWhere<SingleTarget,MultipleTarget,TNode>
+            where MultipleTarget : IMultipleTarget<TNode>
+            where SingleTarget : ISingleTarget<TNode>,IUsing<SingleTarget,SingleTarget,TNode>
+            where TNode : TBaseNode
+        {
+            protected MultipleTargeter(IEnumerable<SingleTarget> singleTargets)
             {
+                this.SingleTargets = singleTargets;
             }
 
-            internal override IEnumerable<SingleTarget<TNode0, TNode1, TNode2>> SelectedNodes(TBaseNode root)
+            IEnumerable<SingleTarget> SingleTargets { get; set; }
+            public MultipleTarget Where(Func<SingleTarget, bool> whereSelector)
             {
-                return this.CodeGenerationEngine.GetDescendantNodes(root)
-                           .OfType<TNode2>()
-                           .SelectMany(grandparent => this.CodeGenerationEngine
-                                                          .GetDescendantNodes(grandparent)
-                                                          .OfType<TNode1>()
-                                                          .SelectMany(parent => this.CodeGenerationEngine
-                                                                                    .GetDescendantNodes(parent)
-                                                                                    .OfType<TNode0>()
-                                                                                    .Select(node => {
-                                                                                        var result = new SingleTarget<TNode0, TNode1, TNode2>(this.CodeGenerationEngine, node, parent, grandparent);
-                                                                                        foreach (var usingSelector in this.UsingSelectors)
-                                                                                            result = result.Using(usingSelector,out var _);
-                                                                                        return result;
-                                                                                    })))
-                           .Where(x => WhereSelector(x));
+                this.SingleTargets = SingleTargets.Where(whereSelector);
+                return (MultipleTarget)(IMultipleTarget<TNode>)this;
+            }
+
+            //Not need to implement IEnumerable to use in a foreach statement.
+            //Only need to have a public GetEnumeratorMethod().
+            //Wich allows to avoid the unwanted use of linq in Targets.
+
+            public IEnumerator<SingleTarget> GetEnumerator()
+            {
+                return SingleTargets.GetEnumerator();
+            }
+            
+            ITarget<TOutNode> ITarget<TNode>.Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
+            {
+                return this.Execute(commandModifiers);
+            }
+
+            public IMultipleTarget<TOutput> Execute<TCommand,TOutput>(Func<TCommand,ICommand<TNode, TOutput>> commandModifiers)
+                where TCommand : ICommand<TNode,TOutput>
+                where TOutput : TBaseNode
+            {
+                var output = Enumerable.Empty<ISingleTarget<TOutput>>();
+                foreach (var singleTarget in this)
+                    output=output.Append(singleTarget.Execute(commandModifiers));
+
+                return new MultipleTarget<TOutput>(output);
+            }
+
+            public MultipleTarget Using<T>(Func<SingleTarget, T> usingSelector, out Key<T> key)
+                where T:class
+            {
+                key = new Key<T>(usingSelector.GetHashCode());
+                this.SingleTargets = SingleTargets.Select(x => x.Using(usingSelector, out var _));
+                return (MultipleTarget)(ITarget<TNode>)this;
+            }
+
+            //public static MultipleTarget From(ICodeGenerationEngine engine,params IEnumerable<ISingleTarget<TNode>>[] targets)
+            //{
+            //    var result = Enumerable.Empty<ISingleTarget<TNode>>();
+            //    foreach (var item in targets)
+            //        result = result.Concat(item);
+            //    return (MultipleTarget)(IMultipleTarget<TNode>)new MultipleTarget() { };
+            //}
+
+            //public static MultipleTarget From(ICodeGenerationEngine engine, params SingleTarget[] targets)
+            //{
+            //    return (MultipleTarget)(ITarget<TNode>)new MultipleTargeter<MultipleTarget, SingleTarget, TNode>(engine, targets.AsEnumerable());
+            //}
+
+            //public static MultipleTarget From(ICodeGenerationEngine engine, IEnumerable<SingleTarget> enumerable, params SingleTarget[] targets)
+            //{
+            //    var result = enumerable;
+            //    foreach (var item in targets)
+            //        result = result.Append(item);
+            //    return (MultipleTarget)(ITarget<TNode>)new MultipleTargeter<MultipleTarget, SingleTarget, TNode>(engine, result);
+            //}
+
+        }
+
+        public sealed class MultipleTarget<TNode> : MultipleTargeter<IMultipleTarget<TNode>, ISingleTarget<TNode>, TNode>,
+                                                    IMultipleTarget<TNode>
+           where TNode : TBaseNode
+        {
+            public MultipleTarget():base(Enumerable.Empty<ISingleTarget<TNode>>()) 
+            {
+            }
+            
+            public MultipleTarget(IEnumerable<ISingleTarget<TNode>> singleTargets)
+                : base(singleTargets)
+            {
             }
 
         }
+
+        public sealed class MultipleTarget<TNode, TNode1> : MultipleTargeter<IMultipleTarget<TNode, TNode1>, ISingleTarget<TNode, TNode1>, TNode>,
+                                                            IMultipleTarget<TNode, TNode1>
+             where TNode : TBaseNode
+             where TNode1 : TBaseNode
+        {
+            public MultipleTarget() : base(Enumerable.Empty<ISingleTarget<TNode,TNode1>>())
+            {
+            }
+            public MultipleTarget(IEnumerable<ISingleTarget<TNode, TNode1>> singleTargets)
+                : base(singleTargets)
+            {
+            }
+
+            IEnumerator<ISingleTarget<TNode>> IMultipleTarget<TNode>.GetEnumerator()
+            {
+                return this.GetEnumerator();
+            }
+
+            IMultipleTarget<TNode> IUsing<ISingleTarget<TNode>, IMultipleTarget<TNode>, TNode>.Using<T>(Func<ISingleTarget<TNode>, T> usingSelector, out Key<T> key)
+            {
+                return this.Using(usingSelector, out key);
+            }
+
+            IMultipleTarget<TNode> IWhere<ISingleTarget<TNode>, IMultipleTarget<TNode>, TNode>.Where(Func<ISingleTarget<TNode>, bool> whereSelector)
+            {
+                return this.Where(whereSelector);
+            }
+        }
+
+        public sealed class MultipleTarget<TNode, TNode1, TNode2> : MultipleTargeter<IMultipleTarget<TNode, TNode1, TNode2>, ISingleTarget<TNode, TNode1, TNode2>, TNode>,
+                                                                    IMultipleTarget<TNode, TNode1, TNode2>
+             where TNode : TBaseNode
+             where TNode1 : TBaseNode
+             where TNode2 : TBaseNode
+        {
+            public MultipleTarget() : base(Enumerable.Empty<ISingleTarget<TNode,TNode1,TNode2>>())
+            {
+            }
+            public MultipleTarget(IEnumerable<ISingleTarget<TNode, TNode1, TNode2>> singleTargets)
+                : base(singleTargets)
+            {
+            }
+
+            IEnumerator<ISingleTarget<TNode, TNode1>> IMultipleTarget<TNode, TNode1>.GetEnumerator()
+            {
+                return this.GetEnumerator();
+            }
+
+            IEnumerator<ISingleTarget<TNode>> IMultipleTarget<TNode>.GetEnumerator()
+            {
+                return this.GetEnumerator();
+            }
+
+            IMultipleTarget<TNode> IUsing<ISingleTarget<TNode>, IMultipleTarget<TNode>, TNode>.Using<T>(Func<ISingleTarget<TNode>, T> usingSelector, out Key<T> key)
+            {
+                return this.Using(usingSelector, out key);
+            }
+
+            IMultipleTarget<TNode, TNode1> IUsing<ISingleTarget<TNode, TNode1>, IMultipleTarget<TNode, TNode1>, TNode>.Using<T>(Func<ISingleTarget<TNode, TNode1>, T> usingSelector, out Key<T> key)
+            {
+                return this.Using(usingSelector, out key);
+            }
+
+            IMultipleTarget<TNode> IWhere<ISingleTarget<TNode>, IMultipleTarget<TNode>, TNode>.Where(Func<ISingleTarget<TNode>, bool> whereSelector)
+            {
+                return this.Where(whereSelector);
+            }
+
+            IMultipleTarget<TNode, TNode1> IWhere<ISingleTarget<TNode, TNode1>, IMultipleTarget<TNode, TNode1>, TNode>.Where(Func<ISingleTarget<TNode, TNode1>, bool> whereSelector)
+            {
+                return this.Where(whereSelector);
+            }
+        }
+
     }
 }

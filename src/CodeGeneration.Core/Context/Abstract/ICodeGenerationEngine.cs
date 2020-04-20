@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CodeGen.Context
 {
@@ -7,35 +8,24 @@ namespace CodeGen.Context
     {
         public interface ICodeGenerationEngine:Core.ICodeGenerationEngine
         {
-            TProject CurrentProject { get; }
+            TProject CurrentProject { get; set; }
             ICodeGenerationResolver CodeGenerationResolver { get; }
             //TODO: extract to a new interface
-            MultipleTarget<TSyntaxNode> Select<TSyntaxNode>()
+            IMultipleTarget<TSyntaxNode> Select<TSyntaxNode>()
                 where TSyntaxNode : TBaseNode;
-            MultipleTarget<TSyntaxNode0,TSyntaxNode1> Select<TSyntaxNode0, TSyntaxNode1>()
+            IMultipleTarget<TSyntaxNode0,TSyntaxNode1> Select<TSyntaxNode0, TSyntaxNode1>()
                 where TSyntaxNode0 : TBaseNode
                 where TSyntaxNode1 : TBaseNode;
-            MultipleTarget<TSyntaxNode0,TSyntaxNode1,TSyntaxNode2> Select<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>()
+            IMultipleTarget<TSyntaxNode0,TSyntaxNode1,TSyntaxNode2> Select<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>()
                 where TSyntaxNode0 : TBaseNode
                 where TSyntaxNode1 : TBaseNode
                 where TSyntaxNode2 : TBaseNode;
 
-            SingleTarget<TRootNode> SelectNew(string path);
+            ISingleTarget<TRootNode> SelectNew(string path);
 
-            void UpdateProject(TProcessEntity processEntity);
-
-            TProcessEntity GetProccesEntity<TNode>(ISingleTarget<TNode> target)
-                where TNode : TBaseNode;
-
-            IEnumerable<TBaseNode> GetDescendantNodes(TBaseNode node);
-
-            IEnumerable<TRootNode> GetRootNodes();
-
-            TSemanticModel GetSemantic<TNode>(TNode node)
-                where TNode : TBaseNode;
-
-            string GetFilePath<TNode>(TNode node)
-                where TNode : TBaseNode;
+            IEnumerable<string> GetAllDocumentsPaths(); 
+            
+            TRootNode GetRootNode(string Path);
         }
     }
 }
