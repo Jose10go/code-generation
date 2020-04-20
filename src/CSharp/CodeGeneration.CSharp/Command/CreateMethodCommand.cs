@@ -6,16 +6,16 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol, TProcessEntity>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
     {
         public interface ICreateMethod : ICommand<ClassDeclarationSyntax,MethodDeclarationSyntax>,
                                          IWithName<ICreateMethod>,
-                                         IWithAttribute<ICreateMethod, MethodDeclarationSyntax>,
-                                         IWithBody<ICreateMethod, MethodDeclarationSyntax>,
-                                         IWithAccessModifier<ICreateMethod, MethodDeclarationSyntax>,
-                                         IAbstract<ICreateMethod, MethodDeclarationSyntax>,
-                                         IStatic<ICreateMethod, MethodDeclarationSyntax>,
-                                         IPartial<ICreateMethod, MethodDeclarationSyntax>
+                                         IWithAttribute<ICreateMethod>,
+                                         IWithBody<ICreateMethod>,
+                                         IWithAccessModifier<ICreateMethod>,
+                                         IAbstract<ICreateMethod>,
+                                         IStatic<ICreateMethod>,
+                                         IPartial<ICreateMethod>
         {
         }
 

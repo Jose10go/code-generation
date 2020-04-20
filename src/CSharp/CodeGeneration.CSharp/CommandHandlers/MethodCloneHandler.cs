@@ -4,10 +4,11 @@ using Microsoft.CodeAnalysis.Editing;
 using CodeGen.Attributes;
 using Microsoft.CodeAnalysis;
 using System;
+using CodeGen.Context;
 
-namespace CodeGen.CSharp.Context.DocumentEdit
+namespace CodeGen.CSharp.Context
 {
-    public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
         public class MethodCloneCommandHandler : CommandHandler<IMethodClone,MethodDeclarationSyntax>
@@ -27,7 +28,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                     modifiers = modifiers.Add(Command.Static);
                 if (Command.Partial != default)
                     modifiers = modifiers.Add(Command.Partial);
-                var methodNode = node.WithIdentifier(SyntaxFactory.ParseToken(Command.NewName(node)))
+                var methodNode = node.WithIdentifier(SyntaxFactory.ParseToken(Command.Name))
                                                .WithAttributeLists(Command.Attributes)
                                                .WithBody(Command.Body)
                                                .WithModifiers(modifiers)

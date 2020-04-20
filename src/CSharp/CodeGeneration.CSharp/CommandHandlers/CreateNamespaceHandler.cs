@@ -4,10 +4,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis;
 using System;
+using CodeGen.Context;
 
-namespace CodeGen.CSharp.Context.DocumentEdit
+namespace CodeGen.CSharp.Context
 {
-    public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
+    public abstract partial class CSharpContext:CodeGenContext<Project,CSharpSyntaxNode,CompilationUnitSyntax,ISymbol>
     {
         [CommandHandler]
         public class CreateNamespaceCommandHandler :CommandHandler<ICreateNamespace,CompilationUnitSyntax,NamespaceDeclarationSyntax> 

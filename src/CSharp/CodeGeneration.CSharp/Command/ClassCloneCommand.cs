@@ -3,19 +3,19 @@ using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
 
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol, TProcessEntity>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
     {
         public interface IClassClone : ICommand<ClassDeclarationSyntax,ClassDeclarationSyntax>,
-                                       IWithNewName<IClassClone, ClassDeclarationSyntax>,
-                                       IWithAttribute<IClassClone, ClassDeclarationSyntax>,
-                                       IWithAccessModifier<IClassClone,ClassDeclarationSyntax>,
-                                       IAbstract<IClassClone, ClassDeclarationSyntax>,
-                                       IStatic<IClassClone, ClassDeclarationSyntax>,
-                                       IPartial<IClassClone, ClassDeclarationSyntax>
+                                       IGet<IClassClone,ClassDeclarationSyntax>,
+                                       IWithName<IClassClone>,
+                                       IWithAttribute<IClassClone>,
+                                       IWithAccessModifier<IClassClone>,
+                                       IAbstract<IClassClone>,
+                                       IStatic<IClassClone>,
+                                       IPartial<IClassClone>
         {
         }
 
@@ -26,7 +26,7 @@ namespace CodeGen.CSharp.Context
             {
             }
 
-            public Func<ClassDeclarationSyntax, string> NewName { get; set; }
+            public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
             public ISingleTarget<ClassDeclarationSyntax> SingleTarget { get; set; }
             public SyntaxToken Modifiers { get; set; }

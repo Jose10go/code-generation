@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using CodeGen.Context;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
@@ -7,16 +8,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace CodeGen.CSharp.Context.DocumentEdit
+namespace CodeGen.CSharp.Context
 {
-    public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
-        public class DocumentEditingCodeGenerationEngine : ICodeGenerationEngine
+        public class CSharpCodeGenerationEngine : ICodeGenerationEngine
         {
             public ICodeGenerationResolver CodeGenerationResolver { get; }
             public Project CurrentProject { get; set; }
             
-            public DocumentEditingCodeGenerationEngine(Project project,ICodeGenerationResolver resolver)
+            public CSharpCodeGenerationEngine(Project project,ICodeGenerationResolver resolver)
             {
                 CurrentProject=project;
                 CodeGenerationResolver = resolver;

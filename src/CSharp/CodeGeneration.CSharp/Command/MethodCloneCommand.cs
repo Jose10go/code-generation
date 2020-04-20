@@ -3,27 +3,27 @@ using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
 
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol, TProcessEntity>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
 {
         public interface IMethodClone : ICommand<MethodDeclarationSyntax,MethodDeclarationSyntax>,
-                                        IWithNewName<IMethodClone,MethodDeclarationSyntax>,
-                                        IWithAttribute<IMethodClone, MethodDeclarationSyntax>,
-                                        IWithBody<IMethodClone,MethodDeclarationSyntax>,
-                                        IWithAccessModifier<IMethodClone,MethodDeclarationSyntax>,
-                                        IAbstract<IMethodClone,MethodDeclarationSyntax>,
-                                        IStatic<IMethodClone, MethodDeclarationSyntax>,
-                                        IPartial<IMethodClone,MethodDeclarationSyntax>
+                                        IGet<IMethodClone,MethodDeclarationSyntax>,
+                                        IWithName<IMethodClone>,
+                                        IWithAttribute<IMethodClone>,
+                                        IWithBody<IMethodClone>,
+                                        IWithAccessModifier<IMethodClone>,
+                                        IAbstract<IMethodClone>,
+                                        IStatic<IMethodClone>,
+                                        IPartial<IMethodClone>
         {
         }
 
         [Command]
         public class MethodCloneCommand : IMethodClone
         {
-            public Func<MethodDeclarationSyntax, string> NewName { get; set; }
+            public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
             public BlockSyntax Body { get; set; }
             public ISingleTarget<MethodDeclarationSyntax> SingleTarget { get; set ; }

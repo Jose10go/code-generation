@@ -11,11 +11,11 @@ using System.Reflection;
 
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode,CompilationUnitSyntax,ISymbol,TProcessEntity>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode,CompilationUnitSyntax,ISymbol>
     {
         public class CSharpAutofacResolver : ICodeGenerationResolver
         {
-            protected IContainer _container { get; set; }
+            protected IContainer container { get; set; }
             private readonly ContainerBuilder builder;
             
             public CSharpAutofacResolver()
@@ -31,7 +31,7 @@ namespace CodeGen.CSharp.Context
             public virtual void BuildContainer()
             {
                 DoAutomaticRegister(builder);
-                _container = builder.Build();
+                container = builder.Build();
             }
 
             public TCommandBuilder ResolveCommandBuilder<TCommandBuilder,TSyntaxNode,TOutput>()
@@ -39,7 +39,7 @@ namespace CodeGen.CSharp.Context
                 where TSyntaxNode : CSharpSyntaxNode
                 where TOutput : CSharpSyntaxNode
             {
-                return _container.Resolve<TCommandBuilder>();
+                return container.Resolve<TCommandBuilder>();
             }
 
             public ICommandHandler<TCommand,TSyntaxNode, TOutput> ResolveCommandHandler<TCommand,TSyntaxNode,TOutput>(TCommand commandBuilder)
@@ -47,7 +47,7 @@ namespace CodeGen.CSharp.Context
                 where TSyntaxNode : CSharpSyntaxNode
                 where TOutput : CSharpSyntaxNode
             {
-                return (ICommandHandler<TCommand,TSyntaxNode,TOutput>)_container.Resolve(typeof(ICommandHandler<TCommand, TSyntaxNode, TOutput>), new[] { new PositionalParameter(0, commandBuilder) });
+                return (ICommandHandler<TCommand,TSyntaxNode,TOutput>)container.Resolve(typeof(ICommandHandler<TCommand, TSyntaxNode, TOutput>), new[] { new PositionalParameter(0, commandBuilder) });
             }
             
             protected void DoAutomaticRegister(ContainerBuilder builder)
@@ -58,7 +58,10 @@ namespace CodeGen.CSharp.Context
                 foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandAttribute))))
                 {
                     var abstractcommand = t.GetInterfaces().FirstOrDefault(i => i.IsAssignableTo<Core.ICommand>());
-                    builder.RegisterGeneric(t).As(abstractcommand);
+                    if (t.IsGenericType)
+                        builder.RegisterGeneric(t).As(abstractcommand);
+                    else
+                        builder.RegisterType(t).As(abstractcommand);
                 }
 
                 foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandHandlerAttribute))))

@@ -1,10 +1,11 @@
-﻿using static CodeGen.CSharp.Context.DocumentEdit.CSharpContextDocumentEditor;
+﻿using static CodeGen.CSharp.Context.CSharpContext;
 
 namespace CodeGeneration.CSharp
 {
+
     public abstract class CodeGenerationTransformer 
     {
-        public DocumentEditingCodeGenerationEngine Engine { get; set; }
+        public CSharpCodeGenerationEngine Engine { get; set; }
 
         public abstract void Transform();
 

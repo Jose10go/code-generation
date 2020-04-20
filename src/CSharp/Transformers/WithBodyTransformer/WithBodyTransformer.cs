@@ -1,10 +1,10 @@
-﻿using CodeGen.CSharp.Context.DocumentEdit;
-using CodeGeneration.CSharp;
+﻿using CodeGeneration.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Linq;
+using static CodeGen.CSharp.Context.CSharpContext;
 
 namespace WithBodyTransformer
 {
@@ -18,11 +18,11 @@ namespace WithBodyTransformer
                       var s = (IMethodSymbol)single.SemanticSymbol;
                       if (s is null)
                           return false;
-                      return s.Name == "WithBody" && s.ContainingType.Name == "IWithBody" && !s.Parameters.Any(x=>x.Type.Name=="string");
+                      return s.Name == "WithBody" && s.ContainingType.Name == "IWithBody" && !s.Parameters.Any(x => x.Type.Name == "string");
                   })
                   .Using(target => target.Node.Body.ToString().Replace("@this", "this"), out var bodyKey)
-                  .Execute((CSharpContextDocumentEditor.IReplaceExpression<ParenthesizedLambdaExpressionSyntax> cmd) => cmd.Get(bodyKey, out var stringBody)
-                                                                                                                         .With(SyntaxFactory.ParseExpression($"\"{stringBody}\"")));
+                  .Execute((IReplaceExpression<ParenthesizedLambdaExpressionSyntax> cmd) => cmd.Get(bodyKey, out var stringBody)
+                                                                                               .With(SyntaxFactory.ParseExpression($"\"{stringBody}\"")));
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace CodeGen.Context
 {
-    public partial class CodeGenContext<TProject, TBaseNode, TRootNode, TSemanticModel, TProcessEntity>
+    public partial class CodeGenContext<TProject, TBaseNode, TRootNode, TSemanticModel>
         where TRootNode:TBaseNode
     {
         public interface ICommand<TExecuteOnNode> : Core.ICommand

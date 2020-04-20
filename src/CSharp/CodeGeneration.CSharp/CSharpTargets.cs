@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol, TProcessEntity>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         public abstract class CSharpSingleTargeter<TSingleTarget,TNode> : SingleTargeter<TSingleTarget, TNode>
             where TSingleTarget : ISingleTarget<TNode>

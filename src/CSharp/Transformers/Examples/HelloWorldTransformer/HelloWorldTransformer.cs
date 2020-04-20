@@ -1,22 +1,20 @@
-﻿using CodeGen.CSharp.Context.DocumentEdit;
-using System;
+﻿using System;
+using CodeGeneration.CSharp;
+using static CodeGen.CSharp.Context.CSharpContext;
 
 namespace HelloWorldTransformer
 {
-    public class HelloWorldTransformer : CodeGeneration.CSharp.CodeGenerationTransformer
+    public class HelloWorldTransformer :CodeGenerationTransformer
     {
         public override void Transform()
         {
             Engine.SelectNew("Program.cs")
-                  .Execute<CSharpContextDocumentEditor.ICreateNamespace>(
-                    cmd => cmd.WithName("HelloWorld"))
-                  .Execute<CSharpContextDocumentEditor.ICreateClass>(
-                    cmd => cmd.WithName("Program")
-                            .MakeStatic())
-                  .Execute<CSharpContextDocumentEditor.ICreateMethod>(
-                    cmd => cmd.WithName("Main")
-                            .MakeStatic()
-                            .WithBody((dynamic @this) => { Console.WriteLine("Hello World!!!"); }));
+                  .Execute((ICreateNamespace cmd )=> cmd.WithName("HelloWorld"))
+                  .Execute((ICreateClass cmd) => cmd.WithName("Program")
+                                                    .MakeStatic())
+                  .Execute((ICreateMethod cmd) => cmd.WithName("Main")
+                                                     .MakeStatic()
+                                                     .WithBody((dynamic @this) => { Console.WriteLine("Hello World!!!"); }));
             
         }
     }

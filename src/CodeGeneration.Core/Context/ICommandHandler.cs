@@ -2,7 +2,7 @@
 
 namespace CodeGen.Context
 {
-    public abstract partial class CodeGenContext<TProject, TBaseNode,TRootNode,TSemanticModel, TProcessEntity> 
+    public abstract partial class CodeGenContext<TProject, TBaseNode,TRootNode,TSemanticModel> 
         where TRootNode:TBaseNode
     {
         //keyInterface

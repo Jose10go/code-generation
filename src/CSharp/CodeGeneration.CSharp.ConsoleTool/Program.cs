@@ -1,6 +1,5 @@
 ﻿using Buildalyzer;
 using Buildalyzer.Workspaces;
-using CodeGen.CSharp.Context.DocumentEdit;
 using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using static CodeGen.CSharp.Context.DocumentEdit.CSharpContextDocumentEditor;
+using static CodeGen.CSharp.Context.CSharpContext;
 
 namespace CodeGeneration.CSharp.Precompilation
 {
@@ -28,8 +27,8 @@ namespace CodeGeneration.CSharp.Precompilation
             if (Project is null)
                 throw new ArgumentException($"Project is null. ({project})");
 
-            var resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
-            var Engine = new DocumentEditingCodeGenerationEngine(Project,resolver);
+            var resolver = new CSharpAutofacResolver();
+            var Engine = new CSharpCodeGenerationEngine(Project,resolver);
             foreach (var item in transformers)
             {
                 var assembly=LoadAssembly(item);
@@ -41,7 +40,7 @@ namespace CodeGeneration.CSharp.Precompilation
             Procces(Engine,project,changes.GetChangedDocuments(), "Updated");
         }
 
-        private static void Procces(DocumentEditingCodeGenerationEngine engine, string project, IEnumerable<DocumentId> docs, string status)
+        private static void Procces(CSharpCodeGenerationEngine engine, string project, IEnumerable<DocumentId> docs, string status)
         {
             foreach (var docId in docs)
             {
@@ -55,7 +54,7 @@ namespace CodeGeneration.CSharp.Precompilation
             }
         }
 
-        private static CodeGenerationTransformer LoadTransformer(Assembly assembly,DocumentEditingCodeGenerationEngine Engine)
+        private static CodeGenerationTransformer LoadTransformer(Assembly assembly,CSharpCodeGenerationEngine Engine)
         {
             var type=assembly.GetTypes().First(x => x.IsSubclassOf(typeof(CodeGenerationTransformer)));//TODO: Why only one transformer by assembly
             if (type is null) 

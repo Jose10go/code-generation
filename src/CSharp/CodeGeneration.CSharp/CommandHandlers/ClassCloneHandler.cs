@@ -1,13 +1,14 @@
 ﻿using CodeGen.Attributes;
+using CodeGen.Context;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using System;
 
-namespace CodeGen.CSharp.Context.DocumentEdit
+namespace CodeGen.CSharp.Context
 {
-    public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
         public class ClassCloneCommandHandler :CommandHandler<IClassClone,ClassDeclarationSyntax> 
@@ -27,7 +28,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                     modifiers = modifiers.Add(Command.Static);
                 if (Command.Partial != default)
                     modifiers = modifiers.Add(Command.Partial);
-                var newNode = node.WithIdentifier(SyntaxFactory.Identifier(Command.NewName(node)))
+                var newNode = node.WithIdentifier(SyntaxFactory.Identifier(Command.Name))
                                   .WithAttributeLists(Command.Attributes)
                                   .WithModifiers(modifiers)
                                   .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));

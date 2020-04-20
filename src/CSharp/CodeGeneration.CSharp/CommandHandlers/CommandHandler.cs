@@ -2,10 +2,12 @@
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis;
 using System;
+using CodeGen.Context;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeGen.CSharp.Context.DocumentEdit
+namespace CodeGen.CSharp.Context
 {
-    public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         public abstract class CommandHandler<TCommand, TSyntaxNode, TOutput> : ICommandHandler<TCommand, TSyntaxNode, TOutput>
             where TCommand : ICommand<TSyntaxNode,TOutput>

@@ -1,13 +1,14 @@
 ﻿using CodeGen.Attributes;
+using CodeGen.Context;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using System;
 
-namespace CodeGen.CSharp.Context.DocumentEdit
+namespace CodeGen.CSharp.Context
 {
-    public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
         public class CreateClassCommandHandler : CommandHandler<ICreateClass, NamespaceDeclarationSyntax, ClassDeclarationSyntax>

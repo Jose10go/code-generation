@@ -1,8 +1,8 @@
-﻿using CodeGen.CSharp.Context.DocumentEdit;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using Microsoft.CodeAnalysis;
 using CodeGeneration.CSharp;
+using static CodeGen.CSharp.Context.CSharpContext;
 
 namespace FancyDecoTransformer
 {
@@ -11,43 +11,23 @@ namespace FancyDecoTransformer
         public override void Transform()
         {
             var decorators = Engine.Select<ClassDeclarationSyntax>()
-                                   .Where(target => IsFancyDecorator(target.SemanticSymbol, target.Node));
+                                   .Where(target => IsFancyDecorator(target.SemanticSymbol));
 
             foreach (var decorator in decorators)
             {
                 var x = 5;
                 for (int i = 0; i < x; i++)
-                    decorator.Execute<CSharpContextDocumentEditor.ICreateMethod>(cmd=>cmd);
+                    decorator.Execute((ICreateMethod cmd) => cmd);
             }
              
 
         }
 
-        [A]
-        [A,B,A]
-        private bool IsFancyDecorator(ISymbol symbol, ClassDeclarationSyntax node) 
+        private bool IsFancyDecorator(ISymbol symbol) 
         {
             var classSymbol = symbol as INamedTypeSymbol;
             return classSymbol.BaseType.Name == "FancyDecorator";
         }
     }
 
-    [AttributeUsage(AttributeTargets.Method,AllowMultiple =true)]
-    public class A : Attribute 
-    {
-        public A()
-        {
-        }
-
-        void f<T1, T2, T3, T4>(Func<T1,T2,T3,T4> a) 
-        {
-        }
-
-
-    }
-
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class B : Attribute
-    {
-    }
 }

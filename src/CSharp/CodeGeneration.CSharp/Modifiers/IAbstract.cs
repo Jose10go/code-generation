@@ -5,12 +5,11 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace CodeGen.CSharp.Context
 {
-    public abstract partial class CSharpContext<TProcessEntity> : CodeGenContext<Project, CSharpSyntaxNode,CompilationUnitSyntax, ISymbol, TProcessEntity>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode,CompilationUnitSyntax, ISymbol>
     {
         [CommandModifier]
-        public interface IAbstract<TCommand,TNode>
+        public interface IAbstract<TCommand>
             where TCommand:Core.ICommand
-            where TNode:CSharpSyntaxNode                    
         {
             SyntaxToken Abstract { get; set; }
             TCommand MakeAbstract() 

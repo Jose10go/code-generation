@@ -3,10 +3,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Editing;
 using System;
+using CodeGen.Context;
+using Microsoft.CodeAnalysis.CSharp;
 
-namespace CodeGen.CSharp.Context.DocumentEdit
+namespace CodeGen.CSharp.Context
 {
-    public partial class CSharpContextDocumentEditor : CSharpContext<DocumentEditor>
+    public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
         public class ReplaceExpressionCommandHandler<Exp> : CommandHandler<IReplaceExpression<Exp>,Exp,ExpressionSyntax>
