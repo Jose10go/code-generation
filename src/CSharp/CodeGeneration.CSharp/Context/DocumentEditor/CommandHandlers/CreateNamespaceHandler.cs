@@ -2,6 +2,8 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis;
+using System;
 
 namespace CodeGen.CSharp.Context.DocumentEdit
 {
@@ -14,10 +16,11 @@ namespace CodeGen.CSharp.Context.DocumentEdit
             {
             }
 
-            public override NamespaceDeclarationSyntax ProccessNode(CompilationUnitSyntax targetNode, DocumentEditor documentEditor,ICodeGenerationEngine engine)
+            protected override NamespaceDeclarationSyntax ProccessNode(CompilationUnitSyntax node, DocumentEditor documentEditor,Guid id)
             {
-                var namespaceNode=SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(Command.Name));
-                documentEditor.InsertMembers(targetNode,0,new[]{namespaceNode});
+                var namespaceNode = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(Command.Name))
+                                                 .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+                documentEditor.InsertMembers(node,0,new[]{namespaceNode});
                 return namespaceNode;
             }
         }

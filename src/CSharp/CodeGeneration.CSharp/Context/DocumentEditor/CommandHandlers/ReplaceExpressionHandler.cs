@@ -1,6 +1,8 @@
 ﻿using CodeGen.Attributes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Editing;
+using System;
 
 namespace CodeGen.CSharp.Context.DocumentEdit
 {
@@ -14,10 +16,13 @@ namespace CodeGen.CSharp.Context.DocumentEdit
             {
             }
 
-            public override ExpressionSyntax ProccessNode(Exp node, DocumentEditor documentEditor,ICodeGenerationEngine engine)
+            protected override ExpressionSyntax ProccessNode(Exp node, DocumentEditor documentEditor,Guid id)
             {
-                documentEditor.ReplaceNode(node,this.Command.NewExpression);
-                return this.Command.NewExpression;
+                var newNode= this.Command.NewExpression
+                                         .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+
+                documentEditor.ReplaceNode(node,newNode);
+                return newNode;
             }
         }
     }

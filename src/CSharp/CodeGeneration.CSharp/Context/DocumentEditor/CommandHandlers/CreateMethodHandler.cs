@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using CodeGen.Attributes;
 using Microsoft.CodeAnalysis;
+using System;
 
 namespace CodeGen.CSharp.Context.DocumentEdit
 {
@@ -15,7 +16,7 @@ namespace CodeGen.CSharp.Context.DocumentEdit
             {
             }
 
-            public override MethodDeclarationSyntax ProccessNode(ClassDeclarationSyntax targetNode, DocumentEditor documentEditor,ICodeGenerationEngine engine)
+            protected override MethodDeclarationSyntax ProccessNode(ClassDeclarationSyntax node, DocumentEditor documentEditor,Guid id)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -29,9 +30,9 @@ namespace CodeGen.CSharp.Context.DocumentEdit
                 var method = SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName("void"), Command.Name)
                                           .WithAttributeLists(Command.Attributes)
                                           .WithBody(Command.Body)
-                                          .WithModifiers(modifiers);
-
-                documentEditor.InsertMembers(targetNode,0,new[]{method});
+                                          .WithModifiers(modifiers)
+                                          .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+                documentEditor.InsertMembers(node,0,new[]{method});
                 return method;
             }
         }

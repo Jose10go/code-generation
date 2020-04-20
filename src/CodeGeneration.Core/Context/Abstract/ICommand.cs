@@ -1,5 +1,4 @@
-﻿
-namespace CodeGen.Context
+﻿namespace CodeGen.Context
 {
     public partial class CodeGenContext<TProject, TBaseNode, TRootNode, TSemanticModel, TProcessEntity>
         where TRootNode:TBaseNode
