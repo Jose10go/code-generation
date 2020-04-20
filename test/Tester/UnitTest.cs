@@ -6,31 +6,20 @@ using System.Linq;
 using Xunit;
 using System.IO;
 using static CodeGen.CSharp.Context.DocumentEdit.CSharpContextDocumentEditor;
-using Buildalyzer;
-using Buildalyzer.Workspaces;
+using Xunit.Abstractions;
 
 namespace Tests
 {
-    public class UnitTest
+    public class UnitTest:IClassFixture<TestDocumentEditingCodeGenerationEngine>
     {
-        readonly AdhocWorkspace workspace;
-        readonly string projectPath;
-        readonly Project project;
         readonly DocumentEditingCodeGenerationEngine engine;
-        readonly CSharpContextDocumentEditor.CSharpAutofacResolver resolver;
+        readonly ITestOutputHelper output;
+        string projectPath => engine.CurrentProject.FilePath;
 
-        public UnitTest()
+        public UnitTest(ITestOutputHelper output,TestDocumentEditingCodeGenerationEngine engine)
         {
-            projectPath = Path.GetFullPath(Path.Combine("..", "..", "..","..", "Examples","CommandTests", "CommandTests.csproj"));
-            AnalyzerManager manager = new AnalyzerManager();
-            ProjectAnalyzer analyzer = manager.GetProject(projectPath);
-            workspace = new AdhocWorkspace();
-            //workspace.WorkspaceFailed += (sender, args) =>
-            //                                workspace.Diagnostics.Add(args.Diagnostic);
-
-            project = analyzer.AddToWorkspace(workspace);
-            resolver = new CSharpContextDocumentEditor.CSharpAutofacResolver();
-            engine = new DocumentEditingCodeGenerationEngine(project, resolver);
+            this.output = output;
+            this.engine = engine;
         }
 
         private SyntaxTree ParseFile(string path)
@@ -48,13 +37,13 @@ namespace Tests
         {
             string inpath = Path.Combine(Path.GetDirectoryName(projectPath), "CloneClass", "in.cs");
             string outpath = Path.Combine(Path.GetDirectoryName(projectPath), "CloneClass", "out.cs");
-            Document document_in = project.Documents.First(x=>x.FilePath==inpath);
 
             engine.Select<ClassDeclarationSyntax>()
-                    .Where(x => x.DocumentPath == inpath)
-                        .Execute((CSharpContextDocumentEditor.IClassClone cmd)=>cmd.WithNewName(m => m.Identifier.Text + "_generated")
-                                                                                   .MakePublic());
+                  .Where(x => x.DocumentPath == inpath)
+                  .Execute((CSharpContextDocumentEditor.IClassClone cmd)=>cmd.WithNewName(m => m.Identifier.Text + "_generated")
+                                                                             .MakePublic());
 
+            Document document_in = engine.CurrentProject.Documents.First(x=>x.FilePath==inpath);
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));
@@ -65,17 +54,17 @@ namespace Tests
         {
             string inpath = Path.Combine(Path.GetDirectoryName(projectPath), "CloneMethod", "in.cs");
             string outpath = Path.Combine(Path.GetDirectoryName(projectPath), "CloneMethod", "out.cs");
-            Document document_in = project.Documents.First(x => x.FilePath == inpath); 
             
             engine.Select<MethodDeclarationSyntax>()
-                    .Where(x => x.DocumentPath==inpath)
-                        .Execute((CSharpContextDocumentEditor.IMethodClone cmd)=>cmd.WithNewName(m => m.Identifier.Text + "_generated")
-                                                                                    .MakePublic()
-                                                                                    .WithBody("{Console.WriteLine(\"hello my friend.\");}"));
+                  .Where(x => x.DocumentPath == inpath)
+                  .Execute((CSharpContextDocumentEditor.IMethodClone cmd)=>cmd.WithNewName(m => m.Identifier.Text + "_generated")
+                                                                              .MakePublic()
+                                                                              .WithBody("{Console.WriteLine(\"hello my friend.\");}"));
 
             //This Comment is preserved to mark the moment :)
             //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever...
 
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath); 
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));
@@ -88,20 +77,38 @@ namespace Tests
             string outpath = Path.Combine(Path.GetDirectoryName(projectPath), "ReplaceInvocation", "out.cs");
 
             engine.Select<ParenthesizedLambdaExpressionSyntax, ArgumentSyntax, InvocationExpressionSyntax>()
-                  .Where(x => x.DocumentPath == inpath)
-                  .Where(x =>
-                  {
+                  .Where(x => { 
                       var s = (IMethodSymbol)x.Grandparent.SemanticSymbol;
                       if (s is null)
                           return false;
-                      return s.Name == "f" && s.ContainingType.Name == "A";
-                  })
+                      return s.Name == "f" && s.ContainingType.Name == "A";})
+                  .Where(x => x.DocumentPath == inpath)
                   .Using(target => target.Node.Body.ToString().Replace("@this", "this"), out var bodyKey)
                   .Execute((CSharpContextDocumentEditor.IReplaceExpression<ParenthesizedLambdaExpressionSyntax> cmd) => cmd.Get(bodyKey, out var stringBody)
-                                                                                                                         .With(SyntaxFactory.ParseExpression($"\"{stringBody}\"")));
+                                                                                                                           .With(SyntaxFactory.ParseExpression($"\"{stringBody}\"")));
                   
 
-            Document document_in = project.Documents.First(x => x.FilePath == inpath);
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
+        }
+
+        [Fact] 
+        public void HelloWorldTest() 
+        {
+            string outpath = Path.Combine(Path.GetDirectoryName(projectPath), "HelloWorld", "out.cs");
+            string inpath = Path.Combine(Path.GetDirectoryName(projectPath), "HelloWorld", "in.cs");
+
+            engine.SelectNew(inpath)
+                  .Execute((CSharpContextDocumentEditor.ICreateNamespace cmd) => cmd.WithName("HelloWorld"))
+                  .Execute((CSharpContextDocumentEditor.ICreateClass cmd) => cmd.WithName("Program")
+                                                                                .MakeStatic())
+                  .Execute((CSharpContextDocumentEditor.ICreateMethod cmd) => cmd.WithName("Main")
+                                                                                 .MakeStatic()
+                                                                                 .WithBody("{System.Console.WriteLine(\"Hello World!!!\"); }"));
+
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));
