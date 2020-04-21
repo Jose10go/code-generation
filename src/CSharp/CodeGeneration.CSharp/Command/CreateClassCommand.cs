@@ -9,12 +9,15 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
     {
         public interface ICreateClass: ICommand<NamespaceDeclarationSyntax, ClassDeclarationSyntax>,
+                                       IGet<ICreateClass,NamespaceDeclarationSyntax>,
                                        IWithName<ICreateClass>,
                                        IWithAttribute<ICreateClass>,
                                        IWithAccessModifier<ICreateClass>,
                                        IAbstract<ICreateClass>,
                                        IStatic<ICreateClass>,
-                                       IPartial<ICreateClass>
+                                       IPartial<ICreateClass>,
+                                       IInheritsFrom<ICreateClass>,
+                                       IImplements<ICreateClass>
         {
         }
 
@@ -32,6 +35,8 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Abstract { get; set; }
             public SyntaxToken Static { get; set; }
             public SyntaxToken Partial { get; set; }
+            public string InheritsType { get ; set ; }
+            public string[] ImplementedInterfaces { get ; set ; }
         }
 
     }

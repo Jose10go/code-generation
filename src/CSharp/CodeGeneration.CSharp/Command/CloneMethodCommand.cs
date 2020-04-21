@@ -21,7 +21,7 @@ namespace CodeGen.CSharp.Context
         }
 
         [Command]
-        public class MethodCloneCommand : IMethodClone
+        public class CloneMethodCommand : IMethodClone
         {
             public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }

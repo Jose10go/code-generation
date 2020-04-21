@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using System;
+using System.Linq;
 
 namespace CodeGen.CSharp.Context
 {
@@ -28,10 +29,19 @@ namespace CodeGen.CSharp.Context
                     modifiers = modifiers.Add(Command.Static);
                 if (Command.Partial != default)
                     modifiers = modifiers.Add(Command.Partial);
+
+                var separatedBaseTypes = new SeparatedSyntaxList<BaseTypeSyntax>();
+                if (Command.InheritsType != null)
+                    separatedBaseTypes.Add(SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(Command.InheritsType)));
+                if (Command.ImplementedInterfaces != null)
+                    separatedBaseTypes.AddRange(Command.ImplementedInterfaces.Select(name => SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(name))));
+
                 var classNode = SyntaxFactory.ClassDeclaration(Command.Name)
                                              .WithAttributeLists(Command.Attributes)
                                              .WithModifiers(modifiers)
+                                             .WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes))
                                              .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+
                 documentEditor.InsertMembers(node, 0, new[] { classNode });
                 return classNode;
             }
