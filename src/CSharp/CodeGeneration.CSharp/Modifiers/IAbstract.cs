@@ -14,7 +14,7 @@ namespace CodeGen.CSharp.Context
             SyntaxToken Abstract { get; set; }
             TCommand MakeAbstract() 
             {
-                SyntaxFactory.Token(SyntaxKind.AbstractKeyword);
+                Abstract=SyntaxFactory.Token(SyntaxKind.AbstractKeyword);
                 return (TCommand)this;
             }
         }

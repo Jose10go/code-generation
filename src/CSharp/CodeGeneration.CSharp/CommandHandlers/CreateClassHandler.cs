@@ -39,8 +39,10 @@ namespace CodeGen.CSharp.Context
                 var classNode = SyntaxFactory.ClassDeclaration(Command.Name)
                                              .WithAttributeLists(Command.Attributes)
                                              .WithModifiers(modifiers)
-                                             .WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes))
                                              .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+
+                if (separatedBaseTypes.Count > 0)
+                    classNode = classNode.WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes));
 
                 documentEditor.InsertMembers(node, 0, new[] { classNode });
                 return classNode;

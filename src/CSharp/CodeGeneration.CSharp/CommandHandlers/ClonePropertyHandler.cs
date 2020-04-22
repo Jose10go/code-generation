@@ -26,11 +26,8 @@ namespace CodeGen.CSharp.Context
                     modifiers = modifiers.Add(Command.Abstract);
                 if (Command.Static != default)
                     modifiers = modifiers.Add(Command.Static);
-                if (Command.Partial != default)
-                    modifiers = modifiers.Add(Command.Partial);
                 var methodNode = node.WithIdentifier(SyntaxFactory.ParseToken(Command.Name))
                                                .WithAttributeLists(Command.Attributes)
-                                               .WithBody(Command.Body)
                                                .WithModifiers(modifiers)
                                                .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
 
