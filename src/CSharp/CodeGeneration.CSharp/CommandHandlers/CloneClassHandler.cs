@@ -12,9 +12,9 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
-        public class ClassCloneCommandHandler :CommandHandler<IClassClone,ClassDeclarationSyntax> 
+        public class ClassCloneCommandHandler :CommandHandler<ICloneClass,ClassDeclarationSyntax> 
         {
-            public ClassCloneCommandHandler(IClassClone command) : base(command)
+            public ClassCloneCommandHandler(ICloneClass command) : base(command)
             {
             }
 

@@ -8,21 +8,21 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
     {
-        public interface IClassClone : ICommand<ClassDeclarationSyntax,ClassDeclarationSyntax>,
-                                       IGet<IClassClone,ClassDeclarationSyntax>,
-                                       IWithName<IClassClone>,
-                                       IWithAttribute<IClassClone>,
-                                       IWithAccessModifier<IClassClone>,
-                                       IAbstract<IClassClone>,
-                                       IStatic<IClassClone>,
-                                       IPartial<IClassClone>,
-                                       IInheritsFrom<IClassClone>,
-                                       IImplements<IClassClone>
+        public interface ICloneClass : ICommand<ClassDeclarationSyntax,ClassDeclarationSyntax>,
+                                       IGet<ICloneClass,ClassDeclarationSyntax>,
+                                       IWithName<ICloneClass>,
+                                       IWithAttribute<ICloneClass>,
+                                       IWithAccessModifier<ICloneClass>,
+                                       IAbstract<ICloneClass>,
+                                       IStatic<ICloneClass>,
+                                       IPartial<ICloneClass>,
+                                       IInheritsFrom<ICloneClass>,
+                                       IImplements<ICloneClass>
         {
         }
 
         [Command]
-        public class CloneClassCommand : IClassClone
+        public class CloneClassCommand : ICloneClass
         {
             public CloneClassCommand():base()
             {
