@@ -34,7 +34,7 @@ namespace CodeGen.CSharp.Context
                                   .WithModifiers(modifiers)
                                   .WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes))
                                   .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
-                documentEditor.InsertAfter(node,newNode);
+                documentEditor.ReplaceNode(node,newNode);
                 return newNode;
             }
         }
