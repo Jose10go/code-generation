@@ -1,17 +1,9 @@
 ﻿using System;
-
+using System.Collections.Generic;
 namespace Tests.Examples.CreateClass
 {
-    public static partial class B
+    public abstract static partial class A
     {
         
-    }
-
-    public class A
-    {
-        public void hello()
-        {
-            Console.WriteLine("hello my friend.");
-        }
     }
 }
