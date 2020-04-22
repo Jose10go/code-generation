@@ -60,7 +60,7 @@ namespace Tests
             engine.Select<MethodDeclarationSyntax>()
                   .Where(x => x.DocumentPath == inpath)
                   .Using(x=>x.Node.Identifier.Text,out var keyName)
-                  .Execute((IMethodClone cmd)=>cmd.Get(keyName,out var name)
+                  .Execute((ICloneMethod cmd)=>cmd.Get(keyName,out var name)
                                                   .WithName(name + "_generated")
                                                   .MakePublic()
                                                   .WithBody("{Console.WriteLine(\"hello my friend.\");}"));

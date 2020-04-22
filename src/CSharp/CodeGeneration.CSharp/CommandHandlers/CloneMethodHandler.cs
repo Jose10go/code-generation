@@ -11,9 +11,9 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
-        public class CloneMethodCommandHandler : CommandHandler<IMethodClone,MethodDeclarationSyntax>
+        public class CloneMethodCommandHandler : CommandHandler<ICloneMethod,MethodDeclarationSyntax>
         {
-            public CloneMethodCommandHandler(IMethodClone command) :base(command)
+            public CloneMethodCommandHandler(ICloneMethod command) :base(command)
             {
             }
 

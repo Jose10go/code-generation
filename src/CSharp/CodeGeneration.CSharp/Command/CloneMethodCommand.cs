@@ -8,20 +8,20 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
 {
-        public interface IMethodClone : ICommand<MethodDeclarationSyntax,MethodDeclarationSyntax>,
-                                        IGet<IMethodClone,MethodDeclarationSyntax>,
-                                        IWithName<IMethodClone>,
-                                        IWithAttribute<IMethodClone>,
-                                        IWithBody<IMethodClone>,
-                                        IWithAccessModifier<IMethodClone>,
-                                        IAbstract<IMethodClone>,
-                                        IStatic<IMethodClone>,
-                                        IPartial<IMethodClone>
+        public interface ICloneMethod : ICommand<MethodDeclarationSyntax,MethodDeclarationSyntax>,
+                                        IGet<ICloneMethod,MethodDeclarationSyntax>,
+                                        IWithName<ICloneMethod>,
+                                        IWithAttribute<ICloneMethod>,
+                                        IWithBody<ICloneMethod>,
+                                        IWithAccessModifier<ICloneMethod>,
+                                        IAbstract<ICloneMethod>,
+                                        IStatic<ICloneMethod>,
+                                        IPartial<ICloneMethod>
         {
         }
 
         [Command]
-        public class CloneMethodCommand : IMethodClone
+        public class CloneMethodCommand : ICloneMethod
         {
             public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
