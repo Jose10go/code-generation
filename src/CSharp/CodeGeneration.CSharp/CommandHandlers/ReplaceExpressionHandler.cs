@@ -22,7 +22,6 @@ namespace CodeGen.CSharp.Context
             {
                 var newNode= this.Command.NewExpression
                                          .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
-
                 documentEditor.ReplaceNode(node,newNode);
                 return newNode;
             }
