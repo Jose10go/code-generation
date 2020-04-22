@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis;
 using System;
 using CodeGen.Context;
+using System.Linq;
 
 namespace CodeGen.CSharp.Context
 {
@@ -21,7 +22,8 @@ namespace CodeGen.CSharp.Context
             {
                 var namespaceNode = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(Command.Name))
                                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
-                documentEditor.InsertMembers(node,0,new[]{namespaceNode});
+                documentEditor.ReplaceNode(node, node.WithUsings(new SyntaxList<UsingDirectiveSyntax>(Command.Namespaces.Select(n => SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(n)))))
+                                                     .WithMembers(new SyntaxList<MemberDeclarationSyntax>(namespaceNode)));
                 return namespaceNode;
             }
         }
