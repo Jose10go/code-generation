@@ -32,18 +32,32 @@ namespace CodeGen.CSharp.Context
 
                 var separatedBaseTypes = new SeparatedSyntaxList<BaseTypeSyntax>();
                 if (Command.InheritsType != null)
-                    separatedBaseTypes.Add(SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(Command.InheritsType)));
+                    separatedBaseTypes=separatedBaseTypes.Add(SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(Command.InheritsType)));
                 if (Command.ImplementedInterfaces != null)
-                    separatedBaseTypes.AddRange(Command.ImplementedInterfaces.Select(name => SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(name))));
+                    separatedBaseTypes=separatedBaseTypes.AddRange(Command.ImplementedInterfaces.Select(name => SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(name))));
 
                 var classNode = SyntaxFactory.ClassDeclaration(Command.Name)
                                              .WithAttributeLists(Command.Attributes)
                                              .WithModifiers(modifiers)
                                              .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+               
+                if (Command.GenericTypes.Count > 0)
+                    classNode = classNode.WithTypeParameterList(
+                        SyntaxFactory.TypeParameterList(
+                            new SeparatedSyntaxList<TypeParameterSyntax>().AddRange(
+                                Command.GenericTypes.Keys.Select(x=>SyntaxFactory.TypeParameter(x)))));
 
-                if (separatedBaseTypes.Count > 0)
+                if (separatedBaseTypes.Count>0)
                     classNode = classNode.WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes));
-
+                
+                if(Command.GenericTypes!=null && Command.GenericTypes.Count>0)
+                    classNode = classNode.WithConstraintClauses(
+                        new SyntaxList<TypeParameterConstraintClauseSyntax>(
+                            Command.GenericTypes.Where(item=>item.Value.Count>0)
+                                                .Select(item=>SyntaxFactory.TypeParameterConstraintClause(item.Key)
+                                                                           .WithConstraints(new SeparatedSyntaxList<TypeParameterConstraintSyntax>()
+                                                                           .AddRange(item.Value.Select(x=>SyntaxFactory.TypeConstraint(SyntaxFactory.ParseTypeName(x))))))));
+               
                 documentEditor.InsertMembers(node, 0, new[] { classNode });
                 return classNode;
             }

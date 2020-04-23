@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Tests
 {
@@ -40,14 +41,19 @@ namespace Tests
             string outpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CreateClass", "out.cs");
 
             engine.SelectNew(inpath)
-                  .Execute((ICreateNamespace cmd) => cmd.WithName("Tests.Examples.CreateClass")
-                                                      .Using("System")
-                                                      .Using<List<object>>())
+                  .Execute((ICreateNamespace cmd) => 
+                        cmd.WithName("Tests.Examples.CreateClass")
+                           .Using("System")
+                           .Using<List<object>>())
                   .Execute((ICreateClass cmd) => cmd.WithName("A")
+                                                    .MakeGenericIn("T")
+                                                    .WithTypeConstraints("T", new GenericType(typeof(IEnumerable<>), "T"))
+                                                    .InheritsFrom(new GenericType(typeof(Dictionary<,>), "string", "T"))
+                                                    .Implements(new GenericType(typeof(ICollection<>), "T"),
+                                                                new GenericType(typeof(IComparable<>), "T"))
                                                     .MakePublic()
                                                     .MakePartial()
-                                                    .MakeStatic()
-                                                    .MakeAbstract());
+                                                    .MakeStatic());
 
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
@@ -111,7 +117,7 @@ namespace Tests
             {
                 _class.Execute((ICreateMethod cmd) => cmd.WithName("returns" + i)
                                                          .WithAttributes("GeneratedCode")
-                                                         .Returns<int>()
+                                                         .Returns(new Type<int>())
                                                          .MakeStatic()
                                                          .WithBody($"{{return {i};}}"));
             } 

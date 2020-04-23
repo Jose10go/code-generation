@@ -18,9 +18,9 @@ namespace CodeGen.CSharp.Context
                 return (TCommand)this;
             }
 
-            TCommand Returns<T>()
+            TCommand Returns(IType type)
             {
-                return this.Returns(typeof(T).Name);
+                return this.Returns(type.TypeName);
             }
 
         }

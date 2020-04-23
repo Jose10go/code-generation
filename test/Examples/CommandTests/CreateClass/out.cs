@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+
 namespace Tests.Examples.CreateClass
 {
-    public abstract static partial class A
+    public static partial class A<T>:Dictionary<string,T>,ICollection<T>,IComparable<T>
+        where T:IEnumerable<T>
     {
-        
     }
 }

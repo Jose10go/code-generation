@@ -3,6 +3,8 @@ using CodeGen.Context;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Linq;
+
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode,CompilationUnitSyntax, ISymbol>
@@ -18,39 +20,9 @@ namespace CodeGen.CSharp.Context
                 return (TCommand)this;
             }
 
-            TCommand Implements<T>()
+            TCommand Implements(params IType[] interfaces)
             {
-                return this.Implements(typeof(T).Name);
-            }
-
-            TCommand Implements<T1,T2>()
-            {
-                return this.Implements(typeof(T1).Name,
-                                       typeof(T2).Name);
-            }
-
-            TCommand Implements<T1, T2, T3>()
-            {
-                return this.Implements(typeof(T1).Name,
-                                       typeof(T2).Name,
-                                       typeof(T3).Name);
-            }
-
-            TCommand Implements<T1, T2, T3,T4>()
-            {
-                return this.Implements(typeof(T1).Name,
-                                       typeof(T2).Name,
-                                       typeof(T3).Name,
-                                       typeof(T4).Name);
-            }
-
-            TCommand Implements<T1, T2, T3, T4, T5>()
-            {
-                return this.Implements(typeof(T1).Name,
-                                       typeof(T2).Name,
-                                       typeof(T3).Name,
-                                       typeof(T4).Name,
-                                       typeof(T5).Name);
+                return this.Implements(interfaces.Select(t =>t.TypeName).ToArray());
             }
         }
     }

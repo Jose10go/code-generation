@@ -18,10 +18,9 @@ namespace CodeGen.CSharp.Context
                 return (TCommand)this;
             }
 
-            TCommand InheritsFrom<T>()
-                where T:class
+            TCommand InheritsFrom(IType type)
             {
-                return this.InheritsFrom(typeof(T).Name);
+                return this.InheritsFrom(type.TypeName);
             }
 
         }
