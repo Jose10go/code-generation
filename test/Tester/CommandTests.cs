@@ -72,6 +72,9 @@ namespace Tests
                   .Using(x=>x.Node.Identifier.Text,out var keyName)
                   .Execute((ICloneClass cmd)=>cmd.Get(keyName,out var name)
                                                  .WithName(name + "_generated")
+                                                 .Implements(new GenericType(typeof(IEnumerable<>),"string"))
+                                                 .MakeGenericIn("TGeneric")
+                                                 .WithConstraints("TGeneric","Console")
                                                  .MakePublic());
 
             Document document_in = engine.CurrentProject.Documents.First(x=>x.FilePath==inpath);

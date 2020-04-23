@@ -41,7 +41,7 @@ namespace CodeGen.CSharp.Context
                                              .WithModifiers(modifiers)
                                              .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
                
-                if (Command.GenericTypes.Count > 0)
+                if (Command.GenericTypes !=null && Command.GenericTypes.Count > 0)
                     classNode = classNode.WithTypeParameterList(
                         SyntaxFactory.TypeParameterList(
                             new SeparatedSyntaxList<TypeParameterSyntax>().AddRange(

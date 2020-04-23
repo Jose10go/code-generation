@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 namespace Tests.Examples.CloneClass
 {
     public class A
@@ -10,7 +10,8 @@ namespace Tests.Examples.CloneClass
         }
     }
 
-    public class A_generated
+    public class A_generated<TGeneric>:IEnumerable<string>
+        where TGeneric:Console
     {
         public void hello()
         {

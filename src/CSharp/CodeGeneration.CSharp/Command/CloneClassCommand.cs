@@ -3,6 +3,7 @@ using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Generic;
 
 namespace CodeGen.CSharp.Context
 {
@@ -17,7 +18,8 @@ namespace CodeGen.CSharp.Context
                                        IStatic<ICloneClass>,
                                        IPartial<ICloneClass>,
                                        IInheritsFrom<ICloneClass>,
-                                       IImplements<ICloneClass>
+                                       IImplements<ICloneClass>,
+                                       IWithGeneric<ICloneClass>
         {
         }
 
@@ -37,6 +39,7 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Partial { get; set; }
             public string InheritsType { get ; set ; }
             public string[] ImplementedInterfaces { get ; set ; }
+            public Dictionary<string, List<string>> GenericTypes { get; set ; }
         }
 
     }
