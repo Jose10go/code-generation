@@ -22,8 +22,11 @@ namespace CodeGen.CSharp.Context
             {
                 var namespaceNode = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(Command.Name))
                                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
-                documentEditor.ReplaceNode(node, node.WithUsings(new SyntaxList<UsingDirectiveSyntax>(Command.Namespaces.Select(n => SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(n)))))
-                                                     .WithMembers(new SyntaxList<MemberDeclarationSyntax>(namespaceNode)));
+                var newcompilationUnitNode = node.WithMembers(new SyntaxList<MemberDeclarationSyntax>(namespaceNode));
+                if (Command.Namespaces != null)
+                    newcompilationUnitNode = newcompilationUnitNode.WithUsings(new SyntaxList<UsingDirectiveSyntax>(Command.Namespaces.Select(n => SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(n)))));
+                
+                documentEditor.ReplaceNode(node, newcompilationUnitNode);
                 return namespaceNode;
             }
         }
