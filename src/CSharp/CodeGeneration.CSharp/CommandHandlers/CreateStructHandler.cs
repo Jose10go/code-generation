@@ -28,15 +28,33 @@ namespace CodeGen.CSharp.Context
 
                 var separatedBaseTypes = new SeparatedSyntaxList<BaseTypeSyntax>();
                 if (Command.ImplementedInterfaces != null)
-                    separatedBaseTypes.AddRange(Command.ImplementedInterfaces.Select(name => SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(name))));
+                    separatedBaseTypes=separatedBaseTypes.AddRange(Command.ImplementedInterfaces.Select(name => SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(name))));
 
-                var classNode = SyntaxFactory.StructDeclaration(Command.Name)
+                var structNode = SyntaxFactory.StructDeclaration(Command.Name)
                                              .WithAttributeLists(Command.Attributes)
                                              .WithModifiers(modifiers)
-                                             .WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes))
                                              .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
-                documentEditor.InsertMembers(node, 0, new[] { classNode });
-                return classNode;
+
+                if (Command.GenericTypes != null && Command.GenericTypes.Count > 0)
+                    structNode = structNode.WithTypeParameterList(
+                        SyntaxFactory.TypeParameterList(
+                            new SeparatedSyntaxList<TypeParameterSyntax>().AddRange(
+                                Command.GenericTypes.Keys.Select(x => SyntaxFactory.TypeParameter(x)))));
+
+                if (separatedBaseTypes.Count > 0)
+                    structNode = structNode.WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes));
+
+                if (Command.GenericTypes != null && Command.GenericTypes.Count > 0)
+                    structNode = structNode.WithConstraintClauses(
+                        new SyntaxList<TypeParameterConstraintClauseSyntax>(
+                            Command.GenericTypes.Where(item => item.Value.Count > 0)
+                                                .Select(item => SyntaxFactory.TypeParameterConstraintClause(item.Key)
+                                                                             .WithConstraints(new SeparatedSyntaxList<TypeParameterConstraintSyntax>()
+                                                                             .AddRange(item.Value.Select(x => SyntaxFactory.TypeConstraint(SyntaxFactory.ParseTypeName(x))))))));
+
+
+                documentEditor.InsertMembers(node, 0, new[] { structNode });
+                return structNode;
             }
 
         }

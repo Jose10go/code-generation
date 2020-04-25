@@ -60,6 +60,31 @@ namespace Tests
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));
         }
+
+        [Fact]
+        public void CreateStruct()
+        {
+            string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CreateStruct", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CreateStruct", "out.cs");
+
+            engine.SelectNew(inpath)
+                  .Execute((ICreateNamespace cmd) =>
+                        cmd.WithName("Tests.Examples.CreateStruct")
+                           .Using("System")
+                           .Using<List<object>>())
+                  .Execute((ICreateStruct cmd) => cmd.WithName("A")
+                                                     .MakeGenericIn<T>()
+                                                     .WithConstraints<T>("IEnumerable<T>")
+                                                     .Implements<IDictionary<string, T>,ICollection<T>, IComparable<T>>()
+                                                     .MakePublic()
+                                                     .MakePartial());
+
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
+        }
+
         class TGeneric { }
         [Fact]
         public void CloneClass()
@@ -78,6 +103,28 @@ namespace Tests
                                                  .MakePublic());
 
             Document document_in = engine.CurrentProject.Documents.First(x=>x.FilePath==inpath);
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
+        }
+
+        [Fact]
+        public void CloneStruct()
+        {
+            string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CloneStruct", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CloneStruct", "out.cs");
+
+            engine.Select<StructDeclarationSyntax>()
+                  .Where(x => x.DocumentPath == inpath)
+                  .Using(x => x.Node.Identifier.Text, out var keyName)
+                  .Execute((ICloneStruct cmd) => cmd.Get(keyName, out var name)
+                                                 .WithName(name + "_generated")
+                                                 .Implements<IEnumerable<string>>()
+                                                 .MakeGenericIn<TGeneric>()
+                                                 .WithConstraints<TGeneric>("Console")
+                                                 .MakeProtected());
+
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));

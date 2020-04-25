@@ -3,6 +3,7 @@ using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Generic;
 
 namespace CodeGen.CSharp.Context
 {
@@ -14,7 +15,8 @@ namespace CodeGen.CSharp.Context
                                         IWithAttribute<ICreateStruct>,
                                         IWithAccessModifier<ICreateStruct>,
                                         IPartial<ICreateStruct>,
-                                        IImplements<ICreateStruct>
+                                        IImplements<ICreateStruct>,
+                                        IWithGeneric<ICreateStruct>
         {
         }
 
@@ -31,6 +33,7 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Modifiers { get; set; }
             public SyntaxToken Partial { get; set; }
             public string[] ImplementedInterfaces { get ; set ; }
+            public Dictionary<string, List<string>> GenericTypes { get ; set ; }
         }
 
     }
