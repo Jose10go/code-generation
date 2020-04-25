@@ -128,6 +128,12 @@ namespace Tests
                   .Execute((ICloneProperty cmd) => cmd.WithName("SomeOther")
                                                       .MakeStatic()
                                                       .MakePublic());
+            propTarget
+                  .Execute((ICloneProperty cmd) => cmd.WithName("SomeOtherOne")
+                                                      .MakeProtected()
+                                                      .Returns("string")
+                                                      .WithGet("{return \"hola\";}")
+                                                      .MakeGetPrivate());
 
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);

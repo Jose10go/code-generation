@@ -32,8 +32,8 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Modifiers { get; set; }
             public SyntaxToken Abstract { get; set; }
             public SyntaxToken Static { get; set; }
-            public SyntaxToken SetModifier { get ; set ; }
-            public SyntaxToken GetModifier { get ; set ; }
+            public SyntaxTokenList SetModifier { get ; set ; }
+            public SyntaxTokenList GetModifier { get ; set ; }
             public BlockSyntax GetStatements { get ; set ; }
             public BlockSyntax SetStatements { get ; set ; }
             public string ReturnType { get; set ; }
