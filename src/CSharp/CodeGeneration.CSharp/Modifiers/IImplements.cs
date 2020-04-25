@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Linq;
-
+using static CodeGen.CSharp.Extensions;
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode,CompilationUnitSyntax, ISymbol>
@@ -20,9 +20,39 @@ namespace CodeGen.CSharp.Context
                 return (TCommand)this;
             }
 
-            TCommand Implements(params IType[] interfaces)
+            TCommand Implements<T>()
             {
-                return this.Implements(interfaces.Select(t =>t.TypeName).ToArray());
+                return this.Implements(GetCSharpName<T>());
+            }
+
+            TCommand Implements<T1,T2>()
+            {
+                return this.Implements(GetCSharpName<T1>(), 
+                                       GetCSharpName<T2>());
+            }
+
+            TCommand Implements<T1, T2, T3>()
+            {
+                return this.Implements(GetCSharpName<T1>(),
+                                       GetCSharpName<T2>(),
+                                       GetCSharpName<T3>());
+            }
+
+            TCommand Implements<T1, T2, T3, T4>()
+            {
+                return this.Implements(GetCSharpName<T1>(),
+                                       GetCSharpName<T2>(),
+                                       GetCSharpName<T3>(),
+                                       GetCSharpName<T4>());
+            }
+
+            TCommand Implements<T1, T2, T3, T4, T5>()
+            {
+                return this.Implements(GetCSharpName<T1>(),
+                                       GetCSharpName<T2>(),
+                                       GetCSharpName<T3>(),
+                                       GetCSharpName<T4>(),
+                                       GetCSharpName<T5>());
             }
         }
     }

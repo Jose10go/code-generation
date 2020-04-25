@@ -3,6 +3,7 @@ using CodeGen.Context;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static CodeGen.CSharp.Extensions;
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode,CompilationUnitSyntax, ISymbol>
@@ -18,9 +19,9 @@ namespace CodeGen.CSharp.Context
                 return (TCommand)this;
             }
 
-            TCommand Returns(IType type)
+            TCommand Returns<T>()
             {
-                return this.Returns(type.TypeName);
+                return this.Returns(GetCSharpName<T>());
             }
 
         }

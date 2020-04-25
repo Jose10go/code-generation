@@ -3,10 +3,8 @@ using CodeGen.Context;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-
+using static CodeGen.CSharp.Extensions;
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
@@ -28,15 +26,50 @@ namespace CodeGen.CSharp.Context
                 return (TCommand)this;
             }
 
+            TCommand MakeGenericIn<T>()
+            {
+                return MakeGenericIn(GetCSharpName<T>());
+            }
+
+            TCommand MakeGenericIn<T1,T2>()
+            {
+                return MakeGenericIn(GetCSharpName<T1>(),
+                                     GetCSharpName<T2>());
+            }
+
+            TCommand MakeGenericIn<T1, T2, T3>()
+            {
+                return MakeGenericIn(GetCSharpName<T1>(),
+                                     GetCSharpName<T2>(),
+                                     GetCSharpName<T3>());
+            }
+
+            TCommand MakeGenericIn<T1, T2, T3,T4>()
+            {
+                return MakeGenericIn(GetCSharpName<T1>(),
+                                     GetCSharpName<T2>(),
+                                     GetCSharpName<T3>(),
+                                     GetCSharpName<T4>());
+            }
+
+            TCommand MakeGenericIn<T1, T2, T3, T4, T5>()
+            {
+                return MakeGenericIn(GetCSharpName<T1>(),
+                                     GetCSharpName<T2>(),
+                                     GetCSharpName<T3>(),
+                                     GetCSharpName<T4>(),
+                                     GetCSharpName<T5>());
+            }
+
             TCommand WithConstraints(string type, params string[] constraints)
             {
                 GenericTypes[type].AddRange(constraints);
                 return (TCommand)this;
             }
 
-            TCommand WithTypeConstraints(string type,params IType[] constraints)
+            TCommand WithConstraints<T>(params string[] constraints)
             {
-                return this.WithConstraints(type,constraints.Select(t=>t.TypeName).ToArray());
+                return WithConstraints(GetCSharpName<T>(), constraints);
             }
 
             TCommand WithClassConstraint(string type)
@@ -44,9 +77,19 @@ namespace CodeGen.CSharp.Context
                 return this.WithConstraints(type,"class");
             }
 
+            TCommand WithClassConstraint<T>()
+            {
+                return this.WithConstraints(GetCSharpName<T>(), "class");
+            }
+
             TCommand WithStructConstraint(string type)
             {
                 return this.WithConstraints(type, "struct");
+            }
+
+            TCommand WithStructConstraint<T>()
+            {
+                return this.WithConstraints(GetCSharpName<T>(), "struct");
             }
 
             TCommand WithNewConstraint(string type)
@@ -54,11 +97,21 @@ namespace CodeGen.CSharp.Context
                 return this.WithConstraints(type, "new()");
             }
 
+            TCommand WithNewConstraint<T>()
+            {
+                return this.WithConstraints(GetCSharpName<T>(), "new()");
+            }
+
             TCommand WithNotNullConstraint(string type)
             {
                 return this.WithConstraints(type, "notnull");
             }
-            
+
+            TCommand WithNotNullConstraint<T>()
+            {
+                return this.WithConstraints(GetCSharpName<T>(), "notnull");
+            }
+
         }
         
     }

@@ -3,595 +3,595 @@
     public class A
     {
         [GeneratedCode]
-        static Int32 returns98()
+        static int returns98()
         {
             return 98;
         }
 
         [GeneratedCode]
-        static Int32 returns97()
+        static int returns97()
         {
             return 97;
         }
 
         [GeneratedCode]
-        static Int32 returns96()
+        static int returns96()
         {
             return 96;
         }
 
         [GeneratedCode]
-        static Int32 returns95()
+        static int returns95()
         {
             return 95;
         }
 
         [GeneratedCode]
-        static Int32 returns94()
+        static int returns94()
         {
             return 94;
         }
 
         [GeneratedCode]
-        static Int32 returns93()
+        static int returns93()
         {
             return 93;
         }
 
         [GeneratedCode]
-        static Int32 returns92()
+        static int returns92()
         {
             return 92;
         }
 
         [GeneratedCode]
-        static Int32 returns91()
+        static int returns91()
         {
             return 91;
         }
 
         [GeneratedCode]
-        static Int32 returns90()
+        static int returns90()
         {
             return 90;
         }
 
         [GeneratedCode]
-        static Int32 returns89()
+        static int returns89()
         {
             return 89;
         }
 
         [GeneratedCode]
-        static Int32 returns88()
+        static int returns88()
         {
             return 88;
         }
 
         [GeneratedCode]
-        static Int32 returns87()
+        static int returns87()
         {
             return 87;
         }
 
         [GeneratedCode]
-        static Int32 returns86()
+        static int returns86()
         {
             return 86;
         }
 
         [GeneratedCode]
-        static Int32 returns85()
+        static int returns85()
         {
             return 85;
         }
 
         [GeneratedCode]
-        static Int32 returns84()
+        static int returns84()
         {
             return 84;
         }
 
         [GeneratedCode]
-        static Int32 returns83()
+        static int returns83()
         {
             return 83;
         }
 
         [GeneratedCode]
-        static Int32 returns82()
+        static int returns82()
         {
             return 82;
         }
 
         [GeneratedCode]
-        static Int32 returns81()
+        static int returns81()
         {
             return 81;
         }
 
         [GeneratedCode]
-        static Int32 returns80()
+        static int returns80()
         {
             return 80;
         }
 
         [GeneratedCode]
-        static Int32 returns79()
+        static int returns79()
         {
             return 79;
         }
 
         [GeneratedCode]
-        static Int32 returns78()
+        static int returns78()
         {
             return 78;
         }
 
         [GeneratedCode]
-        static Int32 returns77()
+        static int returns77()
         {
             return 77;
         }
 
         [GeneratedCode]
-        static Int32 returns76()
+        static int returns76()
         {
             return 76;
         }
 
         [GeneratedCode]
-        static Int32 returns75()
+        static int returns75()
         {
             return 75;
         }
 
         [GeneratedCode]
-        static Int32 returns74()
+        static int returns74()
         {
             return 74;
         }
 
         [GeneratedCode]
-        static Int32 returns73()
+        static int returns73()
         {
             return 73;
         }
 
         [GeneratedCode]
-        static Int32 returns72()
+        static int returns72()
         {
             return 72;
         }
 
         [GeneratedCode]
-        static Int32 returns71()
+        static int returns71()
         {
             return 71;
         }
 
         [GeneratedCode]
-        static Int32 returns70()
+        static int returns70()
         {
             return 70;
         }
 
         [GeneratedCode]
-        static Int32 returns69()
+        static int returns69()
         {
             return 69;
         }
 
         [GeneratedCode]
-        static Int32 returns68()
+        static int returns68()
         {
             return 68;
         }
 
         [GeneratedCode]
-        static Int32 returns67()
+        static int returns67()
         {
             return 67;
         }
 
         [GeneratedCode]
-        static Int32 returns66()
+        static int returns66()
         {
             return 66;
         }
 
         [GeneratedCode]
-        static Int32 returns65()
+        static int returns65()
         {
             return 65;
         }
 
         [GeneratedCode]
-        static Int32 returns64()
+        static int returns64()
         {
             return 64;
         }
 
         [GeneratedCode]
-        static Int32 returns63()
+        static int returns63()
         {
             return 63;
         }
 
         [GeneratedCode]
-        static Int32 returns62()
+        static int returns62()
         {
             return 62;
         }
 
         [GeneratedCode]
-        static Int32 returns61()
+        static int returns61()
         {
             return 61;
         }
 
         [GeneratedCode]
-        static Int32 returns60()
+        static int returns60()
         {
             return 60;
         }
 
         [GeneratedCode]
-        static Int32 returns59()
+        static int returns59()
         {
             return 59;
         }
 
         [GeneratedCode]
-        static Int32 returns58()
+        static int returns58()
         {
             return 58;
         }
 
         [GeneratedCode]
-        static Int32 returns57()
+        static int returns57()
         {
             return 57;
         }
 
         [GeneratedCode]
-        static Int32 returns56()
+        static int returns56()
         {
             return 56;
         }
 
         [GeneratedCode]
-        static Int32 returns55()
+        static int returns55()
         {
             return 55;
         }
 
         [GeneratedCode]
-        static Int32 returns54()
+        static int returns54()
         {
             return 54;
         }
 
         [GeneratedCode]
-        static Int32 returns53()
+        static int returns53()
         {
             return 53;
         }
 
         [GeneratedCode]
-        static Int32 returns52()
+        static int returns52()
         {
             return 52;
         }
 
         [GeneratedCode]
-        static Int32 returns51()
+        static int returns51()
         {
             return 51;
         }
 
         [GeneratedCode]
-        static Int32 returns50()
+        static int returns50()
         {
             return 50;
         }
 
         [GeneratedCode]
-        static Int32 returns49()
+        static int returns49()
         {
             return 49;
         }
 
         [GeneratedCode]
-        static Int32 returns48()
+        static int returns48()
         {
             return 48;
         }
 
         [GeneratedCode]
-        static Int32 returns47()
+        static int returns47()
         {
             return 47;
         }
 
         [GeneratedCode]
-        static Int32 returns46()
+        static int returns46()
         {
             return 46;
         }
 
         [GeneratedCode]
-        static Int32 returns45()
+        static int returns45()
         {
             return 45;
         }
 
         [GeneratedCode]
-        static Int32 returns44()
+        static int returns44()
         {
             return 44;
         }
 
         [GeneratedCode]
-        static Int32 returns43()
+        static int returns43()
         {
             return 43;
         }
 
         [GeneratedCode]
-        static Int32 returns42()
+        static int returns42()
         {
             return 42;
         }
 
         [GeneratedCode]
-        static Int32 returns41()
+        static int returns41()
         {
             return 41;
         }
 
         [GeneratedCode]
-        static Int32 returns40()
+        static int returns40()
         {
             return 40;
         }
 
         [GeneratedCode]
-        static Int32 returns39()
+        static int returns39()
         {
             return 39;
         }
 
         [GeneratedCode]
-        static Int32 returns38()
+        static int returns38()
         {
             return 38;
         }
 
         [GeneratedCode]
-        static Int32 returns37()
+        static int returns37()
         {
             return 37;
         }
 
         [GeneratedCode]
-        static Int32 returns36()
+        static int returns36()
         {
             return 36;
         }
 
         [GeneratedCode]
-        static Int32 returns35()
+        static int returns35()
         {
             return 35;
         }
 
         [GeneratedCode]
-        static Int32 returns34()
+        static int returns34()
         {
             return 34;
         }
 
         [GeneratedCode]
-        static Int32 returns33()
+        static int returns33()
         {
             return 33;
         }
 
         [GeneratedCode]
-        static Int32 returns32()
+        static int returns32()
         {
             return 32;
         }
 
         [GeneratedCode]
-        static Int32 returns31()
+        static int returns31()
         {
             return 31;
         }
 
         [GeneratedCode]
-        static Int32 returns30()
+        static int returns30()
         {
             return 30;
         }
 
         [GeneratedCode]
-        static Int32 returns29()
+        static int returns29()
         {
             return 29;
         }
 
         [GeneratedCode]
-        static Int32 returns28()
+        static int returns28()
         {
             return 28;
         }
 
         [GeneratedCode]
-        static Int32 returns27()
+        static int returns27()
         {
             return 27;
         }
 
         [GeneratedCode]
-        static Int32 returns26()
+        static int returns26()
         {
             return 26;
         }
 
         [GeneratedCode]
-        static Int32 returns25()
+        static int returns25()
         {
             return 25;
         }
 
         [GeneratedCode]
-        static Int32 returns24()
+        static int returns24()
         {
             return 24;
         }
 
         [GeneratedCode]
-        static Int32 returns23()
+        static int returns23()
         {
             return 23;
         }
 
         [GeneratedCode]
-        static Int32 returns22()
+        static int returns22()
         {
             return 22;
         }
 
         [GeneratedCode]
-        static Int32 returns21()
+        static int returns21()
         {
             return 21;
         }
 
         [GeneratedCode]
-        static Int32 returns20()
+        static int returns20()
         {
             return 20;
         }
 
         [GeneratedCode]
-        static Int32 returns19()
+        static int returns19()
         {
             return 19;
         }
 
         [GeneratedCode]
-        static Int32 returns18()
+        static int returns18()
         {
             return 18;
         }
 
         [GeneratedCode]
-        static Int32 returns17()
+        static int returns17()
         {
             return 17;
         }
 
         [GeneratedCode]
-        static Int32 returns16()
+        static int returns16()
         {
             return 16;
         }
 
         [GeneratedCode]
-        static Int32 returns15()
+        static int returns15()
         {
             return 15;
         }
 
         [GeneratedCode]
-        static Int32 returns14()
+        static int returns14()
         {
             return 14;
         }
 
         [GeneratedCode]
-        static Int32 returns13()
+        static int returns13()
         {
             return 13;
         }
 
         [GeneratedCode]
-        static Int32 returns12()
+        static int returns12()
         {
             return 12;
         }
 
         [GeneratedCode]
-        static Int32 returns11()
+        static int returns11()
         {
             return 11;
         }
 
         [GeneratedCode]
-        static Int32 returns10()
+        static int returns10()
         {
             return 10;
         }
 
         [GeneratedCode]
-        static Int32 returns9()
+        static int returns9()
         {
             return 9;
         }
 
         [GeneratedCode]
-        static Int32 returns8()
+        static int returns8()
         {
             return 8;
         }
 
         [GeneratedCode]
-        static Int32 returns7()
+        static int returns7()
         {
             return 7;
         }
 
         [GeneratedCode]
-        static Int32 returns6()
+        static int returns6()
         {
             return 6;
         }
 
         [GeneratedCode]
-        static Int32 returns5()
+        static int returns5()
         {
             return 5;
         }
 
         [GeneratedCode]
-        static Int32 returns4()
+        static int returns4()
         {
             return 4;
         }
 
         [GeneratedCode]
-        static Int32 returns3()
+        static int returns3()
         {
             return 3;
         }
 
         [GeneratedCode]
-        static Int32 returns2()
+        static int returns2()
         {
             return 2;
         }
 
         [GeneratedCode]
-        static Int32 returns1()
+        static int returns1()
         {
             return 1;
         }
 
         [GeneratedCode]
-        static Int32 returns0()
+        static int returns0()
         {
             return 0;
         }

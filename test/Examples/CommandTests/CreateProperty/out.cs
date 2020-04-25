@@ -5,7 +5,7 @@ namespace Tests.Examples.CreateProperty
 {
     protected abstract class A
     {
-        public static Int32 SomeInt {internal get { return 100; } private set; }
-        String SomeString { get { return null; } set; }
+        public static int SomeInt {internal get { return 100; } private set; }
+        string SomeString { get { return null; } set; }
     }
 }

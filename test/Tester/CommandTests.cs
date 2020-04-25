@@ -34,6 +34,7 @@ namespace Tests
             }
         }
 
+        class T { }
         [Fact]
         public void CreateClass()
         {
@@ -46,11 +47,10 @@ namespace Tests
                            .Using("System")
                            .Using<List<object>>())
                   .Execute((ICreateClass cmd) => cmd.WithName("A")
-                                                    .MakeGenericIn("T")
-                                                    .WithTypeConstraints("T", new GenericType(typeof(IEnumerable<>), "T"))
-                                                    .InheritsFrom(new GenericType(typeof(Dictionary<,>), "string", "T"))
-                                                    .Implements(new GenericType(typeof(ICollection<>), "T"),
-                                                                new GenericType(typeof(IComparable<>), "T"))
+                                                    .MakeGenericIn<T>()
+                                                    .WithConstraints<T>("IEnumerable<T>")
+                                                    .InheritsFrom<Dictionary<string,T>>()
+                                                    .Implements<ICollection<T>,IComparable<T>>()
                                                     .MakePublic()
                                                     .MakePartial()
                                                     .MakeStatic());
@@ -60,7 +60,7 @@ namespace Tests
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));
         }
-
+        class TGeneric { }
         [Fact]
         public void CloneClass()
         {
@@ -72,9 +72,9 @@ namespace Tests
                   .Using(x=>x.Node.Identifier.Text,out var keyName)
                   .Execute((ICloneClass cmd)=>cmd.Get(keyName,out var name)
                                                  .WithName(name + "_generated")
-                                                 .Implements(new GenericType(typeof(IEnumerable<>),"string"))
-                                                 .MakeGenericIn("TGeneric")
-                                                 .WithConstraints("TGeneric","Console")
+                                                 .Implements<IEnumerable<string>>()
+                                                 .MakeGenericIn<TGeneric>()
+                                                 .WithConstraints<TGeneric>("Console")
                                                  .MakePublic());
 
             Document document_in = engine.CurrentProject.Documents.First(x=>x.FilePath==inpath);
@@ -99,13 +99,13 @@ namespace Tests
                                                     .MakeAbstract());
 
             classTarget.Execute((ICreateProperty cmd) => cmd.WithName("SomeString")
-                                                            .Returns(new Type<string>())
+                                                            .Returns<string>()
                                                             .WithGet("{return null;}"));
 
             classTarget.Execute((ICreateProperty cmd) => cmd.WithName("SomeInt")
                                                             .MakeStatic()
                                                             .MakePublic()
-                                                            .Returns(new Type<int>())
+                                                            .Returns<int>()
                                                             .MakeSetPrivate()
                                                             .WithGet("{return 100;}")
                                                             .MakeGetInternal());
@@ -131,7 +131,7 @@ namespace Tests
             propTarget
                   .Execute((ICloneProperty cmd) => cmd.WithName("SomeOtherOne")
                                                       .MakeProtected()
-                                                      .Returns("string")
+                                                      .Returns<string>()
                                                       .WithGet("{return \"hola\";}")
                                                       .MakeGetPrivate());
 
@@ -178,7 +178,7 @@ namespace Tests
             {
                 _class.Execute((ICreateMethod cmd) => cmd.WithName("returns" + i)
                                                          .WithAttributes("GeneratedCode")
-                                                         .Returns(new Type<int>())
+                                                         .Returns<int>()
                                                          .MakeStatic()
                                                          .WithBody($"{{return {i};}}"));
             } 
