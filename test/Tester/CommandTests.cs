@@ -84,6 +84,39 @@ namespace Tests
         }
 
         [Fact]
+        public void CreateProperty()
+        {
+            string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CreateProperty", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CreateProperty", "out.cs");
+
+            var classTarget = engine.SelectNew(inpath)
+                  .Execute((ICreateNamespace cmd) =>
+                        cmd.WithName("Tests.Examples.CreateProperty")
+                           .Using("System")
+                           .Using<List<int>>())
+                  .Execute((ICreateClass cmd) => cmd.WithName("A")
+                                                    .MakeProtected()
+                                                    .MakeAbstract());
+
+            classTarget.Execute((ICreateProperty cmd) => cmd.WithName("SomeString")
+                                                            .Returns(new Type<string>())
+                                                            .WithGet("{return null;}"));
+
+            classTarget.Execute((ICreateProperty cmd) => cmd.WithName("SomeInt")
+                                                            .MakeStatic()
+                                                            .MakePublic()
+                                                            .Returns(new Type<int>())
+                                                            .MakeSetPrivate()
+                                                            .WithGet("{return 100;}")
+                                                            .MakeGetInternal());
+
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
+        }
+
+        [Fact]
         public void CloneMethod()
         {
             string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CloneMethod", "in.cs");

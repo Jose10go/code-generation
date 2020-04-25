@@ -13,7 +13,9 @@ namespace CodeGen.CSharp.Context
                                          IWithAttribute<ICreateProperty>,
                                          IWithAccessModifier<ICreateProperty>,
                                          IAbstract<ICreateProperty>,
-                                         IStatic<ICreateProperty>
+                                         IStatic<ICreateProperty>,
+                                         IWithGetSet<ICreateProperty>,
+                                         IReturns<ICreateProperty>
         {
         }
 
@@ -30,7 +32,11 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Modifiers { get; set; }
             public SyntaxToken Abstract { get; set; }
             public SyntaxToken Static { get; set; }
-            public BlockSyntax Body { get ; set ; }
+            public SyntaxToken SetModifier { get ; set ; }
+            public SyntaxToken GetModifier { get ; set ; }
+            public BlockSyntax GetStatements { get ; set ; }
+            public BlockSyntax SetStatements { get ; set ; }
+            public string ReturnType { get; set ; }
         }
 
     }
