@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Remove="CloneClass\out.cs" />
+    <Compile Remove="CloneProperty\out.cs" />
     <Compile Remove="CloneMethod\out.cs" />
     <Compile Remove="CreateProperty\out.cs" />
     <Compile Remove="CreateClass\out.cs" />
@@ -16,6 +17,7 @@
 
   <ItemGroup>
     <None Include="CloneClass\out.cs" />
+    <None Include="CloneProperty\out.cs" />
     <None Include="CloneMethod\out.cs" />
     <None Include="CreateProperty\out.cs" />
     <None Include="CreateClass\out.cs" />

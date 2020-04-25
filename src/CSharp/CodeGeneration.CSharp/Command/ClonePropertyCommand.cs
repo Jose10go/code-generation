@@ -14,7 +14,8 @@ namespace CodeGen.CSharp.Context
                                         IWithAttribute<ICloneProperty>,
                                         IWithAccessModifier<ICloneProperty>,
                                         IAbstract<ICloneProperty>,
-                                        IStatic<ICloneProperty>
+                                        IStatic<ICloneProperty>,
+                                        IWithGetSet<ICloneProperty>
         {
         }
 
@@ -29,6 +30,10 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Abstract { get ; set ; }
             public SyntaxToken Static { get ; set ; }
             public SyntaxToken Partial { get ; set ; }
+            public SyntaxToken SetModifier { get ; set ; }
+            public SyntaxToken GetModifier { get ; set ; }
+            public BlockSyntax GetStatements { get ; set ; }
+            public BlockSyntax SetStatements { get ; set ; }
         }
         
     }
