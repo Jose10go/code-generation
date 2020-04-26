@@ -16,7 +16,8 @@ namespace CodeGen.CSharp.Context
                                             IWithAttribute<IModifyInterface>,
                                             IWithAccessModifier<IModifyInterface>,
                                             IPartial<IModifyInterface>,
-                                            IImplements<IModifyInterface>
+                                            IImplements<IModifyInterface>,
+                                            IWithGeneric<IModifyInterface>
         {
         }
 
@@ -33,6 +34,8 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Modifiers { get; set; }
             public SyntaxToken Partial { get; set; }
             public BaseListSyntax ImplementedInterfaces { get ; set ; }
+            public TypeParameterListSyntax GenericParameters { get; set ; }
+            public SyntaxList<TypeParameterConstraintClauseSyntax> GenericParametersConstraints { get ; set ; }
         }
 
     }
