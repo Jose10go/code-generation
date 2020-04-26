@@ -139,6 +139,29 @@ namespace Tests
         }
 
         [Fact]
+        public void CloneInterface()
+        {
+            string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CloneInterface", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CloneInterface", "out.cs");
+
+            engine.Select<InterfaceDeclarationSyntax>()
+                  .Where(x => x.DocumentPath == inpath)
+                  .Using(x => x.Node.Identifier.Text, out var keyName)
+                  .Execute((ICloneInterface cmd) => cmd.Get(keyName, out var name)
+                                                       .WithName(name + "_generated")
+                                                       .MakeGenericIn<T>()
+                                                       .WithClassConstraint<T>()
+                                                       .MakeInternal())
+
+                  .Execute((ICreateMethod cmd)=>cmd.WithName("goodBye"));
+
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
+        }
+
+        [Fact]
         public void CloneStruct()
         {
             string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CloneStruct", "in.cs");

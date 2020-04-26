@@ -25,14 +25,37 @@ namespace CodeGen.CSharp.Context
                     modifiers = modifiers.Add(Command.Partial);
                 var separatedBaseTypes = new SeparatedSyntaxList<BaseTypeSyntax>();
                 if (Command.ImplementedInterfaces != null)
-                    separatedBaseTypes.AddRange(Command.ImplementedInterfaces.Select(name => SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(name))));
+                    separatedBaseTypes=separatedBaseTypes.AddRange(Command.ImplementedInterfaces.Select(name => SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(name))));
 
-                var newNode = node.WithIdentifier(SyntaxFactory.Identifier(Command.Name))
-                                  .WithAttributeLists(Command.Attributes)
-                                  .WithModifiers(modifiers)
-                                  .WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes))
-                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
-                DocumentEditor.InsertAfter(node,newNode);
+                var interfaceNode = node.WithIdentifier(SyntaxFactory.Identifier(Command.Name))
+                                          .WithAttributeLists(Command.Attributes)
+                                          .WithModifiers(modifiers)
+                                          .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
+                
+                if (Command.GenericTypes != null && Command.GenericTypes.Count > 0)
+                    interfaceNode = interfaceNode.WithTypeParameterList(
+                        SyntaxFactory.TypeParameterList(
+                            new SeparatedSyntaxList<TypeParameterSyntax>().AddRange(
+                                Command.GenericTypes.Keys.Select(x => SyntaxFactory.TypeParameter(x)))));
+
+                if (separatedBaseTypes.Count > 0)
+                    interfaceNode = interfaceNode.WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes));
+
+                if (Command.GenericTypes != null && Command.GenericTypes.Count > 0)
+                    interfaceNode = interfaceNode.WithConstraintClauses(
+                        new SyntaxList<TypeParameterConstraintClauseSyntax>(
+                            Command.GenericTypes.Where(item => item.Value.Count > 0)
+                                                .Select(item => SyntaxFactory.TypeParameterConstraintClause(item.Key)
+                                                                             .WithConstraints(new SeparatedSyntaxList<TypeParameterConstraintSyntax>()
+                                                                             .AddRange(item.Value.Select<string,TypeParameterConstraintSyntax>(x =>  x switch
+                                                                             {
+                                                                                 "new" => SyntaxFactory.ConstructorConstraint(),
+                                                                                 "struct" => SyntaxFactory.ClassOrStructConstraint(SyntaxKind.StructConstraint),
+                                                                                 "class" => SyntaxFactory.ClassOrStructConstraint(SyntaxKind.ClassConstraint),
+                                                                                 _ => SyntaxFactory.TypeConstraint(SyntaxFactory.ParseTypeName(x))
+                                                                             }))))));
+
+                DocumentEditor.InsertAfter(node,interfaceNode);
             }
         }
     }

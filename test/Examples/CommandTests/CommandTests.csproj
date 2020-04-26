@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CloneInterface\out.cs" />
     <Compile Remove="CloneStruct\out.cs" />
     <Compile Remove="CloneClass\out.cs" />
     <Compile Remove="CloneProperty\out.cs" />
@@ -19,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="CloneInterface\out.cs" />
     <None Include="CloneStruct\out.cs" />
     <None Include="CloneClass\out.cs" />
     <None Include="CloneProperty\out.cs" />
