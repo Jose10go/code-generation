@@ -37,8 +37,8 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Abstract { get; set; }
             public SyntaxToken Static { get; set; }
             public SyntaxToken Partial { get; set; }
-            public string InheritsType { get ; set ; }
-            public string[] ImplementedInterfaces { get ; set ; }
+            public BaseTypeSyntax InheritsType { get ; set ; }
+            public BaseListSyntax ImplementedInterfaces { get; set; }
         }
 
     }

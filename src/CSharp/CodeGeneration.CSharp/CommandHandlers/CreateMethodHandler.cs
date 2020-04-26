@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Editing;
 using CodeGen.Attributes;
 using Microsoft.CodeAnalysis;
 using CodeGen.Context;
-
+using static CodeGen.CSharp.Extensions;
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext:CodeGenContext<Project,CSharpSyntaxNode,CompilationUnitSyntax,ISymbol>
@@ -18,20 +18,14 @@ namespace CodeGen.CSharp.Context
 
             private void ProccessNode(CSharpSyntaxNode node)
             {
-                var modifiers = new SyntaxTokenList();
-                if (Command.Modifiers != default)
-                    modifiers = modifiers.Add(Command.Modifiers);
-                if (Command.Abstract != default)
-                    modifiers = modifiers.Add(Command.Abstract);
-                if (Command.Static != default)
-                    modifiers = modifiers.Add(Command.Static);
-                if (Command.Partial != default)
-                    modifiers = modifiers.Add(Command.Partial);
+                var modifiers = GetModifiers(Command.Modifiers, Command.Abstract, Command.Static, Command.Partial);
+                
                 var method = SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(Command.ReturnType??"void"), Command.Name)
                                           .WithAttributeLists(Command.Attributes)
                                           .WithBody(Command.Body)
                                           .WithModifiers(modifiers)
                                           .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
+                
                 DocumentEditor.InsertMembers(node,0,new[]{method});
             }
 

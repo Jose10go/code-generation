@@ -1,4 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Linq;
 
@@ -6,22 +8,43 @@ namespace CodeGen.CSharp
 {
     internal static class Extensions
     {
-        internal static SyntaxTokenList MergeModifiers(params SyntaxToken[] tokens)
+        public static SyntaxTokenList GetModifiers(params SyntaxToken[] tokens)
         {
-            throw new Exception();//TODO:Implement this method
+            SyntaxTokenList result = new SyntaxTokenList();
+            foreach (var item in tokens)
+                if (item != default)
+                    result = result.Add(item);
+            return result;
         }
 
-        internal static SyntaxTokenList AddModifiers(this SyntaxTokenList list, params SyntaxToken[] tokens)
+        public static SyntaxTokenList GetModifiers(SyntaxTokenList list, params SyntaxToken[] tokens)
         {
-            return MergeModifiers(list.AddRange(tokens).ToArray());
+            SyntaxTokenList result = list==default ? new SyntaxTokenList() : list;
+            foreach (var item in tokens)
+                if (item != default)
+                    result=result.Add(item);
+            return result;
         }
 
-        internal static string GetCSharpName<T>()
+        public static BaseListSyntax GetBaseTypes(BaseListSyntax implementedInterfaces,BaseTypeSyntax inheritsType=null) 
+        {
+            return (implementedInterfaces,inheritsType) switch
+            {
+                (null, null) => null,
+                (_, null) => implementedInterfaces,
+                (null, _) => SyntaxFactory.BaseList().AddTypes(inheritsType),
+                (_, _) => SyntaxFactory.BaseList().AddTypes(inheritsType)
+                                                  .AddTypes(implementedInterfaces.Types.ToArray())
+                                                  
+            };
+        }
+
+        public static string GetCSharpName<T>()
         {
             return GetCSharpName(typeof(T));
         }
 
-        private static string GetCSharpName(Type type)
+        public static string GetCSharpName(Type type)
         {
             //TODO: Complete al primitive types an correctly generate arrays and nested types...
             if (type == typeof(string))

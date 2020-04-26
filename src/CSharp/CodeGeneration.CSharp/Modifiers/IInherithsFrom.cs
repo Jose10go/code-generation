@@ -12,10 +12,10 @@ namespace CodeGen.CSharp.Context
         public interface IInheritsFrom<TCommand>
             where TCommand:Core.ICommand
         {
-            string InheritsType { get; set; }
+            BaseTypeSyntax InheritsType { get; set; }
             TCommand InheritsFrom(string inheritsType)
             {
-                this.InheritsType = inheritsType;
+                this.InheritsType = SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(inheritsType));
                 return (TCommand)this;
             }
 

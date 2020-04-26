@@ -3,7 +3,7 @@ using CodeGen.Context;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
+using System.Linq;
 using static CodeGen.CSharp.Extensions;
 namespace CodeGen.CSharp.Context
 {
@@ -13,16 +13,15 @@ namespace CodeGen.CSharp.Context
         public interface IWithGeneric<TCommand>
             where TCommand : Core.ICommand
         {
-            Dictionary<string, List<string>> GenericTypes { get; set; }
+            TypeParameterListSyntax GenericParameters { get; set; }
+            SyntaxList<TypeParameterConstraintClauseSyntax> GenericParametersConstraints { get; set; }
 
             TCommand MakeGenericIn(params string[] genericTypes)
             {
-                if (this.GenericTypes is null)
-                    this.GenericTypes = new Dictionary<string, List<string>>();
+                if (this.GenericParameters is null)
+                    this.GenericParameters = SyntaxFactory.TypeParameterList();
 
-                foreach (var item in genericTypes)
-                    if (!GenericTypes.ContainsKey(item))
-                        GenericTypes.Add(item, new List<string>());
+                GenericParameters = GenericParameters.AddParameters(genericTypes.Select(x => SyntaxFactory.TypeParameter(x)).ToArray());
                 return (TCommand)this;
             }
 
@@ -63,7 +62,16 @@ namespace CodeGen.CSharp.Context
 
             TCommand WithConstraints(string type, params string[] constraints)
             {
-                GenericTypes[type].AddRange(constraints);
+                GenericParametersConstraints = GenericParametersConstraints.Add(
+                    SyntaxFactory.TypeParameterConstraintClause(type).AddConstraints(
+                        constraints.Select<string,TypeParameterConstraintSyntax>(name =>
+                            name switch
+                            {
+                                "new" => SyntaxFactory.ConstructorConstraint(),
+                                "struct" => SyntaxFactory.ClassOrStructConstraint(SyntaxKind.StructConstraint),
+                                "class" => SyntaxFactory.ClassOrStructConstraint(SyntaxKind.ClassConstraint),
+                                _ => SyntaxFactory.TypeConstraint(SyntaxFactory.ParseTypeName(name))
+                            }).ToArray()));
                 return (TCommand)this;
             }
 

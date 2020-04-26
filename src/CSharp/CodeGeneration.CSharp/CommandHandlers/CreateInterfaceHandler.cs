@@ -4,8 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
-using System.Linq;
-
+using static CodeGen.CSharp.Extensions;
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
@@ -19,37 +18,16 @@ namespace CodeGen.CSharp.Context
 
             private void ProccessNode(CSharpSyntaxNode node)
             {
-                var modifiers = new SyntaxTokenList();
-                if (Command.Modifiers != default)
-                    modifiers = modifiers.Add(Command.Modifiers);
-                if (Command.Partial != default)
-                    modifiers = modifiers.Add(Command.Partial);
-
-                var separatedBaseTypes = new SeparatedSyntaxList<BaseTypeSyntax>();
-                if (Command.ImplementedInterfaces != null)
-                    separatedBaseTypes = separatedBaseTypes.AddRange(Command.ImplementedInterfaces.Select(name => SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(name))));
+                var modifiers = GetModifiers(Command.Modifiers,Command.Partial);
+                var baseTypes = GetBaseTypes(Command.ImplementedInterfaces);
 
                 var interfaceNode = SyntaxFactory.InterfaceDeclaration(Command.Name)
+                                                 .WithBaseList(baseTypes)
+                                                 .WithTypeParameterList(Command.GenericParameters)
+                                                 .WithConstraintClauses(Command.GenericParametersConstraints)
                                                  .WithAttributeLists(Command.Attributes)
                                                  .WithModifiers(modifiers)
                                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
-
-                if (Command.GenericTypes != null && Command.GenericTypes.Count > 0)
-                    interfaceNode = interfaceNode.WithTypeParameterList(
-                        SyntaxFactory.TypeParameterList(
-                            new SeparatedSyntaxList<TypeParameterSyntax>().AddRange(
-                                Command.GenericTypes.Keys.Select(x => SyntaxFactory.TypeParameter(x)))));
-
-                if (separatedBaseTypes.Count > 0)
-                    interfaceNode = interfaceNode.WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes));
-
-                if (Command.GenericTypes != null && Command.GenericTypes.Count > 0)
-                    interfaceNode = interfaceNode.WithConstraintClauses(
-                        new SyntaxList<TypeParameterConstraintClauseSyntax>(
-                            Command.GenericTypes.Where(item => item.Value.Count > 0)
-                                                .Select(item => SyntaxFactory.TypeParameterConstraintClause(item.Key)
-                                                                             .WithConstraints(new SeparatedSyntaxList<TypeParameterConstraintSyntax>()
-                                                                             .AddRange(item.Value.Select(x => SyntaxFactory.TypeConstraint(SyntaxFactory.ParseTypeName(x))))))));
 
                 DocumentEditor.InsertMembers(node, 0, new[] { interfaceNode });
             }

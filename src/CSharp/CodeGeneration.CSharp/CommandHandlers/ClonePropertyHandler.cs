@@ -5,7 +5,7 @@ using CodeGen.Attributes;
 using Microsoft.CodeAnalysis;
 using CodeGen.Context;
 using System.Linq;
-
+using static CodeGen.CSharp.Extensions;
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
@@ -19,20 +19,14 @@ namespace CodeGen.CSharp.Context
 
             public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
             {
-                var modifiers = new SyntaxTokenList();
-                if (Command.Modifiers != default)
-                    modifiers = modifiers.Add(Command.Modifiers);
-                if (Command.Abstract != default)
-                    modifiers = modifiers.Add(Command.Abstract);
-                if (Command.Static != default)
-                    modifiers = modifiers.Add(Command.Static);
+                var modifiers = GetModifiers(Command.Modifiers,Command.Abstract,Command.Static);
 
                 var newNode = node.WithIdentifier(SyntaxFactory.ParseToken(Command.Name))
                                   .WithAttributeLists(Command.Attributes)
                                   .WithModifiers(modifiers)
-                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
-                if (Command.ReturnType != null)
-                    newNode = newNode.WithType(SyntaxFactory.ParseTypeName(Command.ReturnType));
+                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"))
+                                  .WithType(SyntaxFactory.ParseTypeName(Command.ReturnType??node.Type.ToString()));
+
                 var getAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.GetAccessorDeclaration));
                 var setAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.SetKeyword));
                 

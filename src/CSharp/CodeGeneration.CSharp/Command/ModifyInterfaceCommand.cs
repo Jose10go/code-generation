@@ -32,7 +32,7 @@ namespace CodeGen.CSharp.Context
             public ISingleTarget SingleTarget { get; set; }
             public SyntaxToken Modifiers { get; set; }
             public SyntaxToken Partial { get; set; }
-            public string[] ImplementedInterfaces { get ; set ; }
+            public BaseListSyntax ImplementedInterfaces { get ; set ; }
         }
 
     }

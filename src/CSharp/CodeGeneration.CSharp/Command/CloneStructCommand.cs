@@ -3,7 +3,6 @@ using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
 using CodeGen.Core;
 namespace CodeGen.CSharp.Context
 {
@@ -33,8 +32,9 @@ namespace CodeGen.CSharp.Context
             public ISingleTarget SingleTarget { get; set; }
             public SyntaxToken Modifiers { get; set; }
             public SyntaxToken Partial { get; set; }
-            public string[] ImplementedInterfaces { get ; set ; }
-            public Dictionary<string, List<string>> GenericTypes { get ; set ; }
+            public BaseListSyntax ImplementedInterfaces { get ; set ; }
+            public TypeParameterListSyntax GenericParameters { get ; set ; }
+            public SyntaxList<TypeParameterConstraintClauseSyntax> GenericParametersConstraints { get ; set ; }
         }
 
     }

@@ -37,8 +37,9 @@ namespace CodeGen.CSharp.Context
             public ISingleTarget SingleTarget { get; set; }
             public SyntaxToken Modifiers { get; set; }
             public SyntaxToken Partial { get; set; }
-            public string[] ImplementedInterfaces { get ; set ; }
-            public Dictionary<string, List<string>> GenericTypes { get ; set ; }
+            public BaseListSyntax ImplementedInterfaces { get ; set ; }
+            public TypeParameterListSyntax GenericParameters { get ; set; }
+            public SyntaxList<TypeParameterConstraintClauseSyntax> GenericParametersConstraints { get ; set ; }
         }
 
     }

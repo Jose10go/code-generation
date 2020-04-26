@@ -3,6 +3,7 @@ using CodeGen.Context;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Linq;
 using static CodeGen.CSharp.Extensions;
 namespace CodeGen.CSharp.Context
 {
@@ -12,10 +13,15 @@ namespace CodeGen.CSharp.Context
         public interface IImplements<TCommand>
             where TCommand:Core.ICommand
         {
-            string[]  ImplementedInterfaces { get; set; }
+            BaseListSyntax ImplementedInterfaces { get; set; }
             TCommand Implements(params string[] interfaces)
             {
-                this.ImplementedInterfaces = interfaces;
+                if (ImplementedInterfaces is null)
+                    ImplementedInterfaces = SyntaxFactory.BaseList();
+                ImplementedInterfaces=ImplementedInterfaces.AddTypes(
+                    interfaces.Select(
+                        name => SyntaxFactory.SimpleBaseType(
+                            SyntaxFactory.ParseTypeName(name))).ToArray());
                 return (TCommand)this;
             }
 
