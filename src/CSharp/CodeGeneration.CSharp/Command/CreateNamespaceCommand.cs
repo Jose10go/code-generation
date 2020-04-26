@@ -1,4 +1,5 @@
 ﻿using CodeGen.Context;
+using CodeGen.Core;
 using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,7 +10,8 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
     {
-        public interface ICreateNamespace : ICommand<CompilationUnitSyntax,NamespaceDeclarationSyntax>,
+        public interface ICreateNamespace : ICommandResult<NamespaceDeclarationSyntax>,
+                                            ICommandOn<CompilationUnitSyntax>,
                                             IWithName<ICreateNamespace>,
                                             IUsingNamespace<ICreateNamespace>
         {
@@ -23,7 +25,7 @@ namespace CodeGen.CSharp.Context
             }
 
             public string Name { get; set; }
-            public ISingleTarget<CompilationUnitSyntax> SingleTarget { get; set; }
+            public ISingleTarget SingleTarget { get; set; }
             public List<string> Namespaces { get; set; }
         }
 

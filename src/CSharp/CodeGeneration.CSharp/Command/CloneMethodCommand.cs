@@ -1,4 +1,5 @@
 ﻿using CodeGen.Context;
+using CodeGen.Core;
 using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,8 +9,9 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
 {
-        public interface ICloneMethod : ICommand<MethodDeclarationSyntax,MethodDeclarationSyntax>,
-                                        IGet<ICloneMethod,MethodDeclarationSyntax>,
+        public interface ICloneMethod : ICommandResult<MethodDeclarationSyntax>,
+                                        ICommandOn<MethodDeclarationSyntax>,
+                                        IGet<ICloneMethod>,
                                         IWithName<ICloneMethod>,
                                         IWithAttribute<ICloneMethod>,
                                         IWithBody<ICloneMethod>,
@@ -26,7 +28,7 @@ namespace CodeGen.CSharp.Context
             public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
             public BlockSyntax Body { get; set; }
-            public ISingleTarget<MethodDeclarationSyntax> SingleTarget { get; set ; }
+            public ISingleTarget SingleTarget { get; set ; }
             public SyntaxToken Modifiers { get ; set ; }
             public SyntaxToken Abstract { get ; set ; }
             public SyntaxToken Static { get ; set ; }

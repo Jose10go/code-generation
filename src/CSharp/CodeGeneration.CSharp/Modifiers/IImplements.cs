@@ -3,7 +3,6 @@ using CodeGen.Context;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Linq;
 using static CodeGen.CSharp.Extensions;
 namespace CodeGen.CSharp.Context
 {

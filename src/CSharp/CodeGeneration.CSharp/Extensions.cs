@@ -8,7 +8,7 @@ namespace CodeGen.CSharp
     {
         internal static SyntaxTokenList MergeModifiers(params SyntaxToken[] tokens)
         {
-            throw new Exception();
+            throw new Exception();//TODO:Implement this method
         }
 
         internal static SyntaxTokenList AddModifiers(this SyntaxTokenList list, params SyntaxToken[] tokens)

@@ -1,4 +1,5 @@
 ﻿using CodeGen.Context;
+using CodeGen.Core;
 using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,7 +9,11 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
     {
-        public interface ICreateMethod : ICommand<ClassDeclarationSyntax,MethodDeclarationSyntax>,
+        public interface ICreateMethod : ICommandResult<MethodDeclarationSyntax>,
+                                         ICommandOn<ClassDeclarationSyntax>,
+                                         ICommandOn<StructDeclarationSyntax>,
+                                         ICommandOn<InterfaceDeclarationSyntax>,
+                                         ICommandOn<MethodDeclarationSyntax>,
                                          IWithName<ICreateMethod>,
                                          IWithAttribute<ICreateMethod>,
                                          IWithBody<ICreateMethod>,
@@ -30,7 +35,7 @@ namespace CodeGen.CSharp.Context
             public string Name { get; set; }
             public string ReturnType { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
-            public ISingleTarget<ClassDeclarationSyntax> SingleTarget { get; set; }
+            public ISingleTarget SingleTarget { get; set; }
             public SyntaxToken Modifiers { get; set; }
             public SyntaxToken Abstract { get; set; }
             public SyntaxToken Static { get; set; }

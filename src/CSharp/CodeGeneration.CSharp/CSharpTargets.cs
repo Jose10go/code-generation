@@ -1,4 +1,5 @@
 ﻿using CodeGen.Context;
+using CodeGen.Core;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -53,6 +54,11 @@ namespace CodeGen.CSharp.Context
             public CSharpSingleTarget(ICodeGenerationEngine engine, Guid id,string path) : base(engine,id,path)
             {
             }
+
+            void ISingleTarget.Get<T>(Key<T> key, out T value)
+            {
+                this.Get(key, out value);
+            }
         }
 
         public sealed class CSharpSingleTarget<TNode0, TNode1> : CSharpSingleTargeter<ISingleTarget<TNode0, TNode1>, TNode0>, ISingleTarget<TNode0, TNode1>
@@ -74,6 +80,11 @@ namespace CodeGen.CSharp.Context
             ISingleTarget<TNode0> IUsing<ISingleTarget<TNode0>, ISingleTarget<TNode0>, TNode0>.Using<T>(Func<ISingleTarget<TNode0>, T> usingSelector, out Key<T> key)
             {
                 return this.Using(usingSelector,out key);
+            }
+
+            void ISingleTarget.Get<T>(Key<T> key, out T value)
+            {
+                this.Get(key, out value);
             }
         }
 
@@ -109,6 +120,11 @@ namespace CodeGen.CSharp.Context
             ISingleTarget<TNode0, TNode1> IUsing<ISingleTarget<TNode0, TNode1>, ISingleTarget<TNode0, TNode1>, TNode0>.Using<T>(Func<ISingleTarget<TNode0, TNode1>, T> usingSelector, out Key<T> key)
             {
                 return this.Using(usingSelector, out key);
+            }
+
+            void ISingleTarget.Get<T>(Key<T> key, out T value)
+            {
+                this.Get(key, out value);
             }
         }
 

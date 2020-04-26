@@ -34,27 +34,22 @@ namespace CodeGen.CSharp.Context
                 container = builder.Build();
             }
 
-            public TCommandBuilder ResolveCommandBuilder<TCommandBuilder,TSyntaxNode,TOutput>()
-                where TCommandBuilder : ICommand<TSyntaxNode, TOutput>
-                where TSyntaxNode : CSharpSyntaxNode
-                where TOutput : CSharpSyntaxNode
+            public TCommand ResolveCommand<TCommand>()
+                where TCommand : Core.ICommand
             {
-                return container.Resolve<TCommandBuilder>();
+                return container.Resolve<TCommand>();
             }
 
-            public ICommandHandler<TCommand,TSyntaxNode, TOutput> ResolveCommandHandler<TCommand,TSyntaxNode,TOutput>(TCommand commandBuilder)
-                where TCommand : ICommand<TSyntaxNode, TOutput>
-                where TSyntaxNode : CSharpSyntaxNode
-                where TOutput : CSharpSyntaxNode
+            public ICommandHandler<TCommand> ResolveCommandHandler<TCommand>(TCommand commandBuilder)
+                where TCommand: Core.ICommand
             {
-                return (ICommandHandler<TCommand,TSyntaxNode,TOutput>)container.Resolve(typeof(ICommandHandler<TCommand, TSyntaxNode, TOutput>), new[] { new PositionalParameter(0, commandBuilder) });
+                return (ICommandHandler<TCommand>)container.Resolve(typeof(ICommandHandler<TCommand>), new[] { new PositionalParameter(0, commandBuilder) });
             }
             
             protected void DoAutomaticRegister(ContainerBuilder builder)
             {
                 var coreAssembly = Assembly.GetExecutingAssembly();
 
-                ////Register Command Builders only as generic services
                 foreach (var t in coreAssembly.GetTypes().Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(CommandAttribute))))
                 {
                     var abstractcommand = t.GetInterfaces().FirstOrDefault(i => i.IsAssignableTo<Core.ICommand>());

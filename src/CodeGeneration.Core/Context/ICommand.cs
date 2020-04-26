@@ -1,16 +1,16 @@
-﻿namespace CodeGen.Context
+﻿using CodeGen.Core;
+
+namespace CodeGen.Context
 {
     public partial class CodeGenContext<TProject, TBaseNode, TRootNode, TSemanticModel>
         where TRootNode:TBaseNode
     {
-        public interface ICommand<TExecuteOnNode> : Core.ICommand
+        public interface ICommandOn<TExecuteOnNode> : ICommand
             where TExecuteOnNode : TBaseNode
         {
-             ISingleTarget<TExecuteOnNode> SingleTarget { get; set; }
         }
 
-        public interface ICommand<TExecuteOnNode, TOutNode> : ICommand<TExecuteOnNode>
-            where TExecuteOnNode : TBaseNode
+        public interface ICommandResult<TOutNode> : ICommand
             where TOutNode : TBaseNode
         {
         }

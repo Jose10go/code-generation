@@ -4,13 +4,14 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
-
+using CodeGen.Core;
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
     {
-        public interface ICloneStruct: ICommand<StructDeclarationSyntax, StructDeclarationSyntax>,
-                                       IGet<ICloneStruct, StructDeclarationSyntax>,
+        public interface ICloneStruct: ICommandResult<StructDeclarationSyntax>,
+                                       ICommandOn<StructDeclarationSyntax>,
+                                       IGet<ICloneStruct>,
                                        IWithName<ICloneStruct>,
                                        IWithAttribute<ICloneStruct>,
                                        IWithAccessModifier<ICloneStruct>,
@@ -29,7 +30,7 @@ namespace CodeGen.CSharp.Context
 
             public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
-            public ISingleTarget<StructDeclarationSyntax> SingleTarget { get; set; }
+            public ISingleTarget SingleTarget { get; set; }
             public SyntaxToken Modifiers { get; set; }
             public SyntaxToken Partial { get; set; }
             public string[] ImplementedInterfaces { get ; set ; }

@@ -1,4 +1,5 @@
 ﻿using CodeGen.Context;
+using CodeGen.Core;
 using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,8 +9,9 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
     {
-        public interface IModifyStruct: ICommand<StructDeclarationSyntax, StructDeclarationSyntax>,
-                                        IGet<IModifyStruct, StructDeclarationSyntax>,
+        public interface IModifyStruct: ICommandResult<StructDeclarationSyntax>,
+                                        ICommandOn<StructDeclarationSyntax>,
+                                        IGet<IModifyStruct>,
                                         IWithName<IModifyStruct>,
                                         IWithAttribute<IModifyStruct>,
                                         IWithAccessModifier<IModifyStruct>,
@@ -27,7 +29,7 @@ namespace CodeGen.CSharp.Context
 
             public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
-            public ISingleTarget<StructDeclarationSyntax> SingleTarget { get; set; }
+            public ISingleTarget SingleTarget { get; set; }
             public SyntaxToken Modifiers { get; set; }
             public SyntaxToken Partial { get; set; }
             public string[] ImplementedInterfaces { get ; set ; }

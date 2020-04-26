@@ -1,4 +1,5 @@
 ﻿using CodeGen.Context;
+using CodeGen.Core;
 using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,8 +9,9 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
 {
-        public interface IModifyProperty : ICommand<PropertyDeclarationSyntax,PropertyDeclarationSyntax>,
-                                        IGet<IModifyProperty,PropertyDeclarationSyntax>,
+        public interface IModifyProperty : ICommandResult<PropertyDeclarationSyntax>,
+                                        ICommandOn<PropertyDeclarationSyntax>,
+                                        IGet<IModifyProperty>,
                                         IWithName<IModifyProperty>,
                                         IWithAttribute<IModifyProperty>,
                                         IWithAccessModifier<IModifyProperty>,
@@ -23,7 +25,7 @@ namespace CodeGen.CSharp.Context
         {
             public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
-            public ISingleTarget<PropertyDeclarationSyntax> SingleTarget { get; set ; }
+            public ISingleTarget SingleTarget { get; set ; }
             public SyntaxToken Modifiers { get ; set ; }
             public SyntaxToken Abstract { get ; set ; }
             public SyntaxToken Static { get ; set ; }

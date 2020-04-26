@@ -8,39 +8,7 @@ namespace CodeGen.Context
     public abstract partial class CodeGenContext<TProject, TBaseNode, TRootNode, TSemanticModel>
         where TRootNode : TBaseNode
     {
-        public interface IKey 
-        {
-            int Id { get;}
-        }
-
-        public sealed class Key<T>:IKey
-            where T:class
-        {
-            public int Id { get; }
-            internal Key(int id)
-            {
-                Id = id;
-            }
-
-            public override int GetHashCode()
-            {
-                return Id;
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (obj is null || !(obj is IKey))
-                    return false;
-                var other = obj as IKey;
-                return Id==other.Id;
-            }
-
-            public override string ToString()
-            {
-                return $"Key<{typeof(T)}>-{Id}";
-            }
-        }
-
+     
         public interface IUsing<InTarget,OutTarget,TNode>
             where InTarget:ITarget<TNode>
             where OutTarget:ITarget<TNode>
@@ -67,8 +35,8 @@ namespace CodeGen.Context
         public interface ITarget<TNode> : Core.ITarget
             where TNode : TBaseNode
         {
-            ITarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
-                where TCommand : ICommand<TNode, TOutNode>
+            ITarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand, ICommandResult<TOutNode>> commandModifiers)
+                where TCommand : ICommandOn<TNode>,ICommandResult<TOutNode>
                 where TOutNode : TBaseNode;
         }
 
@@ -79,8 +47,8 @@ namespace CodeGen.Context
             TNode Node { get; }
             TSemanticModel SemanticSymbol { get; }
             string DocumentPath { get; }
-            new ISingleTarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
-                where TCommand : ICommand<TNode,TOutNode>
+            new ISingleTarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand, ICommandResult<TOutNode>> commandModifiers)
+                where TCommand : ICommandOn<TNode>,ICommandResult<TOutNode>
                 where TOutNode : TBaseNode;
         }
 
@@ -136,21 +104,22 @@ namespace CodeGen.Context
                 return self;
             }
 
-            ITarget<TOutNode> ITarget<TNode>.Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
+            ITarget<TOutNode> ITarget<TNode>.Execute<TCommand, TOutNode>(Func<TCommand, ICommandResult<TOutNode>> commandModifiers)
             {
                 return this.Execute(commandModifiers);
             }
 
-            public ISingleTarget<TOutput> Execute<TCommand, TOutput>(Func<TCommand, ICommand<TNode,TOutput>> commandModifiers)
-                where TCommand : ICommand<TNode,TOutput>
+            public ISingleTarget<TOutput> Execute<TCommand, TOutput>(Func<TCommand, ICommandResult<TOutput>> commandModifiers)
+                where TCommand : ICommandOn<TNode>,ICommandResult<TOutput>
                 where TOutput : TBaseNode
             {
-                var command = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandBuilder<TCommand,TNode,TOutput>();
-                var handler = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandHandler<TCommand, TNode, TOutput>(command);
-                command.SingleTarget = (ISingleTarget<TNode>)this;
+                var command = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommand<TCommand>();
+                var handler = this.CodeGenerationEngine.CodeGenerationResolver.ResolveCommandHandler(command);
+                var singleTarget = this as ISingleTarget<TNode>;
+                command.SingleTarget = singleTarget;
                 commandModifiers(command);
 
-                return handler.ProccessTarget(command.SingleTarget,this.CodeGenerationEngine);
+                return handler.ProccessTarget<TCommand,TNode,TOutput>(singleTarget,this.CodeGenerationEngine);
             }
 
         }
@@ -161,8 +130,8 @@ namespace CodeGen.Context
                                                   IWhere<ISingleTarget<TNode>,IMultipleTarget<TNode>,TNode>
             where TNode : TBaseNode
         {
-            new IMultipleTarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
-                where TCommand : ICommand<TNode,TOutNode>
+            new IMultipleTarget<TOutNode> Execute<TCommand, TOutNode>(Func<TCommand, ICommandResult<TOutNode>> commandModifiers)
+                where TCommand : ICommandOn<TNode>, ICommandResult<TOutNode>
                 where TOutNode : TBaseNode;
 
             IEnumerator<ISingleTarget<TNode>> GetEnumerator();
@@ -215,13 +184,13 @@ namespace CodeGen.Context
                 return SingleTargets.GetEnumerator();
             }
             
-            ITarget<TOutNode> ITarget<TNode>.Execute<TCommand, TOutNode>(Func<TCommand, ICommand<TNode, TOutNode>> commandModifiers)
+            ITarget<TOutNode> ITarget<TNode>.Execute<TCommand, TOutNode>(Func<TCommand, ICommandResult<TOutNode>> commandModifiers)
             {
                 return this.Execute(commandModifiers);
             }
 
-            public IMultipleTarget<TOutput> Execute<TCommand,TOutput>(Func<TCommand,ICommand<TNode, TOutput>> commandModifiers)
-                where TCommand : ICommand<TNode,TOutput>
+            public IMultipleTarget<TOutput> Execute<TCommand,TOutput>(Func<TCommand,ICommandResult<TOutput>> commandModifiers)
+                where TCommand : ICommandOn<TNode>, ICommandResult<TOutput>
                 where TOutput : TBaseNode
             {
                 var output = Enumerable.Empty<ISingleTarget<TOutput>>();

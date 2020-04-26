@@ -1,4 +1,5 @@
 ﻿using CodeGen.Context;
+using CodeGen.Core;
 using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,15 +9,16 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax,ISymbol>
 {
-        public interface ICloneProperty : ICommand<PropertyDeclarationSyntax,PropertyDeclarationSyntax>,
-                                        IGet<ICloneProperty,PropertyDeclarationSyntax>,
-                                        IWithName<ICloneProperty>,
-                                        IWithAttribute<ICloneProperty>,
-                                        IWithAccessModifier<ICloneProperty>,
-                                        IAbstract<ICloneProperty>,
-                                        IStatic<ICloneProperty>,
-                                        IWithGetSet<ICloneProperty>,
-                                        IReturns<ICloneProperty>
+        public interface ICloneProperty : ICommandResult<PropertyDeclarationSyntax>,
+                                          ICommandOn<PropertyDeclarationSyntax>,
+                                          IGet<ICloneProperty>,
+                                          IWithName<ICloneProperty>,
+                                          IWithAttribute<ICloneProperty>,
+                                          IWithAccessModifier<ICloneProperty>,
+                                          IAbstract<ICloneProperty>,
+                                          IStatic<ICloneProperty>,
+                                          IWithGetSet<ICloneProperty>,
+                                          IReturns<ICloneProperty>
         {
         }
 
@@ -26,7 +28,7 @@ namespace CodeGen.CSharp.Context
             public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
             public BlockSyntax Body { get; set; }
-            public ISingleTarget<PropertyDeclarationSyntax> SingleTarget { get; set ; }
+            public ISingleTarget SingleTarget { get; set ; }
             public SyntaxToken Modifiers { get ; set ; }
             public SyntaxToken Abstract { get ; set ; }
             public SyntaxToken Static { get ; set ; }

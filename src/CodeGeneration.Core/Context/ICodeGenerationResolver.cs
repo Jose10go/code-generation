@@ -7,14 +7,10 @@
         {
             void BuildContainer();
             void RegisterEngine(ICodeGenerationEngine engine);
-            TCommandBuilder ResolveCommandBuilder<TCommandBuilder,TSyntaxNode,TOutputNode>()
-                where TCommandBuilder :ICommand<TSyntaxNode,TOutputNode>
-                where TSyntaxNode:TBaseNode
-                where TOutputNode:TBaseNode;
-            ICommandHandler<TCommand, TSyntaxNode,TOutputNode> ResolveCommandHandler<TCommand, TSyntaxNode, TOutputNode>(TCommand commandBuilder)
-                where TCommand : ICommand<TSyntaxNode,TOutputNode>
-                where TSyntaxNode : TBaseNode
-                where TOutputNode : TBaseNode;
+            TCommand ResolveCommand<TCommand>()
+                where TCommand : Core.ICommand;
+            ICommandHandler<TCommand> ResolveCommandHandler<TCommand>(TCommand commandBuilder)
+                where TCommand : Core.ICommand;
         }
     }
 }

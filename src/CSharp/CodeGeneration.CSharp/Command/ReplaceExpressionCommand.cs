@@ -1,4 +1,5 @@
 ﻿using CodeGen.Context;
+using CodeGen.Core;
 using CodeGen.Core.Attributes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,9 +9,10 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
-        public interface IReplaceExpression<Exp> : ICommand<Exp, ExpressionSyntax>,
+        public interface IReplaceExpression<Exp> : ICommandResult<ExpressionSyntax>,
+                                                   ICommandOn<Exp>,
                                                    IWith<IReplaceExpression<Exp>>,
-                                                   IGet<IReplaceExpression<Exp>,Exp>
+                                                   IGet<IReplaceExpression<Exp>>
             where Exp:ExpressionSyntax
         {
         }
@@ -19,7 +21,7 @@ namespace CodeGen.CSharp.Context
         public class ReplaceExpressionCommand<Exp> : IReplaceExpression<Exp>
             where Exp:ExpressionSyntax
         {
-            public ISingleTarget<Exp> SingleTarget { get; set; }
+            public ISingleTarget SingleTarget { get; set; }
             ExpressionSyntax IWith<IReplaceExpression<Exp>>.NewExpression { get; set; }
         }
 

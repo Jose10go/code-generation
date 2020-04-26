@@ -6,13 +6,14 @@ namespace CodeGen.Context
         where TRootNode:TBaseNode
     {
         //keyInterface
-        public interface ICommandHandler<TCommand,TSyntaxNode,TOutputNode> : ICommandHandler
-            where TCommand :ICommand<TSyntaxNode,TOutputNode>
-            where TSyntaxNode : TBaseNode
-            where TOutputNode : TBaseNode
+        public interface ICommandHandler<TCommand> : ICommandHandler
+            where TCommand :Core.ICommand
         {
             TCommand Command { get; }
-            ISingleTarget<TOutputNode> ProccessTarget(ISingleTarget<TSyntaxNode> target,ICodeGenerationEngine engine);
+            ISingleTarget<TOutputNode> ProccessTarget<TSpecificCommand, TNode, TOutputNode>(ISingleTarget<TNode> target, ICodeGenerationEngine engine)
+                where TSpecificCommand : TCommand, ICommandOn<TNode>, ICommandResult<TOutputNode>
+                where TNode : TBaseNode
+                where TOutputNode : TBaseNode;
         }
     }
 }
