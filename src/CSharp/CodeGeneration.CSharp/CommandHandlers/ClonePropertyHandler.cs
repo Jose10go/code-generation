@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using CodeGen.Attributes;
 using Microsoft.CodeAnalysis;
-using System;
 using CodeGen.Context;
 using System.Linq;
 
@@ -12,13 +11,13 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
-        public class ClonePropertyCommandHandler : CommandHandler<ICloneProperty,PropertyDeclarationSyntax>
+        public class ClonePropertyCommandHandler : CommandHandler<ICloneProperty>
         {
             public ClonePropertyCommandHandler(ICloneProperty command) :base(command)
             {
             }
 
-            protected override PropertyDeclarationSyntax ProccessNode(PropertyDeclarationSyntax node,DocumentEditor documentEditor,Guid id)
+            public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -31,7 +30,7 @@ namespace CodeGen.CSharp.Context
                 var newNode = node.WithIdentifier(SyntaxFactory.ParseToken(Command.Name))
                                   .WithAttributeLists(Command.Attributes)
                                   .WithModifiers(modifiers)
-                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
                 if (Command.ReturnType != null)
                     newNode = newNode.WithType(SyntaxFactory.ParseTypeName(Command.ReturnType));
                 var getAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.GetAccessorDeclaration));
@@ -76,8 +75,7 @@ namespace CodeGen.CSharp.Context
                     Accesors = Accesors.Add(newSetAccessor);
                 newNode = newNode.WithAccessorList(SyntaxFactory.AccessorList(Accesors));
 
-                documentEditor.InsertAfter(node,newNode);
-                return newNode;
+                DocumentEditor.InsertAfter(node,newNode);
             }
         }
     }

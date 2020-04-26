@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
-using System;
 using System.Linq;
 
 namespace CodeGen.CSharp.Context
@@ -12,13 +11,13 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
-        public class CloneStructCommandHandler : CommandHandler<ICloneStruct, StructDeclarationSyntax, StructDeclarationSyntax>
+        public class CloneStructCommandHandler : CommandHandler<ICloneStruct>
         {
             public CloneStructCommandHandler(ICloneStruct command) : base(command)
             {
             }
 
-            protected override StructDeclarationSyntax ProccessNode(StructDeclarationSyntax node, DocumentEditor documentEditor,Guid id)
+            public override void VisitStructDeclaration(StructDeclarationSyntax node)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -33,7 +32,7 @@ namespace CodeGen.CSharp.Context
                 var structNode = node.WithIdentifier(SyntaxFactory.Identifier(Command.Name))
                                      .WithAttributeLists(Command.Attributes)
                                      .WithModifiers(modifiers)
-                                     .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+                                     .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
 
                 if (Command.GenericTypes != null && Command.GenericTypes.Count > 0)
                     structNode = structNode.WithTypeParameterList(
@@ -53,8 +52,7 @@ namespace CodeGen.CSharp.Context
                                                                              .AddRange(item.Value.Select(x => SyntaxFactory.TypeConstraint(SyntaxFactory.ParseTypeName(x))))))));
 
 
-                documentEditor.InsertAfter(node,structNode);
-                return structNode;
+                DocumentEditor.InsertAfter(node,structNode);
             }
 
         }

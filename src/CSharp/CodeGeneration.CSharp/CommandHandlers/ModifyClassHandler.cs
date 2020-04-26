@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
-using System;
 using System.Linq;
 
 namespace CodeGen.CSharp.Context
@@ -12,13 +11,13 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
-        public class ModifyClassCommandHandler :CommandHandler<IModifyClass, ClassDeclarationSyntax> 
+        public class ModifyClassCommandHandler :CommandHandler<IModifyClass> 
         {
             public ModifyClassCommandHandler(IModifyClass command) : base(command)
             {
             }
 
-            protected override ClassDeclarationSyntax ProccessNode(ClassDeclarationSyntax node, DocumentEditor documentEditor,Guid id)
+            public override void VisitClassDeclaration(ClassDeclarationSyntax node)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -39,9 +38,8 @@ namespace CodeGen.CSharp.Context
                                   .WithAttributeLists(Command.Attributes)
                                   .WithModifiers(modifiers)
                                   .WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes))
-                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
-                documentEditor.ReplaceNode(node,newNode);
-                return newNode;
+                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
+                DocumentEditor.ReplaceNode(node,newNode);
             }
         }
     }

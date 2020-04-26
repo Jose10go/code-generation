@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
-using System;
 using System.Linq;
 
 namespace CodeGen.CSharp.Context
@@ -12,13 +11,13 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
-        public class ClassCloneCommandHandler :CommandHandler<ICloneClass,ClassDeclarationSyntax> 
+        public class ClassCloneCommandHandler :CommandHandler<ICloneClass> 
         {
             public ClassCloneCommandHandler(ICloneClass command) : base(command)
             {
             }
 
-            protected override ClassDeclarationSyntax ProccessNode(ClassDeclarationSyntax node, DocumentEditor documentEditor,Guid id)
+            public override void VisitClassDeclaration(ClassDeclarationSyntax node)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -38,7 +37,7 @@ namespace CodeGen.CSharp.Context
                 var classNode = node.WithIdentifier(SyntaxFactory.Identifier(Command.Name))
                                   .WithAttributeLists(Command.Attributes)
                                   .WithModifiers(modifiers)
-                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
 
                 if (Command.GenericTypes !=null && Command.GenericTypes.Count > 0)
                     classNode = classNode.WithTypeParameterList(
@@ -56,9 +55,9 @@ namespace CodeGen.CSharp.Context
                                                 .Select(item => SyntaxFactory.TypeParameterConstraintClause(item.Key)
                                                                            .WithConstraints(new SeparatedSyntaxList<TypeParameterConstraintSyntax>()
                                                                            .AddRange(item.Value.Select(x => SyntaxFactory.TypeConstraint(SyntaxFactory.ParseTypeName(x))))))));
-                documentEditor.InsertAfter(node,classNode);
-                return classNode;
+                DocumentEditor.InsertAfter(node,classNode);
             }
+        
         }
     }
 }

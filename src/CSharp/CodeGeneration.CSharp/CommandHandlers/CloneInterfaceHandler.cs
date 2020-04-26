@@ -3,8 +3,6 @@ using CodeGen.Context;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Editing;
-using System;
 using System.Linq;
 
 namespace CodeGen.CSharp.Context
@@ -12,13 +10,13 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
-        public class InterfaceCloneCommandHandler :CommandHandler<ICloneInterface,InterfaceDeclarationSyntax> 
+        public class InterfaceCloneCommandHandler :CommandHandler<ICloneInterface> 
         {
             public InterfaceCloneCommandHandler(ICloneInterface command) : base(command)
             {
             }
 
-            protected override InterfaceDeclarationSyntax ProccessNode(InterfaceDeclarationSyntax node, DocumentEditor documentEditor,Guid id)
+            public override void VisitInterfaceDeclaration(InterfaceDeclarationSyntax node)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -33,9 +31,8 @@ namespace CodeGen.CSharp.Context
                                   .WithAttributeLists(Command.Attributes)
                                   .WithModifiers(modifiers)
                                   .WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes))
-                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
-                documentEditor.InsertAfter(node,newNode);
-                return newNode;
+                                  .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
+                DocumentEditor.InsertAfter(node,newNode);
             }
         }
     }

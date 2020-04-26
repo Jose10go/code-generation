@@ -1,9 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Editing;
 using CodeGen.Attributes;
 using Microsoft.CodeAnalysis;
-using System;
 using CodeGen.Context;
 
 namespace CodeGen.CSharp.Context
@@ -11,13 +9,13 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
-        public class CloneMethodCommandHandler : CommandHandler<ICloneMethod,MethodDeclarationSyntax>
+        public class CloneMethodCommandHandler : CommandHandler<ICloneMethod>
         {
             public CloneMethodCommandHandler(ICloneMethod command) :base(command)
             {
             }
 
-            protected override MethodDeclarationSyntax ProccessNode(MethodDeclarationSyntax node,DocumentEditor documentEditor,Guid id)
+            public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -32,10 +30,9 @@ namespace CodeGen.CSharp.Context
                                                .WithAttributeLists(Command.Attributes)
                                                .WithBody(Command.Body)
                                                .WithModifiers(modifiers)
-                                               .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+                                               .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
 
-                documentEditor.InsertAfter(node,methodNode);
-                return methodNode;
+                DocumentEditor.InsertAfter(node,methodNode);
             }
         }
     }

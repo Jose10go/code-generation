@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
-using System;
 using System.Linq;
 
 namespace CodeGen.CSharp.Context
@@ -12,13 +11,13 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
-        public class CreateClassCommandHandler : CommandHandler<ICreateClass, NamespaceDeclarationSyntax, ClassDeclarationSyntax>
+        public class CreateClassCommandHandler : CommandHandler<ICreateClass>
         {
             public CreateClassCommandHandler(ICreateClass command) : base(command)
             {
             }
 
-            protected override ClassDeclarationSyntax ProccessNode(NamespaceDeclarationSyntax node, DocumentEditor documentEditor,Guid id)
+            private void ProccessNode(CSharpSyntaxNode node)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -39,7 +38,7 @@ namespace CodeGen.CSharp.Context
                 var classNode = SyntaxFactory.ClassDeclaration(Command.Name)
                                              .WithAttributeLists(Command.Attributes)
                                              .WithModifiers(modifiers)
-                                             .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+                                             .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
                
                 if (Command.GenericTypes !=null && Command.GenericTypes.Count > 0)
                     classNode = classNode.WithTypeParameterList(
@@ -58,10 +57,28 @@ namespace CodeGen.CSharp.Context
                                                                            .WithConstraints(new SeparatedSyntaxList<TypeParameterConstraintSyntax>()
                                                                            .AddRange(item.Value.Select(x=>SyntaxFactory.TypeConstraint(SyntaxFactory.ParseTypeName(x))))))));
                
-                documentEditor.InsertMembers(node, 0, new[] { classNode });
-                return classNode;
+                DocumentEditor.InsertMembers(node, 0, new[] { classNode });
             }
 
+            public override void VisitNamespaceDeclaration(NamespaceDeclarationSyntax node)
+            {
+                this.ProccessNode(node);
+            }
+
+            public override void VisitClassDeclaration(ClassDeclarationSyntax node)
+            {
+                this.ProccessNode(node);
+            }
+
+            public override void VisitStructDeclaration(StructDeclarationSyntax node)
+            {
+                this.ProccessNode(node);
+            }
+
+            public override void VisitInterfaceDeclaration(InterfaceDeclarationSyntax node)
+            {
+                this.ProccessNode(node);
+            }
         }
     }
 }

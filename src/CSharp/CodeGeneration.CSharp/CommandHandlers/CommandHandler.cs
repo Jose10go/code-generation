@@ -9,38 +9,30 @@ namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
-        public abstract class CommandHandler<TCommand, TSyntaxNode, TOutput> : ICommandHandler<TCommand, TSyntaxNode, TOutput>
-            where TCommand : ICommand<TSyntaxNode,TOutput>
-            where TSyntaxNode : CSharpSyntaxNode
-            where TOutput : CSharpSyntaxNode
+        public abstract class CommandHandler<TCommand> : CSharpSyntaxVisitor,ICommandHandler<TCommand>
+            where TCommand : Core.ICommand
         {
             public TCommand Command { get; }
+            protected DocumentEditor DocumentEditor { get; private set; }
+            protected Guid Id { get; private set; }
             protected CommandHandler(Core.ICommand command)
             {
                 this.Command = (TCommand)command;
             }
 
-            public ISingleTarget<TOutput> ProccessTarget(ISingleTarget<TSyntaxNode> target, ICodeGenerationEngine engine)
+            public ISingleTarget<TOutputNode> ProccessTarget<TSpecificCommand, TNode, TOutputNode>(ISingleTarget<TNode> target, ICodeGenerationEngine engine)
+                where TSpecificCommand : ICommandOn<TNode>, ICommandResult<TOutputNode>, TCommand
+                where TNode : CSharpSyntaxNode
+                where TOutputNode : CSharpSyntaxNode
             {
                 var doc = engine.CurrentProject.GetDocument(target.Node.SyntaxTree);
-                DocumentEditor editor = DocumentEditor.CreateAsync(doc).Result;//TODO: make async???
-                var id = Guid.NewGuid();
-                var outNode = ProccessNode(target.Node, editor,id);
-                var result = new CSharpSingleTarget<TOutput>(engine, id, doc.FilePath);
-                var document = editor.GetChangedDocument();
+                this.DocumentEditor=DocumentEditor.CreateAsync(doc).Result;//TODO: make async???
+                this.Id = Guid.NewGuid();
+                target.Node.Accept(this);
+                var result = new CSharpSingleTarget<TOutputNode>(engine,this.Id, doc.FilePath);
+                var document = this.DocumentEditor.GetChangedDocument();
                 engine.CurrentProject = document.Project;
                 return result;
-            }
-            
-            protected abstract TOutput ProccessNode(TSyntaxNode node,DocumentEditor documentEditor,Guid id);
-        }
-
-        public abstract class CommandHandler<TCommand, TNode> : CommandHandler<TCommand, TNode, TNode>
-            where TCommand : ICommand<TNode,TNode>
-            where TNode : CSharpSyntaxNode
-        {
-            protected CommandHandler(Core.ICommand command):base(command)
-            {
             }
         }
     }

@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using CodeGen.Attributes;
 using Microsoft.CodeAnalysis;
-using System;
 using CodeGen.Context;
 
 namespace CodeGen.CSharp.Context
@@ -11,13 +10,13 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandHandler]
-        public class ModifyPropertyCommandHandler : CommandHandler<IModifyProperty,PropertyDeclarationSyntax>
+        public class ModifyPropertyCommandHandler : CommandHandler<IModifyProperty>
         {
             public ModifyPropertyCommandHandler(IModifyProperty command) :base(command)
             {
             }
 
-            protected override PropertyDeclarationSyntax ProccessNode(PropertyDeclarationSyntax node,DocumentEditor documentEditor,Guid id)
+            public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -30,10 +29,9 @@ namespace CodeGen.CSharp.Context
                                                .WithAttributeLists(Command.Attributes)
                                                .WithAccessorList(SyntaxFactory.AccessorList())
                                                .WithModifiers(modifiers)
-                                               .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
+                                               .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
 
-                documentEditor.ReplaceNode(node,methodNode);
-                return methodNode;
+                DocumentEditor.ReplaceNode(node,methodNode);
             }
         }
     }

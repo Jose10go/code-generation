@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using CodeGen.Attributes;
 using Microsoft.CodeAnalysis;
-using System;
 using CodeGen.Context;
 
 namespace CodeGen.CSharp.Context
@@ -11,13 +10,13 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext:CodeGenContext<Project,CSharpSyntaxNode,CompilationUnitSyntax,ISymbol>
     {
         [CommandHandler]
-        public class CreateMethodCommandHandler : CommandHandler<ICreateMethod,ClassDeclarationSyntax,MethodDeclarationSyntax>
+        public class CreateMethodCommandHandler : CommandHandler<ICreateMethod>
         {
             public CreateMethodCommandHandler(ICreateMethod command) :base(command)
             {
             }
 
-            protected override MethodDeclarationSyntax ProccessNode(ClassDeclarationSyntax node, DocumentEditor documentEditor,Guid id)
+            private void ProccessNode(CSharpSyntaxNode node)
             {
                 var modifiers = new SyntaxTokenList();
                 if (Command.Modifiers != default)
@@ -32,9 +31,28 @@ namespace CodeGen.CSharp.Context
                                           .WithAttributeLists(Command.Attributes)
                                           .WithBody(Command.Body)
                                           .WithModifiers(modifiers)
-                                          .WithAdditionalAnnotations(new SyntaxAnnotation($"{id}"));
-                documentEditor.InsertMembers(node,0,new[]{method});
-                return method;
+                                          .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
+                DocumentEditor.InsertMembers(node,0,new[]{method});
+            }
+
+            public override void VisitClassDeclaration(ClassDeclarationSyntax node)
+            {
+                this.ProccessNode(node);
+            }
+
+            public override void VisitStructDeclaration(StructDeclarationSyntax node)
+            {
+                this.ProccessNode(node);
+            }
+
+            public override void VisitInterfaceDeclaration(InterfaceDeclarationSyntax node)
+            {
+                this.ProccessNode(node);
+            }
+
+            public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
+            {
+                this.ProccessNode(node);
             }
         }
     }
