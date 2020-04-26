@@ -18,7 +18,8 @@ namespace CodeGen.CSharp.Context
                                         IWithAccessModifier<IModifyMethod>,
                                         IAbstract<IModifyMethod>,
                                         IStatic<IModifyMethod>,
-                                        IPartial<IModifyMethod>
+                                        IPartial<IModifyMethod>,
+                                        IReturns<IModifyMethod>
         {
         }
 
@@ -33,6 +34,7 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Abstract { get ; set ; }
             public SyntaxToken Static { get ; set ; }
             public SyntaxToken Partial { get ; set ; }
+            public TypeSyntax ReturnType { get ; set ; }
         }
         
     }

@@ -207,7 +207,6 @@ namespace Tests
             Assert.True(st1.IsEquivalentTo(st2));
         }
 
-
         [Fact]
         public void CloneStruct()
         {
@@ -306,6 +305,27 @@ namespace Tests
             //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever...
 
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath); 
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
+        }
+
+        [Fact]
+        public void ModifyMethod()
+        {
+            string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "ModifyMethod", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "ModifyMethod", "out.cs");
+
+            engine.Select<MethodDeclarationSyntax>()
+                  .Where(x => x.DocumentPath == inpath)
+                  .Using(x => x.Node.Identifier.Text, out var keyName)
+                  .Execute((IModifyMethod cmd) => cmd.Get(keyName, out var name)
+                                                     .WithName(name + "_modified")
+                                                     .MakePublic()
+                                                     .WithBody("{Console.WriteLine(\"hello my friend.\");}"));
+
+          
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));
