@@ -288,6 +288,25 @@ namespace Tests
         }
 
         [Fact]
+        public void ModifyProperty()
+        {
+            string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "ModifyProperty", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "ModifyProperty", "out.cs");
+
+           engine.Select<PropertyDeclarationSyntax>()
+                 .Where(x => x.DocumentPath == inpath)
+                 .Execute((IModifyProperty cmd) => cmd.WithName("SomeOther")
+                                                      .Returns<object>()
+                                                      .MakeStatic()
+                                                      .MakePrivate());
+
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
+        }
+
+        [Fact]
         public void CloneMethod()
         {
             string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CloneMethod", "in.cs");

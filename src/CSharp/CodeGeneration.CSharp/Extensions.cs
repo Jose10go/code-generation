@@ -47,6 +47,8 @@ namespace CodeGen.CSharp
         public static string GetCSharpName(Type type)
         {
             //TODO: Complete al primitive types an correctly generate arrays and nested types...
+            if (type == typeof(object))
+                return "object";
             if (type == typeof(string))
                 return "string";
             if (type == typeof(bool))

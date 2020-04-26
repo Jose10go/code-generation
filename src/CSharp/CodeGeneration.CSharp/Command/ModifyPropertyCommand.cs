@@ -16,7 +16,9 @@ namespace CodeGen.CSharp.Context
                                         IWithAttribute<IModifyProperty>,
                                         IWithAccessModifier<IModifyProperty>,
                                         IAbstract<IModifyProperty>,
-                                        IStatic<IModifyProperty>
+                                        IStatic<IModifyProperty>,
+                                        IReturns<IModifyProperty>,
+                                        IWithGetSet<IModifyProperty>
         {
         }
 
@@ -29,6 +31,11 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Modifiers { get ; set ; }
             public SyntaxToken Abstract { get ; set ; }
             public SyntaxToken Static { get ; set ; }
+            public TypeSyntax ReturnType { get; set ; }
+            public SyntaxTokenList GetModifier { get ; set ; }
+            public SyntaxTokenList SetModifier { get ; set ; }
+            public BlockSyntax GetStatements { get ; set ; }
+            public BlockSyntax SetStatements { get ; set ; }
         }
         
     }
