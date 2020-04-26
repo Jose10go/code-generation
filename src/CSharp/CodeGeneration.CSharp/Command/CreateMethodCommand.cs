@@ -33,7 +33,7 @@ namespace CodeGen.CSharp.Context
             }
 
             public string Name { get; set; }
-            public string ReturnType { get; set; }
+            public TypeSyntax ReturnType { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
             public ISingleTarget SingleTarget { get; set; }
             public SyntaxToken Modifiers { get; set; }

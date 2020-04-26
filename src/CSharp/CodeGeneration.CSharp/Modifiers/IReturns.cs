@@ -12,10 +12,10 @@ namespace CodeGen.CSharp.Context
         public interface IReturns<TCommand>
             where TCommand:Core.ICommand
         {
-            string ReturnType { get; set; }
+            TypeSyntax ReturnType { get; set; }
             TCommand Returns(string returnType) 
             {
-                this.ReturnType = returnType;
+                this.ReturnType = SyntaxFactory.ParseTypeName(returnType);
                 return (TCommand)this;
             }
 

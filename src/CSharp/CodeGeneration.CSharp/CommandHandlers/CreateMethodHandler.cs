@@ -20,7 +20,7 @@ namespace CodeGen.CSharp.Context
             {
                 var modifiers = GetModifiers(Command.Modifiers, Command.Abstract, Command.Static, Command.Partial);
                 
-                var method = SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(Command.ReturnType??"void"), Command.Name)
+                var method = SyntaxFactory.MethodDeclaration(Command.ReturnType??SyntaxFactory.ParseTypeName("void"), Command.Name)
                                           .WithAttributeLists(Command.Attributes)
                                           .WithBody(Command.Body)
                                           .WithModifiers(modifiers)

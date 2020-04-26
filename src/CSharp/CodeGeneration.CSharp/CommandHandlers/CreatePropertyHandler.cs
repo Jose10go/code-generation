@@ -42,7 +42,7 @@ namespace CodeGen.CSharp.Context
 
                 var Accesors = new SyntaxList<AccessorDeclarationSyntax>().Add(getAccesor).Add(setAccesor);
 
-                var property = SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(Command.ReturnType ?? "object"), Command.Name)
+                var property = SyntaxFactory.PropertyDeclaration(Command.ReturnType??SyntaxFactory.ParseTypeName("object"), Command.Name)
                                             .WithAttributeLists(Command.Attributes)
                                             .WithModifiers(modifiers)
                                             .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"))

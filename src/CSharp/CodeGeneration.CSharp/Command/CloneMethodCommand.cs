@@ -18,7 +18,8 @@ namespace CodeGen.CSharp.Context
                                         IWithAccessModifier<ICloneMethod>,
                                         IAbstract<ICloneMethod>,
                                         IStatic<ICloneMethod>,
-                                        IPartial<ICloneMethod>
+                                        IPartial<ICloneMethod>,
+                                        IReturns<ICloneMethod>
         {
         }
 
@@ -33,6 +34,7 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Abstract { get ; set ; }
             public SyntaxToken Static { get ; set ; }
             public SyntaxToken Partial { get ; set ; }
+            public TypeSyntax ReturnType { get ; set ; }
         }
         
     }

@@ -18,13 +18,13 @@ namespace CodeGen.CSharp.Context
             public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
             {
                 var modifiers = GetModifiers(Command.Modifiers,Command.Abstract,Command.Static, Command.Partial);
-                
+
                 var methodNode = node.WithIdentifier(SyntaxFactory.ParseToken(Command.Name))
                                                .WithAttributeLists(Command.Attributes)
                                                .WithBody(Command.Body)
                                                .WithModifiers(modifiers)
-                                               .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
-
+                                               .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"))
+                                               .WithReturnType(Command.ReturnType ?? node.ReturnType);
                 DocumentEditor.InsertAfter(node,methodNode);
             }
         }

@@ -25,7 +25,7 @@ namespace CodeGen.CSharp.Context
                                   .WithAttributeLists(Command.Attributes)
                                   .WithModifiers(modifiers)
                                   .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"))
-                                  .WithType(SyntaxFactory.ParseTypeName(Command.ReturnType??node.Type.ToString()));
+                                  .WithType(Command.ReturnType??node.Type);
 
                 var getAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.GetAccessorDeclaration));
                 var setAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.SetKeyword));
