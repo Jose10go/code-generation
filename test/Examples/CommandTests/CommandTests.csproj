@@ -9,6 +9,7 @@
     <Compile Remove="CloneClass\out.cs" />
     <Compile Remove="CloneProperty\out.cs" />
     <Compile Remove="CloneMethod\out.cs" />
+    <Compile Remove="CreateInterface\out.cs" />
     <Compile Remove="CreateStruct\out.cs" />
     <Compile Remove="CreateProperty\out.cs" />
     <Compile Remove="CreateClass\out.cs" />
@@ -22,6 +23,7 @@
     <None Include="CloneClass\out.cs" />
     <None Include="CloneProperty\out.cs" />
     <None Include="CloneMethod\out.cs" />
+    <None Include="CreateInterface\out.cs" />
     <None Include="CreateStruct\out.cs" />
     <None Include="CreateProperty\out.cs" />
     <None Include="CreateClass\out.cs" />

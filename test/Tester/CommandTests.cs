@@ -8,7 +8,6 @@ using Xunit.Abstractions;
 using System.Linq;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Tests
 {
@@ -78,6 +77,37 @@ namespace Tests
                                                      .Implements<IDictionary<string, T>,ICollection<T>, IComparable<T>>()
                                                      .MakePublic()
                                                      .MakePartial());
+
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
+        }
+
+        [Fact]
+        public void CreateInterface()
+        {
+            string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CreateInterface", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CreateInterface", "out.cs");
+
+            var _interface=
+            engine.SelectNew(inpath)
+                  .Execute((ICreateNamespace cmd) =>
+                        cmd.WithName("Tests.Examples.CreateInterface")
+                           .Using("System")
+                           .Using<List<object>>())
+                  .Execute((ICreateInterface cmd) => cmd.WithName("IA")
+                                                        .MakeGenericIn<T>()
+                                                        .WithConstraints<T>("IEnumerable<string>")
+                                                        .Implements<IDictionary<string,T>,ICollection<T>>()
+                                                        .MakeInternal()
+                                                        .MakePartial());
+            _interface
+                .Execute((ICreateMethod cmd) =>cmd.WithName("ToString")
+                                                  .Returns<string>());
+            _interface
+               .Execute((ICreateMethod cmd) => cmd.WithName("Parse")
+                                                  .Returns("IA<T>"));
 
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
