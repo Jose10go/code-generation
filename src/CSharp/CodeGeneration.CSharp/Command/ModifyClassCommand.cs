@@ -19,7 +19,8 @@ namespace CodeGen.CSharp.Context
                                        IStatic<IModifyClass>,
                                        IPartial<IModifyClass>,
                                        IInheritsFrom<IModifyClass>,
-                                       IImplements<IModifyClass>
+                                       IImplements<IModifyClass>,
+                                       IWithGeneric<IModifyClass>
         {
         }
 
@@ -39,6 +40,8 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Partial { get; set; }
             public BaseTypeSyntax InheritsType { get ; set ; }
             public BaseListSyntax ImplementedInterfaces { get; set; }
+            public TypeParameterListSyntax GenericParameters { get ; set ; }
+            public SyntaxList<TypeParameterConstraintClauseSyntax> GenericParametersConstraints { get ; set ; }
         }
 
     }
