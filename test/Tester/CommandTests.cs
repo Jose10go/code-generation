@@ -230,6 +230,28 @@ namespace Tests
         }
 
         [Fact]
+        public void ModifyStruct()
+        {
+            string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "ModifyStruct", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "ModifyStruct", "out.cs");
+
+            engine.Select<StructDeclarationSyntax>()
+                  .Where(x => x.DocumentPath == inpath)
+                  .Using(x => x.Node.Identifier.Text, out var keyName)
+                  .Execute((IModifyStruct cmd) => cmd.Get(keyName, out var name)
+                                                     .WithName(name + "_modified")
+                                                     .Implements<ICollection<double>>()
+                                                     .MakeGenericIn<TGeneric>()
+                                                     .WithStructConstraint<TGeneric>()
+                                                     .MakeProtected());
+
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
+        }
+
+        [Fact]
         public void CreateProperty()
         {
             string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "CreateProperty", "in.cs");

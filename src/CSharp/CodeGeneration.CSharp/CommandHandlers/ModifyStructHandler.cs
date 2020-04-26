@@ -3,9 +3,7 @@ using CodeGen.Context;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Editing;
-using System.Linq;
-
+using static CodeGen.CSharp.Extensions;
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
@@ -19,22 +17,18 @@ namespace CodeGen.CSharp.Context
 
             public override void VisitStructDeclaration(StructDeclarationSyntax node)
             {
-                var modifiers = new SyntaxTokenList();
-                if (Command.Modifiers != default)
-                    modifiers = modifiers.Add(Command.Modifiers);
-                if (Command.Partial != default)
-                    modifiers = modifiers.Add(Command.Partial);
+                var modifiers = GetModifiers(Command.Modifiers, Command.Partial);
+                var baseTypes = GetBaseTypes(Command.ImplementedInterfaces);
 
-                var separatedBaseTypes = new SeparatedSyntaxList<BaseTypeSyntax>();
-                if (Command.ImplementedInterfaces != null)
-                    separatedBaseTypes.AddRange(Command.ImplementedInterfaces.Select(name => SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(name))));
+                var structNode = node.WithIdentifier(SyntaxFactory.Identifier(Command.Name))
+                                     .WithTypeParameterList(Command.GenericParameters)
+                                     .WithConstraintClauses(Command.GenericParametersConstraints)
+                                     .WithBaseList(baseTypes)
+                                     .WithAttributeLists(Command.Attributes)
+                                     .WithModifiers(modifiers)
+                                     .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
 
-                var newNode = SyntaxFactory.StructDeclaration(Command.Name)
-                                             .WithAttributeLists(Command.Attributes)
-                                             .WithModifiers(modifiers)
-                                             .WithBaseList(SyntaxFactory.BaseList().WithTypes(separatedBaseTypes))
-                                             .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
-                DocumentEditor.ReplaceNode(node,newNode);
+                DocumentEditor.ReplaceNode(node, structNode);
             }
 
         }
