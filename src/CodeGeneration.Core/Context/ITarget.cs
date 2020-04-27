@@ -14,8 +14,7 @@ namespace CodeGen.Context
             where OutTarget:ITarget<TNode>
             where TNode:TBaseNode
         {
-            OutTarget Using<T>(Func<InTarget,T> usingSelector, out Key<T> key)
-                where T : class;
+            OutTarget Using<T>(Func<InTarget, T> usingSelector, out Key<T> key);
         }
 
         public interface IWhere<InTarget, OutTarget, TNode>
@@ -96,11 +95,10 @@ namespace CodeGen.Context
             }
 
             public TSingleTarget Using<T>(Func<TSingleTarget,T> usingSelector, out Key<T> key)
-                where T : class
             {
                 TSingleTarget self = (TSingleTarget)(ITarget<TNode>)this;
                 key = new Key<T>(usingSelector.GetHashCode());//TODO: another way to generate a key
-                this.dictionary.Add(key, usingSelector);
+                this.dictionary.Add(key,(target)=>usingSelector(target));
                 return self;
             }
 
@@ -201,7 +199,6 @@ namespace CodeGen.Context
             }
 
             public MultipleTarget Using<T>(Func<SingleTarget, T> usingSelector, out Key<T> key)
-                where T:class
             {
                 key = new Key<T>(usingSelector.GetHashCode());
                 this.SingleTargets = SingleTargets.Select(x => x.Using(usingSelector, out var _));

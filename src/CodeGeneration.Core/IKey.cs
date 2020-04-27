@@ -6,7 +6,6 @@
     }
 
     public sealed class Key<T> : IKey
-        where T : class
     {
         public int Id { get; }
         internal Key(int id)
