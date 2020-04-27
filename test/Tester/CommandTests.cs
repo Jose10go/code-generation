@@ -338,14 +338,51 @@ namespace Tests
                   .Where(x => x.DocumentPath == inpath)
                   .Using(x=>x.Node.Identifier.Text,out var keyName)
                   .Execute((ICloneMethod cmd)=>cmd.Get(keyName,out var name)
-                                                  .WithName(name + "_generated")
                                                   .MakePublic()
+                                                  .WithName(name + "_generated")
                                                   .WithBody("{Console.WriteLine(\"hello my friend.\");}"));
 
             //This Comment is preserved to mark the moment :)
             //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever...
 
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath); 
+            engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
+            var st2 = ParseFile(outpath);
+            Assert.True(st1.IsEquivalentTo(st2));
+        }
+
+        class T1 { }
+        class T2 { }
+        [Fact]
+        public void ExtensionMethod()
+        {
+            string inpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "ExtensionMethod", "in.cs");
+            string outpath = Path.Combine(Path.GetDirectoryName(ProjectPath), "ExtensionMethod", "out.cs");
+
+            engine.SelectNew(inpath)
+                  .Execute((ICreateNamespace cmd)=>cmd.WithName("ExtensionMethod")
+                                                      .Using("System"))
+                  .Execute((ICreateClass cmd)=>cmd.WithName("Extensions")
+                                                  .MakePublic()
+                                                  .MakeStatic()
+                                                  .MakeGenericIn<T1>())
+                  .Execute((ICreateMethod cmd) => cmd.MakePublic()
+                                                     .MakeStatic()
+                                                     .WithName("ExtensionMethod")
+                                                     .Returns<T2>()
+                                                     .MakeGenericIn<T2>()
+                                                        .WithConstraints<T2>("T1")
+                                                     .WithParameters<T1>("self")
+                                                        .WithThisParameter("self")
+                                                     .WithParameters<Func<T1,T2>>("func")
+                                                     .WithParameters<string>("message")
+                                                        .WithDefaultValue("message","hello")   
+                                                     .WithBody(@"{
+                                                                    Console.WriteLine(message);
+                                                                    return func(self);
+                                                                  }"));
+
+            Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
             var st2 = ParseFile(outpath);
             Assert.True(st1.IsEquivalentTo(st2));

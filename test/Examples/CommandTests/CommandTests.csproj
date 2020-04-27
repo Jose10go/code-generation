@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ExtensionMethod\out.cs" />
     <Compile Remove="ModifyStruct\out.cs" />
     <Compile Remove="ModifyProperty\out.cs" />
     <Compile Remove="ModifyMethod\out.cs" />
@@ -25,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="ExtensionMethod\out.cs" />
     <None Include="ModifyStruct\out.cs" />
     <None Include="ModifyProperty\out.cs" />
     <None Include="ModifyMethod\out.cs" />
