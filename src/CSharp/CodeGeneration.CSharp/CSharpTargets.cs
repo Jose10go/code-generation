@@ -11,7 +11,7 @@ namespace CodeGen.CSharp.Context
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         public abstract class CSharpSingleTargeter<TSingleTarget,TNode> : SingleTargeter<TSingleTarget, TNode>
-            where TSingleTarget : ISingleTarget<TNode>
+            where TSingleTarget : ISingleTargeter<TNode>
             where TNode : CSharpSyntaxNode
         {
             TNode _node;
@@ -72,16 +72,6 @@ namespace CodeGen.CSharp.Context
                 this.Parent = parent;
             }
 
-            ISingleTarget<TNode0> ITargetGet<ISingleTarget<TNode0>>.Get<T>(Key<T> key, out T value)
-            {
-                return this.Get(key, out value);
-            }
-
-            ISingleTarget<TNode0> IUsing<ISingleTarget<TNode0>, ISingleTarget<TNode0>, TNode0>.Using<T>(Func<ISingleTarget<TNode0>, T> usingSelector, out Key<T> key)
-            {
-                return this.Using(usingSelector,out key);
-            }
-
             void ISingleTarget.Get<T>(Key<T> key, out T value)
             {
                 this.Get(key, out value);
@@ -95,31 +85,10 @@ namespace CodeGen.CSharp.Context
         {
             public ISingleTarget<TNode1, TNode2> Parent { get; }
             public ISingleTarget<TNode2> Grandparent => Parent.Parent;
-            ISingleTarget<TNode1> ISingleTarget<TNode0, TNode1>.Parent => this.Parent;
 
             internal CSharpSingleTarget(ICodeGenerationEngine engine, Guid id, CSharpSingleTarget<TNode1,TNode2> parent, string path) : base(engine,id, path)
             {
                 this.Parent = parent;
-            }
-
-            ISingleTarget<TNode0> ITargetGet<ISingleTarget<TNode0>>.Get<T>(Key<T> key, out T value)
-            {
-                return this.Get(key, out value);
-            }
-
-            ISingleTarget<TNode0, TNode1> ITargetGet<ISingleTarget<TNode0, TNode1>>.Get<T>(Key<T> key, out T value)
-            {
-                return this.Get(key, out value);
-            }
-
-            ISingleTarget<TNode0> IUsing<ISingleTarget<TNode0>, ISingleTarget<TNode0>, TNode0>.Using<T>(Func<ISingleTarget<TNode0>, T> usingSelector, out Key<T> key)
-            {
-                return this.Using(usingSelector, out key);
-            }
-
-            ISingleTarget<TNode0, TNode1> IUsing<ISingleTarget<TNode0, TNode1>, ISingleTarget<TNode0, TNode1>, TNode0>.Using<T>(Func<ISingleTarget<TNode0, TNode1>, T> usingSelector, out Key<T> key)
-            {
-                return this.Using(usingSelector, out key);
             }
 
             void ISingleTarget.Get<T>(Key<T> key, out T value)

@@ -20,7 +20,7 @@ namespace CodeGen.CSharp.Context
                 this.Command = (TCommand)command;
             }
 
-            public ISingleTarget<TOutputNode> ProccessTarget<TSpecificCommand, TNode, TOutputNode>(ISingleTarget<TNode> target, ICodeGenerationEngine engine)
+            public ISingleTarget<TOutputNode> ProccessTarget<TSpecificCommand, TNode, TOutputNode>(ISingleTargeter<TNode> target, ICodeGenerationEngine engine)
                 where TSpecificCommand : ICommandOn<TNode>, ICommandResult<TOutputNode>, TCommand
                 where TNode : CSharpSyntaxNode
                 where TOutputNode : CSharpSyntaxNode
