@@ -19,7 +19,9 @@ namespace CodeGen.CSharp.Context
                                         IAbstract<ICloneMethod>,
                                         IStatic<ICloneMethod>,
                                         IPartial<ICloneMethod>,
-                                        IReturns<ICloneMethod>
+                                        IReturns<ICloneMethod>,
+                                        IWithGeneric<ICloneMethod>,
+                                        IWithParameters<ICloneMethod>
         {
         }
 
@@ -35,6 +37,9 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Static { get ; set ; }
             public SyntaxToken Partial { get ; set ; }
             public TypeSyntax ReturnType { get ; set ; }
+            public TypeParameterListSyntax GenericParameters { get ; set ; }
+            public SyntaxList<TypeParameterConstraintClauseSyntax> GenericParametersConstraints { get ; set ; }
+            public ParameterListSyntax Parameters { get ; set ; }
         }
         
     }

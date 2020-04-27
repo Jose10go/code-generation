@@ -21,7 +21,9 @@ namespace CodeGen.CSharp.Context
                                          IAbstract<ICreateMethod>,
                                          IStatic<ICreateMethod>,
                                          IPartial<ICreateMethod>,
-                                         IReturns<ICreateMethod>
+                                         IReturns<ICreateMethod>,
+                                         IWithGeneric<ICreateMethod>,
+                                         IWithParameters<ICreateMethod>
         {
         }
 
@@ -41,6 +43,9 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Static { get; set; }
             public SyntaxToken Partial { get; set; }
             public BlockSyntax Body { get ; set ; }
+            public TypeParameterListSyntax GenericParameters { get ; set ; }
+            public SyntaxList<TypeParameterConstraintClauseSyntax> GenericParametersConstraints { get ; set ; }
+            public ParameterListSyntax Parameters { get; set ; }
         }
 
     }

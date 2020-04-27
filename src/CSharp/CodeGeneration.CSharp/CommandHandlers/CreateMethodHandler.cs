@@ -23,6 +23,9 @@ namespace CodeGen.CSharp.Context
                 var method = SyntaxFactory.MethodDeclaration(Command.ReturnType??SyntaxFactory.ParseTypeName("void"), Command.Name)
                                           .WithAttributeLists(Command.Attributes)
                                           .WithBody(Command.Body)
+                                          .WithParameterList(Command.Parameters??SyntaxFactory.ParameterList())
+                                          .WithTypeParameterList(Command.GenericParameters)
+                                          .WithConstraintClauses(Command.GenericParametersConstraints)
                                           .WithModifiers(modifiers)
                                           .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
                 

@@ -19,12 +19,15 @@ namespace CodeGen.CSharp.Context
             {
                 var modifiers = GetModifiers(Command.Modifiers,Command.Abstract,Command.Static, Command.Partial);
 
-                var methodNode = node.WithIdentifier(SyntaxFactory.ParseToken(Command.Name))
-                                               .WithAttributeLists(Command.Attributes)
-                                               .WithBody(Command.Body)
-                                               .WithModifiers(modifiers)
-                                               .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"))
-                                               .WithReturnType(Command.ReturnType ?? node.ReturnType);
+                var methodNode = node.WithIdentifier(SyntaxFactory.ParseToken(Command.Name ?? node.Identifier.ToString()))
+                                               .WithAttributeLists(Command.Attributes.Count > 0 ? Command.Attributes : node.AttributeLists)
+                                               .WithParameterList(Command.Parameters??node.ParameterList)
+                                               .WithTypeParameterList(Command.GenericParameters??node.TypeParameterList)
+                                               .WithConstraintClauses(Command.GenericParametersConstraints.Count>0? Command.GenericParametersConstraints : node.ConstraintClauses)
+                                               .WithBody(Command.Body ?? node.Body)
+                                               .WithModifiers(modifiers.Count > 0 ? modifiers : node.Modifiers)
+                                               .WithReturnType(Command.ReturnType ?? node.ReturnType)
+                                               .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
                 DocumentEditor.InsertAfter(node,methodNode);
             }
         }
