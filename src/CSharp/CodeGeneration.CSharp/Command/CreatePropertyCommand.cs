@@ -14,6 +14,7 @@ namespace CodeGen.CSharp.Context
                                          ICommandOn<StructDeclarationSyntax>,
                                          ICommandOn<InterfaceDeclarationSyntax>,
                                          IWithName<ICreateProperty>,
+                                         IGet<ICreateProperty>,
                                          IWithAttribute<ICreateProperty>,
                                          IWithAccessModifier<ICreateProperty>,
                                          IAbstract<ICreateProperty>,
