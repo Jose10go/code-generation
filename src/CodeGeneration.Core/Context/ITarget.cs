@@ -27,8 +27,7 @@ namespace CodeGen.Context
         public interface ITargetGet<OutTarget> 
             where OutTarget:Core.ITarget
         {
-            OutTarget Get<T>(Key<T> key, out T value)
-                where T:class;
+            OutTarget Get<T>(Key<T> key, out T value);
         }
 
         public interface ISingleTargeter<TNode>:Core.ISingleTarget
@@ -85,7 +84,6 @@ namespace CodeGen.Context
             }
 
             public TSingleTarget Get<T>(Key<T> key, out T value)
-                where T : class
             {
                 TSingleTarget self = (TSingleTarget)(ISingleTargeter<TNode>)this;
                 value = (T)dictionary[key](self);
