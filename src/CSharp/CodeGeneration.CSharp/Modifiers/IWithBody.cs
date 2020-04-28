@@ -21,11 +21,17 @@ namespace CodeGen.CSharp.Context
                 return (TCommandBuilder)this;
             }
 
+            TCommandBuilder WithBody(BlockSyntax body)
+            {
+                this.Body = body;
+                return (TCommandBuilder)this;
+            }
+
             TCommandBuilder WithBody<This>(Action<This> body)
             {
                 throw new NonIntendedException();
             }
-            TCommandBuilder WithBody<This, TResult>(Func<TResult> body)
+            TCommandBuilder WithBody<This, TResult>(Func<This,TResult> body)
             {
                 throw new NonIntendedException();
             }
