@@ -54,11 +54,6 @@ namespace CodeGen.CSharp.Context
             public CSharpSingleTarget(ICodeGenerationEngine engine, Guid id,string path) : base(engine,id,path)
             {
             }
-
-            void ISingleTarget.Get<T>(Key<T> key, out T value)
-            {
-                this.Get(key, out value);
-            }
         }
 
         public sealed class CSharpSingleTarget<TNode0, TNode1> : CSharpSingleTargeter<ISingleTarget<TNode0, TNode1>, TNode0>, ISingleTarget<TNode0, TNode1>
@@ -72,10 +67,6 @@ namespace CodeGen.CSharp.Context
                 this.Parent = parent;
             }
 
-            void ISingleTarget.Get<T>(Key<T> key, out T value)
-            {
-                this.Get(key, out value);
-            }
         }
 
         public sealed class CSharpSingleTarget<TNode0, TNode1, TNode2> : CSharpSingleTargeter<ISingleTarget<TNode0, TNode1, TNode2>, TNode0>, ISingleTarget<TNode0, TNode1, TNode2>
@@ -91,10 +82,6 @@ namespace CodeGen.CSharp.Context
                 this.Parent = parent;
             }
 
-            void ISingleTarget.Get<T>(Key<T> key, out T value)
-            {
-                this.Get(key, out value);
-            }
         }
 
     }

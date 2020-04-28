@@ -7,6 +7,7 @@ using CodeGen.Context;
 using Microsoft.CodeAnalysis.CSharp;
 using static CodeGen.CSharp.Context.CSharpContext;
 using Microsoft.CodeAnalysis.Rename;
+using CodeGen.Core;
 
 namespace FancyDecoTransformer
 {
@@ -77,7 +78,8 @@ namespace FancyDecoTransformer
                                                                      .WithGet($"{{ new Log().Decorate(this._{methodName})}}")//TODO:Initializer
                                                                      .Get(returnTypeKey, out var returnType)
                                                                      .Returns(returnType));
-                item.Get(cantParamsKey, out var cantParams);
+               
+                var cantParams=item.Get(cantParamsKey);
                 
                 item.Parent.Execute((ICloneMethod cmd) => 
                     cantParams switch

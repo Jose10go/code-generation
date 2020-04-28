@@ -111,9 +111,10 @@ namespace CodeGen.Context
                 return handler.ProccessTarget<TCommand,TNode,TOutput>(singleTarget,this.CodeGenerationEngine);
             }
 
-            void ISingleTarget.Get<T>(Key<T> key, out T value)
+            T ISingleTarget.Get<T>(Key<T> key)
             {
-                this.Get(key, out value);
+                this.Get(key, out var value);
+                return value;
             }
         }
 

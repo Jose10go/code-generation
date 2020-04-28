@@ -18,7 +18,7 @@ namespace CodeGen.CSharp.Context
                 where T:class
             {
                 var self = (TCommand)this;
-                self.SingleTarget.Get(key, out value);
+                value=self.SingleTarget.Get(key);
                 return self;
             }
         }
