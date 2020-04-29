@@ -69,24 +69,26 @@ namespace CodeGen.CSharp.Context
                     var doc = CurrentProject.GetDocument(id);
                     var editor = DocumentEditor.CreateAsync(doc).Result;
                     var root = editor.OriginalRoot;
-                    var targets = root.DescendantNodes()
-                                       .OfType<TSyntaxNode1>()
-                                       .Select(parentNode => new { Node=parentNode,Target=new CSharpSingleTarget<TSyntaxNode1>(this, Guid.NewGuid(), doc.FilePath) })
-                                       .SelectMany(parent => parent.Node
-                                                            .DescendantNodes()
-                                                            .OfType<TSyntaxNode0>()
-                                                            .Select(node => new {Node=node,ParentNode=parent.Node,Target=new CSharpSingleTarget<TSyntaxNode0, TSyntaxNode1>(this, Guid.NewGuid(), parent.Target, doc.FilePath) }))
-                                                            .ToList();
-                    foreach (var item in targets)
+                    var nodes = root.DescendantNodes()
+                                       .OfType<TSyntaxNode0>()
+                                       .GroupBy(x => x.Ancestors().OfType<TSyntaxNode1>().FirstOrDefault())
+                                       .Where(x => x.Key != null)
+                                       .ToList();
+
+                    foreach (var parentGroup in nodes)
                     {
-                        var newNode = item.Node.WithAdditionalAnnotations(new SyntaxAnnotation($"{item.Target.Id}"));
-                        var newParent=item.ParentNode.ReplaceNode(item.Node,newNode)
-                                                     .WithAdditionalAnnotations(new SyntaxAnnotation($"{item.Target.Parent.Id}"));
-                        editor.ReplaceNode(item.ParentNode,newParent);
+                        var parentTarget = new CSharpSingleTarget<TSyntaxNode1>(this, Guid.NewGuid(), doc.FilePath);
+                        var parentNode = parentGroup.Key.WithAdditionalAnnotations(new SyntaxAnnotation($"{parentTarget.Id}"));
+                        foreach (var node in parentGroup) 
+                        {
+                            var target = new CSharpSingleTarget<TSyntaxNode0, TSyntaxNode1>(this, Guid.NewGuid(),parentTarget,doc.FilePath);
+                            allTargets=allTargets.Append(target);
+                            parentNode = parentNode.ReplaceNode(node, node.WithAdditionalAnnotations(new SyntaxAnnotation($"{target.Id}")));
+                        }
+                        editor.ReplaceNode(parentGroup.Key,parentNode);
                     }
 
                     this.CurrentProject = editor.GetChangedDocument().Project;
-                    allTargets = allTargets.Concat(targets.Select(x=>x.Target));
                 }
                 return new MultipleTarget<TSyntaxNode0,TSyntaxNode1>(allTargets);
             }
@@ -102,31 +104,33 @@ namespace CodeGen.CSharp.Context
                     var doc = CurrentProject.GetDocument(id);
                     var editor = DocumentEditor.CreateAsync(doc).Result;
                     var root = editor.OriginalRoot;
-                    var targets = root.DescendantNodes()
-                                       .OfType<TSyntaxNode2>()
-                                       .Select(node => new { Node = node, Target = new CSharpSingleTarget<TSyntaxNode2>(this, Guid.NewGuid(), doc.FilePath) })
-                                       .SelectMany(grandparent => grandparent.Node
-                                                                    .DescendantNodes()
-                                                                    .OfType<TSyntaxNode1>()
-                                                                    .Select(node => new { Node = node, Target = new CSharpSingleTarget<TSyntaxNode1, TSyntaxNode2>(this, Guid.NewGuid(), grandparent.Target, doc.FilePath) })
-                                                                    .SelectMany(parent => parent.Node
-                                                                                        .DescendantNodes()
-                                                                                        .OfType<TSyntaxNode0>()
-                                                                                        .Select(node => new { Node = node, ParentNode = parent.Node, GrandparentNode = grandparent.Node, Target = new CSharpSingleTarget<TSyntaxNode0, TSyntaxNode1, TSyntaxNode2>(this, Guid.NewGuid(), parent.Target, doc.FilePath)})))
+                    var nodes = root.DescendantNodes()
+                                       .OfType<TSyntaxNode0>()
+                                       .GroupBy(x => x.Ancestors().OfType<TSyntaxNode1>().FirstOrDefault())
+                                       .Where(x => x.Key != null)
+                                       .GroupBy(x => x.Key.Ancestors().OfType<TSyntaxNode2>().FirstOrDefault())
+                                       .Where(x => x.Key != null)
                                        .ToList();
-                    
-                    foreach (var item in targets)
-                    {
-                        var newNode = item.Node.WithAdditionalAnnotations(new SyntaxAnnotation($"{item.Target.Id}"));
-                        var newParent = item.ParentNode.ReplaceNode(item.Node,newNode)
-                                                         .WithAdditionalAnnotations(new SyntaxAnnotation($"{item.Target.Parent.Id}"));
-                        var newGrand = item.GrandparentNode.ReplaceNode(item.ParentNode,newParent)
-                                                           .WithAdditionalAnnotations(new SyntaxAnnotation($"{item.Target.Grandparent.Id}"));
-                        editor.ReplaceNode(item.GrandparentNode,newGrand);
-                    }
 
+                    foreach (var groupGrandparent in nodes)
+                    {
+                        var grandparentTarget = new CSharpSingleTarget<TSyntaxNode2>(this, Guid.NewGuid(), doc.FilePath);
+                        var grandparentNode = groupGrandparent.Key.WithAdditionalAnnotations(new SyntaxAnnotation($"{grandparentTarget.Id}"));
+                        foreach (var parentGroup in groupGrandparent)
+                        {
+                            var parentTarget = new CSharpSingleTarget<TSyntaxNode1,TSyntaxNode2>(this, Guid.NewGuid(),grandparentTarget, doc.FilePath);
+                            var parentNode = parentGroup.Key.WithAdditionalAnnotations(new SyntaxAnnotation($"{parentTarget.Id}"));
+                            foreach (var node in parentGroup)
+                            {
+                                var target = new CSharpSingleTarget<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2>(this, Guid.NewGuid(), parentTarget, doc.FilePath);
+                                allTargets = allTargets.Append(target);
+                                parentNode = parentNode.ReplaceNode(node, node.WithAdditionalAnnotations(new SyntaxAnnotation($"{target.Id}")));
+                            }
+                            grandparentNode=grandparentNode.ReplaceNode(parentGroup.Key, parentNode);
+                        }
+                        editor.ReplaceNode(groupGrandparent.Key, grandparentNode);
+                    }
                     this.CurrentProject = editor.GetChangedDocument().Project;
-                    allTargets = allTargets.Concat(targets.Select(x=>x.Target));
                 }
                 return new MultipleTarget<TSyntaxNode0, TSyntaxNode1,TSyntaxNode2>(allTargets);
             }
