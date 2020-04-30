@@ -2,7 +2,7 @@
   "profiles": {
     "CodeGeneration.CSharp.ConsoleTool": {
       "commandName": "Project",
-      "commandLineArgs": "--project C:\\Users\\Jose10go\\Desktop\\Tesis\\CodeGeneration\\csharp_code_generation-master\\Transformers\\HelloWorldTransformer\\HelloWorldTransformer.csproj --transformers C:\\Users\\Jose10go\\.nuget\\packages\\withbodytransformer\\1.0.0\\build\\netcoreapp3.0\\WithBodyTransformer.dll"
+      "commandLineArgs": "--project C:\\Users\\Jose10go\\Desktop\\Tesis\\CodeGeneration\\csharp_code_generation-master\\src\\CSharp\\Transformers\\FancyDecoTransformer\\FancyDecoTransformer.csproj --transformers C:\\\\Users\\\\Jose10go\\\\.nuget\\\\packages\\\\withbodytransformer\\\\1.0.0\\\\build\\\\netcoreapp3.0\\\\WithBodyTransformer.dll"
     }
   }
 }
