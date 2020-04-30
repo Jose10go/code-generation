@@ -141,6 +141,7 @@ namespace CodeGen.Context
             where TNode1 : TBaseNode
         {
             IEnumerator<ISingleTarget<TNode0,TNode1>> GetEnumerator();
+            IMultipleTarget<TNode1> GetParents();
         }
 
         public interface IMultipleTarget<TNode0, TNode1,TNode2> : IMultipleTargeter<TNode0>,
@@ -151,6 +152,9 @@ namespace CodeGen.Context
             where TNode2 : TBaseNode
         {
             IEnumerator<ISingleTarget<TNode0,TNode1,TNode2>> GetEnumerator();
+            IMultipleTarget<TNode1,TNode2> GetParents();
+            IMultipleTarget<TNode2> GetGrandParents();
+
         }
 
         public abstract class MultipleTargeter<MultipleTarget, SingleTarget, TNode>:IMultipleTargeter<TNode>, 
@@ -165,7 +169,7 @@ namespace CodeGen.Context
                 this.SingleTargets = singleTargets;
             }
 
-            IEnumerable<SingleTarget> SingleTargets { get; set; }
+            protected IEnumerable<SingleTarget> SingleTargets { get; set; }
             public MultipleTarget Where(Func<SingleTarget, bool> whereSelector)
             {
                 this.SingleTargets = SingleTargets.Where(whereSelector);
@@ -249,7 +253,11 @@ namespace CodeGen.Context
                 : base(singleTargets)
             {
             }
-            
+
+            public IMultipleTarget<TNode1> GetParents()
+            {
+                return new MultipleTarget<TNode1>(this.SingleTargets.Select(x => x.Parent));
+            }
         }
 
         public sealed class MultipleTarget<TNode, TNode1, TNode2> : MultipleTargeter<IMultipleTarget<TNode, TNode1, TNode2>, ISingleTarget<TNode, TNode1, TNode2>, TNode>,
@@ -266,6 +274,15 @@ namespace CodeGen.Context
             {
             }
 
+            public IMultipleTarget<TNode2> GetGrandParents()
+            {
+                return new MultipleTarget<TNode2>(this.SingleTargets.Select(x => x.Grandparent));
+            }
+
+            public IMultipleTarget<TNode1, TNode2> GetParents()
+            {
+                return new MultipleTarget<TNode1,TNode2>(this.SingleTargets.Select(x => x.Parent));
+            }
         }
 
     }
