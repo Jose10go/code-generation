@@ -15,6 +15,7 @@ namespace CodeGen.CSharp.Context
                                         IWithName<IModifyMethod>,
                                         IWithAttribute<IModifyMethod>,
                                         IWithBody<IModifyMethod>,
+                                        IWithParameters<IModifyMethod>,
                                         IWithAccessModifier<IModifyMethod>,
                                         IAbstract<IModifyMethod>,
                                         IStatic<IModifyMethod>,
@@ -28,13 +29,15 @@ namespace CodeGen.CSharp.Context
         {
             public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
-            public BlockSyntax Body { get; set; }
+            public BlockSyntax BlockBody { get; set; }
+            public ArrowExpressionClauseSyntax ExpressionBody { get ; set ; }
             public ISingleTarget SingleTarget { get; set ; }
             public SyntaxToken Modifiers { get ; set ; }
             public SyntaxToken Abstract { get ; set ; }
             public SyntaxToken Static { get ; set ; }
             public SyntaxToken Partial { get ; set ; }
             public TypeSyntax ReturnType { get ; set ; }
+            public ParameterListSyntax Parameters { get ; set ; }
         }
         
     }

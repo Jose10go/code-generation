@@ -36,6 +36,8 @@ namespace CodeGen.CSharp.Context
             public SyntaxTokenList SetModifier { get ; set ; }
             public BlockSyntax GetStatements { get ; set ; }
             public BlockSyntax SetStatements { get ; set ; }
+            public ArrowExpressionClauseSyntax GetExpression { get ; set ; }
+            public ArrowExpressionClauseSyntax SetExpression { get ; set ; }
         }
         
     }

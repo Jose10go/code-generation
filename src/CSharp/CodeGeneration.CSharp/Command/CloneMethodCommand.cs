@@ -30,7 +30,8 @@ namespace CodeGen.CSharp.Context
         {
             public string Name { get; set; }
             public SyntaxList<AttributeListSyntax> Attributes{ get; set; }
-            public BlockSyntax Body { get; set; }
+            public BlockSyntax BlockBody { get; set; }
+            public ArrowExpressionClauseSyntax ExpressionBody { get ; set ; }
             public ISingleTarget SingleTarget { get; set ; }
             public SyntaxToken Modifiers { get ; set ; }
             public SyntaxToken Abstract { get ; set ; }

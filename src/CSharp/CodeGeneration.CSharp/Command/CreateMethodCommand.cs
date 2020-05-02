@@ -42,7 +42,8 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Abstract { get; set; }
             public SyntaxToken Static { get; set; }
             public SyntaxToken Partial { get; set; }
-            public BlockSyntax Body { get ; set ; }
+            public BlockSyntax BlockBody { get ; set ; }
+            public ArrowExpressionClauseSyntax ExpressionBody { get ; set ; }
             public TypeParameterListSyntax GenericParameters { get ; set ; }
             public SyntaxList<TypeParameterConstraintClauseSyntax> GenericParametersConstraints { get ; set ; }
             public ParameterListSyntax Parameters { get; set ; }
