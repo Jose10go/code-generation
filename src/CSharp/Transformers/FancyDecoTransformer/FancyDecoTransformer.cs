@@ -1,13 +1,11 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using CodeGeneration.CSharp;
 using CodeGen.Context;
 using Microsoft.CodeAnalysis.CSharp;
 using static CodeGen.CSharp.Context.CSharpContext;
-using Microsoft.CodeAnalysis.Rename;
-using CodeGen.Core;
+using System.Collections.Generic;
 
 namespace FancyDecoTransformer
 {
@@ -71,11 +69,11 @@ namespace FancyDecoTransformer
 
             foreach (var item in implemented)
             {
-                item.Grandparent.Execute((ICreateProperty cmd) => cmd.Get(methodNameKey,out var methodName)
-                                                                     .WithName("__decorated"+methodName)
+                item.Grandparent.Execute((ICreateProperty cmd) => cmd.Get(methodNameKey, out var methodName)
+                                                                     .WithName("__decorated" + methodName)
                                                                      .MakePrivate()
                                                                      .MakeStatic()
-                                                                     .WithGet($"{{ new Log().Decorate(this._{methodName})}}")//TODO:Initializer
+                                                                     .WithGet((dynamic @this) => new Log().Decorate(@this.methodName))//TODO:Initializer and remove log...
                                                                      .Get(returnTypeKey, out var returnType)
                                                                      .Returns(returnType));
                
@@ -86,31 +84,40 @@ namespace FancyDecoTransformer
                     {
                         0 => cmd.WithAttributes()
                                 .Get(methodNameKey, out var methodName)
-                                .WithBody((dynamic @this) => @this["__decorated" + methodName]()),
+                                .WithBody((dynamic @this) => @this.methodName(),
+                                    new Dictionary<string,string>{{nameof(methodName),"__decorated"+methodName}}),
                         1 => cmd.WithAttributes()
                                 .Get(methodNameKey, out var methodName)
-                                .WithBody((dynamic @this,dynamic arg1) => @this["__decorated" + methodName](arg1)),
+                                .WithBody((dynamic @this,dynamic arg1) => @this.methodName(arg1),
+                                    new Dictionary<string, string> { { nameof(methodName), "__decorated" + methodName } }),
                         2 => cmd.WithAttributes()
                                 .Get(methodNameKey, out var methodName)
-                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2) => @this["__decorated" + methodName](arg1,arg2)),
+                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2) => @this.methodName(arg1,arg2),
+                                    new Dictionary<string, string> { { nameof(methodName), "__decorated" + methodName } }),
                         3 => cmd.WithAttributes()
                                 .Get(methodNameKey, out var methodName)
-                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3) => @this["__decorated" + methodName](arg1,arg2,arg3)),
+                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3) => @this.methodName(arg1,arg2,arg3),
+                                    new Dictionary<string, string> { { nameof(methodName), "__decorated" + methodName } }),
                         4 => cmd.WithAttributes()
                                 .Get(methodNameKey, out var methodName)
-                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3, dynamic arg4) => @this["__decorated" + methodName](arg1,arg2,arg3,arg4)),
+                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3, dynamic arg4) => @this.methodName(arg1,arg2,arg3,arg4),
+                                    new Dictionary<string, string> { { nameof(methodName), "__decorated" + methodName } }),
                         5 => cmd.WithAttributes()
                                 .Get(methodNameKey, out var methodName)
-                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3,dynamic arg4,dynamic arg5) => @this["__decorated" + methodName](arg1,arg2,arg3,arg4,arg5)),
+                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3,dynamic arg4,dynamic arg5) => @this.methodName(arg1,arg2,arg3,arg4,arg5),
+                                    new Dictionary<string, string> { { nameof(methodName), "__decorated" + methodName } }),
                         6 => cmd.WithAttributes()
                                 .Get(methodNameKey, out var methodName)
-                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3,dynamic arg4,dynamic arg5,dynamic arg6) => @this["__decorated" + methodName](arg1,arg2,arg3,arg4,arg5,arg6)),
+                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3,dynamic arg4,dynamic arg5,dynamic arg6) => @this.methodName(arg1,arg2,arg3,arg4,arg5,arg6),
+                                    new Dictionary<string, string> { { nameof(methodName), "__decorated" + methodName } }),
                         7 => cmd.WithAttributes()
                                 .Get(methodNameKey, out var methodName)
-                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3,dynamic arg4,dynamic arg5,dynamic arg6,dynamic arg7) => @this["__decorated" + methodName](arg1,arg2,arg3,arg4,arg5,arg6,arg7)),
+                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3,dynamic arg4,dynamic arg5,dynamic arg6,dynamic arg7) => @this.methodName(arg1,arg2,arg3,arg4,arg5,arg6,arg7),
+                                    new Dictionary<string, string> { { nameof(methodName), "__decorated" + methodName } }),
                         8 => cmd.WithAttributes()
                                 .Get(methodNameKey, out var methodName)
-                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3,dynamic arg4,dynamic arg5,dynamic arg6,dynamic arg7,dynamic arg8) => @this["__decorated" + methodName](arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8)),
+                                .WithBody((dynamic @this,dynamic arg1,dynamic arg2,dynamic arg3,dynamic arg4,dynamic arg5,dynamic arg6,dynamic arg7,dynamic arg8) => @this.methodName(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8),
+                                    new Dictionary<string, string> { { nameof(methodName), "__decorated" + methodName } }),
                         _ => throw new Exception()//TODO: throw proper Exception 
                     });
 
