@@ -21,7 +21,7 @@ namespace CodeGen.CSharp.Context
 
                 var methodNode = node.WithIdentifier(SyntaxFactory.ParseToken(Command.Name))
                                                .WithAttributeLists(Command.Attributes)
-                                               .WithBody(Command.Body)
+                                               .WithBody(Command.BlockBody)
                                                .WithModifiers(modifiers)
                                                .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"))
                                                .WithReturnType(Command.ReturnType ?? node.ReturnType);

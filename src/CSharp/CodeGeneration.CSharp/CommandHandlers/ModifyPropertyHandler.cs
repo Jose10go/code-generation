@@ -29,37 +29,17 @@ namespace CodeGen.CSharp.Context
                 var getAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.GetAccessorDeclaration));
                 var setAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.SetKeyword));
 
-                var newGetAccessor = (Command.GetModifier, Command.GetStatements, getAccessor) switch
-                {
-                    ({ Count: 0 }, null, _) => getAccessor,
-                    (_, null, null) => SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                                                    .WithModifiers(Command.GetModifier),
-                    (_, null, _) => getAccessor.WithModifiers(Command.GetModifier),
-                    ({ Count: 0 }, _, null) => SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                                                         .WithBody(Command.GetStatements),
-                    ({ Count: 0 }, _, _) => getAccessor.WithBody(Command.GetStatements),
-                    (_, _, null) => SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                                                 .WithModifiers(Command.GetModifier)
-                                                 .WithBody(Command.GetStatements),
-                    (_, _, _) => getAccessor.WithModifiers(Command.GetModifier)
-                                            .WithBody(Command.GetStatements),
-                };
+                var newGetAccessor = getAccessor ?? SyntaxFactory
+                                                .AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                                                .WithModifiers(Command.GetModifier)
+                                                .WithExpressionBody(Command.GetExpression ?? getAccessor?.ExpressionBody)
+                                                .WithBody(Command.GetStatements ?? getAccessor?.Body);
 
-                var newSetAccessor = (Command.SetModifier, Command.SetStatements, setAccessor) switch
-                {
-                    ({ Count: 0 }, null, _) => setAccessor,
-                    (_, null, null) => SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                                                    .WithModifiers(Command.SetModifier),
-                    (_, null, _) => setAccessor.WithModifiers(Command.SetModifier),
-                    ({ Count: 0 }, _, null) => SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                                                            .WithBody(Command.SetStatements),
-                    ({ Count: 0 }, _, _) => setAccessor.WithBody(Command.SetStatements),
-                    (_, _, null) => SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                var newSetAccessor = setAccessor ?? SyntaxFactory
+                                                 .AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
                                                  .WithModifiers(Command.SetModifier)
-                                                 .WithBody(Command.SetStatements),
-                    (_, _, _) => setAccessor.WithModifiers(Command.SetModifier)
-                                            .WithBody(Command.SetStatements),
-                };
+                                                 .WithExpressionBody(Command.SetExpression ?? setAccessor?.ExpressionBody)
+                                                 .WithBody(Command.SetStatements ?? setAccessor?.Body);
 
                 var Accesors = new SyntaxList<AccessorDeclarationSyntax>();
                 if (newGetAccessor != null)

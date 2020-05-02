@@ -5,6 +5,10 @@ using CodeGen.Attributes;
 using Microsoft.CodeAnalysis;
 using CodeGen.Context;
 using static CodeGen.CSharp.Extensions;
+using System;
+using System.Linq;
+using CodeGen.Core.Exceptions;
+
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext:CodeGenContext<Project,CSharpSyntaxNode,CompilationUnitSyntax,ISymbol>
@@ -19,10 +23,13 @@ namespace CodeGen.CSharp.Context
             private void ProccessNode(CSharpSyntaxNode node)
             {
                 var modifiers = GetModifiers(Command.Modifiers, Command.Abstract, Command.Static, Command.Partial);
-                
+
+                var bodySyntax = Command.BlockBody;
+
                 var method = SyntaxFactory.MethodDeclaration(Command.ReturnType??SyntaxFactory.ParseTypeName("void"), Command.Name)
                                           .WithAttributeLists(Command.Attributes)
-                                          .WithBody(Command.Body)
+                                          .WithBody(Command.BlockBody)
+                                          .WithExpressionBody(Command.ExpressionBody)
                                           .WithParameterList(Command.Parameters??SyntaxFactory.ParameterList())
                                           .WithTypeParameterList(Command.GenericParameters)
                                           .WithConstraintClauses(Command.GenericParametersConstraints)

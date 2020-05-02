@@ -24,7 +24,7 @@ namespace CodeGen.CSharp.Context
                                                .WithParameterList(Command.Parameters??node.ParameterList)
                                                .WithTypeParameterList(Command.GenericParameters??node.TypeParameterList)
                                                .WithConstraintClauses(Command.GenericParametersConstraints.Count>0? Command.GenericParametersConstraints : node.ConstraintClauses)
-                                               .WithBody(Command.Body ?? node.Body)
+                                               .WithBody(Command.BlockBody ?? node.Body)
                                                .WithModifiers(modifiers.Count > 0 ? modifiers : node.Modifiers)
                                                .WithReturnType(Command.ReturnType ?? node.ReturnType)
                                                .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));

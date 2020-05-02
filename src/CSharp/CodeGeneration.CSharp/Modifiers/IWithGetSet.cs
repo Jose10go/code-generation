@@ -6,121 +6,182 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Linq;
+using System.Collections.Generic;
+
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
     {
         [CommandModifier]
-        public interface IWithGetSet<TCommandBuilder>
-            where TCommandBuilder:Core.ICommand
+        public interface IWithGetSet<TCommand>
+            where TCommand:Core.ICommand
         {
             SyntaxTokenList GetModifier { get; set; }
             SyntaxTokenList SetModifier { get; set; }
             BlockSyntax GetStatements { get; set; }
             BlockSyntax SetStatements { get; set; }
-
-            TCommandBuilder WithGet(string exp)
+            ArrowExpressionClauseSyntax GetExpression { get; set; }
+            ArrowExpressionClauseSyntax SetExpression { get; set; }
+            
+            TCommand WithGet(string exp)
             {
                 this.GetStatements = SyntaxFactory.ParseStatement(exp) as BlockSyntax;
-                return (TCommandBuilder)this;
+                if (this.GetStatements != null)
+                    this.GetExpression = null;
+                else
+                    this.GetExpression = SyntaxFactory.ArrowExpressionClause(SyntaxFactory.ParseExpression(exp));
+                return (TCommand)this;
             }
 
-            TCommandBuilder WithGet(BlockSyntax exp)
+            TCommand WithGet(BlockSyntax exp)
             {
+                this.GetExpression = null;
                 this.GetStatements = exp;
-                return (TCommandBuilder)this;
+                return (TCommand)this;
             }
 
-            TCommandBuilder WithGet<ResultType>(Func<ResultType> exp)
+            TCommand WithGet(ArrowExpressionClauseSyntax exp)
+            {
+                this.GetStatements = null;
+                this.GetExpression = exp;
+                return (TCommand)this;
+            }
+
+            TCommand WithGet<This,ResultType>(Func<This,ResultType> exp, Dictionary<string, string> dynamicContext = null)
             {
                 throw new NonIntendedException();
             }
 
-            TCommandBuilder WithSet(string exp)
+            TCommand WithGet(ParenthesizedLambdaExpressionSyntax codeContext, Dictionary<string, string> dynamicContext = null)
+            {
+                var substitutions = new Dictionary<string, Substitution>();
+                if (dynamicContext != null)
+                    foreach (var item in dynamicContext)
+                        substitutions.Add(item.Key, new Substitution(item.Value, SubstitutionKind.DynamicMember));
+
+                var command = (TCommand)this;
+                substitutions.Add(codeContext.ParameterList.Parameters.First().Identifier.ToString(), new Substitution("this", SubstitutionKind.This));
+
+                var body = new SubstitutionContext(codeContext, substitutions).GetReplacedBody();
+                GetStatements = body as BlockSyntax;
+                GetExpression = body as ArrowExpressionClauseSyntax;
+                return command;
+            }
+
+            TCommand WithSet(string exp)
             {
                 this.SetStatements = SyntaxFactory.ParseStatement(exp) as BlockSyntax;
-                return (TCommandBuilder)this;
+                if (this.SetStatements != null)
+                    this.SetExpression = null;
+                else
+                    this.SetExpression = SyntaxFactory.ArrowExpressionClause(SyntaxFactory.ParseExpression(exp));
+                return (TCommand)this;
             }
 
-            TCommandBuilder WithSet(BlockSyntax exp)
+            TCommand WithSet(BlockSyntax exp)
             {
                 this.SetStatements = exp;
-                return (TCommandBuilder)this;
+                this.SetExpression = null;
+                return (TCommand)this;
             }
 
-            TCommandBuilder WithSet<ValueType>(Action<ValueType> exp)
+            TCommand WithSet(ArrowExpressionClauseSyntax exp)
+            {
+                this.SetStatements = null;
+                this.SetExpression = exp;
+                return (TCommand)this;
+            }
+
+            TCommand WithSet<This,ValueType>(Action<This,ValueType> exp, Dictionary<string, string> dynamicContext = null)
             {
                 throw new NonIntendedException();
             }
 
-            TCommandBuilder MakeSetPublic()
+            TCommand WithSet(ParenthesizedLambdaExpressionSyntax codeContext, Dictionary<string, string> dynamicContext = null)
+            {
+                var substitutions = new Dictionary<string, Substitution>();
+                if (dynamicContext != null)
+                    foreach (var item in dynamicContext)
+                        substitutions.Add(item.Key, new Substitution(item.Value, SubstitutionKind.DynamicMember));
+
+                var command = (TCommand)this;
+                substitutions.Add(codeContext.ParameterList.Parameters.First().Identifier.ToString(), new Substitution("this", SubstitutionKind.This));
+                substitutions.Add(codeContext.ParameterList.Parameters.Skip(1).First().Identifier.ToString(), new Substitution("value", SubstitutionKind.Value));
+
+                var body = new SubstitutionContext(codeContext, substitutions).GetReplacedBody();
+                SetStatements = body as BlockSyntax;
+                SetExpression = body as ArrowExpressionClauseSyntax;
+                return command;
+            }
+
+            TCommand MakeSetPublic()
             {
                 if(!SetModifier.Any(x=>x.Kind()==SyntaxKind.PublicKeyword))
                     SetModifier = SetModifier.Add(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
                 SetModifier = SetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
                 SetModifier = SetModifier.Remove(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
                 SetModifier = SetModifier.Remove(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
-                return (TCommandBuilder)this;
+                return (TCommand)this;
             }
-            TCommandBuilder MakeSetInternal()
+            TCommand MakeSetInternal()
             {
                 if(!SetModifier.Any(x=>x.Kind()==SyntaxKind.InternalKeyword))
                     SetModifier = SetModifier.Add(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
                 SetModifier = SetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
                 SetModifier = SetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
-                return (TCommandBuilder)this;
+                return (TCommand)this;
             }
-            TCommandBuilder MakeSetPrivate()
+            TCommand MakeSetPrivate()
             {
                 if (!SetModifier.Any(x => x.Kind() == SyntaxKind.PrivateKeyword))
                     SetModifier = SetModifier.Add(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
                 SetModifier = SetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
                 SetModifier = SetModifier.Remove(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
                 SetModifier = SetModifier.Remove(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
-                return (TCommandBuilder)this;
+                return (TCommand)this;
             }
-            TCommandBuilder MakeSetProtected()
+            TCommand MakeSetProtected()
             {
                 if (!SetModifier.Any(x => x.Kind() == SyntaxKind.ProtectedKeyword))
                     SetModifier = SetModifier.Add(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
                 SetModifier = SetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
                 SetModifier = SetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
-                return (TCommandBuilder)this;
+                return (TCommand)this;
             }
 
-            TCommandBuilder MakeGetPublic()
+            TCommand MakeGetPublic()
             {
                 if (!GetModifier.Any(x => x.Kind() == SyntaxKind.PublicKeyword))
                     GetModifier = GetModifier.Add(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
                 GetModifier = GetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
                 GetModifier = GetModifier.Remove(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
                 GetModifier = GetModifier.Remove(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
-                return (TCommandBuilder)this;
+                return (TCommand)this;
             }
-            TCommandBuilder MakeGetInternal()
+            TCommand MakeGetInternal()
             {
                 if (!GetModifier.Any(x => x.Kind() == SyntaxKind.InternalKeyword))
                     GetModifier = GetModifier.Add(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
                 GetModifier = GetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
                 GetModifier = GetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
-                return (TCommandBuilder)this;
+                return (TCommand)this;
             }
-            TCommandBuilder MakeGetPrivate()
+            TCommand MakeGetPrivate()
             {
                 if (!GetModifier.Any(x => x.Kind() == SyntaxKind.PrivateKeyword))
                     GetModifier = GetModifier.Add(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
                 GetModifier = GetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
                 GetModifier = GetModifier.Remove(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
                 GetModifier = GetModifier.Remove(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
-                return (TCommandBuilder)this;
+                return (TCommand)this;
             }
-            TCommandBuilder MakeGetProtected()
+            TCommand MakeGetProtected()
             {
                 if (!GetModifier.Any(x => x.Kind() == SyntaxKind.ProtectedKeyword))
                     GetModifier = GetModifier.Add(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
                 GetModifier = GetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
                 GetModifier = GetModifier.Remove(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
-                return (TCommandBuilder)this;
+                return (TCommand)this;
             }
 
         }
