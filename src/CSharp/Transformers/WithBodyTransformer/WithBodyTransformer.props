@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Project>
-  <ItemGroup>
-    <TransformerAssemblies Include="$(MSBuildThisFileDirectory)netcoreapp3.0\WithBodyTransformer.dll"/>
-  </ItemGroup>
-</Project> 

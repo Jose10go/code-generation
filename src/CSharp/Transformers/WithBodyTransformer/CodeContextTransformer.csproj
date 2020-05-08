@@ -6,7 +6,7 @@
     <Company />
     <Authors>Jose Diego Menendez del Cueto</Authors>
     <Description>A precompile time transformer to allow CodeGeneration Expresions.</Description>
-    <ProductName>WithBodyTransformer</ProductName>
+    <ProductName>CodeContextTransformer</ProductName>
     <Copyright>Copyright 2020 Jose Diego Menendez del Cueto</Copyright>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -14,21 +14,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="WithBodyTransformer.props" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="WithBodyTransformer.props">
-      <PackagePath>build</PackagePath>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\CodeGeneration.CSharp\CodeGeneration.CSharp.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="Pack">
-    <RemoveDir Directories="$(UserProfile)\.nuget\packages\withbodytransformer" />
+    <RemoveDir Directories="$(UserProfile)\.nuget\packages\codecontexttransformer" />
     <Copy SourceFiles="bin\$(Configuration)\$(ProductName).$(Version).nupkg" DestinationFolder=" $(UserProfile)\.nuget\codegen" />
   </Target>
   

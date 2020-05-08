@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
-  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)netcoreapp3.0\CodeGeneration.CSharp.PrecompilationTask.dll" 
+  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)netcoreapp3.1\CodeGeneration.CSharp.PrecompilationTask.dll" 
              TaskName="CodeGeneration.CSharp.Precompilation.PrecompilationTask"/>
   <Target Name="Precompile" BeforeTargets="BeforeCompile" Condition="'$(DesignTimeBuild)' != 'true'">
     <PrecompilationTask ProjectFilePath="$(MSBuildProjectFullPath)" TransformerAssemblies="@(TransformerAssemblies)">

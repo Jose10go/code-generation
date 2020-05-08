@@ -4,23 +4,20 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static CodeGen.CSharp.Context.CSharpContext;
 
-namespace WithBodyTransformer
+namespace CodeContextTransformer
 {
-    public class WithBodyTransformer : CodeGenerationTransformer
+    public class CodeContextTransformer : CodeGenerationTransformer
     {
         public override void Transform()
         {
               Engine.Select<ParenthesizedLambdaExpressionSyntax,InvocationExpressionSyntax>()
                     .Where(x =>x.Parent.SemanticSymbol is IMethodSymbol)
-                    .Where(x=>x.Parent.SemanticSymbol.Name is "WithBody" || 
-                              x.Parent.SemanticSymbol.Name is "WithGet" || 
-                              x.Parent.SemanticSymbol.Name is "WithSet")
-                    .Where(x=>x.Parent.SemanticSymbol.ContainingType.Name is "IWithBody" ||
-                              x.Parent.SemanticSymbol.ContainingType.Name is "IWithGetSet")
+                    .Where(x=>x.Parent.SemanticSymbol.Name is "StartOrContinueWith")
+                    .Where(x=>x.Parent.SemanticSymbol.ContainingType.Name is "CodeContext") 
                     .Where(x=>x.Parent.Node.ArgumentList.Arguments.First().Expression==x.Node)
-                        .Using(target => GetBody(target.Node), out var bodyKey)
-                        .Execute((IReplaceExpression<ParenthesizedLambdaExpressionSyntax> cmd) => cmd.Get(bodyKey,out var stringBody)
-                                                                                                     .With(stringBody));
+                    .Using(target => GetBody(target.Node), out var bodyKey)
+                    .Execute((IReplaceExpression<ParenthesizedLambdaExpressionSyntax> cmd) => cmd.Get(bodyKey,out var stringBody)
+                                                                                                 .With(stringBody));
         }
 
         private ExpressionSyntax GetBody(ParenthesizedLambdaExpressionSyntax node)

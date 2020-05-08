@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorldTransformer", "sr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{DB6F3D20-2A40-4493-91AC-2D3606F297AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WithBodyTransformer", "src\CSharp\Transformers\WithBodyTransformer\WithBodyTransformer.csproj", "{D1023D17-1B02-4049-B886-12438E60BD78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeContextTransformer", "src\CSharp\Transformers\WithBodyTransformer\CodeContextTransformer.csproj", "{D1023D17-1B02-4049-B886-12438E60BD78}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "CSharp", "{9405D120-BFEE-4CEF-A47E-BF19EF5859A1}"
 EndProject
