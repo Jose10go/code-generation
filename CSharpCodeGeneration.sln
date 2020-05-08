@@ -35,6 +35,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommandTests", "test\Exampl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyDecoTransformer", "src\CSharp\Transformers\FancyDecoTransformer\FancyDecoTransformer.csproj", "{FC091100-6A36-437F-ABBF-5DD5CB44B0BB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FancyDeco", "FancyDeco", "{D588B02A-C739-43FE-9EF8-1FCE0E86576C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decorators", "Decorators\Decorators.csproj", "{A2CB04E6-0434-4C7D-B86D-B421C0203E45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +78,9 @@ Global
 		{FC091100-6A36-437F-ABBF-5DD5CB44B0BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FC091100-6A36-437F-ABBF-5DD5CB44B0BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC091100-6A36-437F-ABBF-5DD5CB44B0BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2CB04E6-0434-4C7D-B86D-B421C0203E45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2CB04E6-0434-4C7D-B86D-B421C0203E45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2CB04E6-0434-4C7D-B86D-B421C0203E45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +99,8 @@ Global
 		{BBCFF22F-ACD6-46FA-9338-683E89F9E07A} = {B220E9AF-C150-43EF-83DC-21CB71EF8003}
 		{6AC9D1CA-D079-4EC4-A489-D272D8072EC3} = {BBCFF22F-ACD6-46FA-9338-683E89F9E07A}
 		{FC091100-6A36-437F-ABBF-5DD5CB44B0BB} = {DB6F3D20-2A40-4493-91AC-2D3606F297AF}
+		{D588B02A-C739-43FE-9EF8-1FCE0E86576C} = {BBCFF22F-ACD6-46FA-9338-683E89F9E07A}
+		{A2CB04E6-0434-4C7D-B86D-B421C0203E45} = {D588B02A-C739-43FE-9EF8-1FCE0E86576C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1CC1CDFE-F4BB-4F31-8205-236B07274925}

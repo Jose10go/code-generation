@@ -1,179 +1,323 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Transactions;
 
 namespace FancyDecoTransformer
 {
-    [AttributeUsage(AttributeTargets.Method,AllowMultiple =true,Inherited=true)]
-    public abstract class DecoratorAttribute:Attribute
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
+    public abstract class DecoratorAttribute : Attribute 
     {
-        protected virtual object Decorator(Delegate d,params object[] objects)
-        {
-            return d.DynamicInvoke(objects);
-        }
-        
+    }
+    
+    public abstract class Decorator
+    {
+        protected abstract object Decorate(Delegate d, params object[] objects);
+
         public Func<TResult> Decorate<TResult>(Func<TResult> f)
         {
-            return () => (TResult)Decorator(f);
+            return () => (TResult)Decorate((Delegate)f);
         }
 
         public Func<T1,TResult> Decorate<T1,TResult>(Func<T1,TResult> f)
         {
-            return (arg1) => (TResult)Decorator(f,arg1);
+            return (arg1) => (TResult)Decorate(f,arg1);
         }
 
         public Func<T1,T2,TResult> Decorate<T1,T2,TResult>(Func<T1,T2,TResult> f)
         {
-            return (arg1,arg2) => (TResult)Decorator(f,arg1,arg2);
+            return (arg1,arg2) => (TResult)Decorate(f,arg1,arg2);
         }
 
         public Func<T1,T2,T3,TResult> Decorate<T1,T2,T3,TResult>(Func<T1,T2,T3,TResult> f)
         {
-            return (arg1,arg2,arg3) => (TResult)Decorator(f, arg1,arg2,arg3);
+            return (arg1,arg2,arg3) => (TResult)Decorate(f, arg1,arg2,arg3);
+        }
+
+        public Action Decorate(Action f)
+        {
+            return () => Decorate((Delegate)f);
         }
 
         public Action<T1> Decorate<T1>(Action<T1> f)
         {
-            return (arg1) => Decorator(f, arg1);
+            return (arg1) => Decorate(f, arg1);
         }
 
         public Action<T1,T2> Decorate<T1, T2>(Action<T1,T2> f)
         {
-            return (arg1, arg2) => Decorator(f, arg1, arg2);
+            return (arg1, arg2) => Decorate(f, arg1, arg2);
         }
 
         public Action<T1,T2,T3> Decorate<T1,T2,T3>(Action<T1,T2,T3> f)
         {
-            return (arg1, arg2, arg3) => Decorator(f, arg1, arg2, arg3);
+            return (arg1, arg2, arg3) => Decorate(f, arg1, arg2, arg3);
         }
     }
 
-    public class MemoizeAttribute : DecoratorAttribute
+    public abstract class Decorator<G1>
     {
-        private class Comparer : IEqualityComparer<object[]>
-        {
-            public bool Equals([AllowNull] object[] x, [AllowNull] object[] y)
-            {
-                if (x is null && y is null)
-                    return true;
-                if (x is null || y is null)
-                    return false;
-                if(x.Length!=y.Length)
-                    return false;
-                for (int i = 0; i < x.Length; i++)
-                    if (!x[i]?.Equals(y[i])??y[i]==null)
-                        return false;
-                return true;
-            }
+        protected abstract object Decorate(Delegate d, G1 arg0, params object[] objects);
 
-            public int GetHashCode([DisallowNull] object[] obj)
-            {
-                return obj?.Sum(x => x?.GetHashCode()??0)??0;
-            }
+        public Func<T1, TResult> Decorate<T1, TResult>(Func<T1, TResult> f)
+            where T1:G1
+        {
+            return (arg1) => (TResult)Decorate(f, arg1);
         }
 
-        readonly Dictionary<object[], object> dictionary = new Dictionary<object[], object>(new Comparer());
-
-        protected override object Decorator(Delegate d, params object[] objects)
+        public Func<T1, T2, TResult> Decorate<T1, T2, TResult>(Func<T1, T2, TResult> f)
+            where T1:G1
         {
-            if (dictionary.ContainsKey(objects))
-                return dictionary[objects];
-            return d.DynamicInvoke(objects);
+            return (arg1, arg2) => (TResult)Decorate(f, arg1, arg2);
+        }
+
+        public Func<T1, T2, T3, TResult> Decorate<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> f)
+            where T1:G1
+        {
+            return (arg1, arg2, arg3) => (TResult)Decorate(f, arg1, arg2, arg3);
+        }
+
+        public Action<T1> Decorate<T1>(Action<T1> f)
+            where T1:G1
+        {
+
+            return (arg1) => Decorate(f, arg1);
+        }
+
+        public Action<T1, T2> Decorate<T1, T2>(Action<T1, T2> f)
+            where T1:G1
+        {
+            return (arg1, arg2) => Decorate(f, arg1, arg2);
+        }
+
+        public Action<T1, T2, T3> Decorate<T1, T2, T3>(Action<T1, T2, T3> f)
+            where T1:G1
+        {
+            return (arg1, arg2, arg3) => Decorate(f, arg1, arg2, arg3);
+        }
+    }
+
+    public abstract class Decorator<G1,G2>
+    {
+        protected abstract object Decorate(Delegate d, G1 arg0, G2 arg1, params object[] objects);
+
+        public Func<T1, T2, TResult> Decorate<T1, T2, TResult>(Func<T1, T2, TResult> f)
+            where T1 : G1
+            where T2 : G2
+        {
+            return (arg1, arg2) => (TResult)Decorate(f, arg1, arg2);
+        }
+
+        public Func<T1, T2, T3, TResult> Decorate<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> f)
+            where T1 : G1
+            where T2 : G2
+        {
+            return (arg1, arg2, arg3) => (TResult)Decorate(f, arg1, arg2, arg3);
+        }
+
+        public Action<T1, T2> Decorate<T1, T2>(Action<T1, T2> f)
+            where T1 : G1
+            where T2 : G2
+        {
+            return (arg1, arg2) => Decorate(f, arg1, arg2);
+        }
+
+        public Action<T1, T2, T3> Decorate<T1, T2, T3>(Action<T1, T2, T3> f)
+            where T1 : G1
+            where T2 : G2
+        {
+            return (arg1, arg2, arg3) => Decorate(f, arg1, arg2, arg3);
+        }
+    }
+
+    public abstract class Decorator<G1,G2,G3>
+    {
+        protected abstract object Decorate(Delegate d, G1 arg0, G2 arg1, G3 arg2, params object[] objects);
+
+        public Func<T1, T2, T3, TResult> Decorate<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> f)
+            where T1 : G1
+            where T2 : G2
+            where T3 : G3
+        {
+            return (arg1, arg2, arg3) => (TResult)Decorate(f, arg1, arg2, arg3);
+        }
+
+        public Action<T1, T2, T3> Decorate<T1, T2, T3>(Action<T1, T2, T3> f)
+            where T1 : G1
+            where T2 : G2
+            where T3 : G3
+        {
+            return (arg1, arg2, arg3) => Decorate(f, arg1, arg2, arg3);
+        }
+    }
+
+    public abstract class FuncDecorator<GResult>
+    {
+        protected abstract GResult Decorate(Delegate d, params object[] objects);
+
+        public Func<TResult> Decorate<TResult>(Func<TResult> f)
+            where TResult:GResult
+        {
+            return () => (TResult)Decorate((Delegate)f);
+        }
+
+        public Func<T1, TResult> Decorate<T1, TResult>(Func<T1, TResult> f)
+            where TResult:GResult
+        {
+            return (arg1) => (TResult)Decorate(f, arg1);
+        }
+
+        public Func<T1, T2, TResult> Decorate<T1, T2, TResult>(Func<T1, T2, TResult> f)
+            where TResult:GResult
+        {
+            return (arg1, arg2) => (TResult)Decorate(f, arg1, arg2);
+        }
+
+        public Func<T1, T2, T3, TResult> Decorate<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> f)
+            where TResult:GResult
+        {
+            return (arg1, arg2, arg3) => (TResult)Decorate(f, arg1, arg2, arg3);
         }
 
     }
 
-    public class CronoAttribute : DecoratorAttribute 
+    public abstract class FuncDecorator<GResult,G1>
     {
-        protected override object Decorator(Delegate d, params object[] objects)
+        protected abstract GResult Decorate(Delegate d, G1 arg0,params object[] objects);
+
+        public Func<T1, TResult> Decorate<T1, TResult>(Func<T1, TResult> f)
+            where TResult : GResult
+            where T1:G1
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            var result=d.DynamicInvoke(objects);
-            stopwatch.Stop();
-            Console.WriteLine($"Method {d.Method.Name} run in {stopwatch.ElapsedMilliseconds}");
-            return result;
+            return (arg1) => (TResult)Decorate(f, arg1);
+        }
+
+        public Func<T1, T2, TResult> Decorate<T1, T2, TResult>(Func<T1, T2, TResult> f)
+            where TResult : GResult
+            where T1:G1
+        {
+            return (arg1, arg2) => (TResult)Decorate(f, arg1, arg2);
+        }
+
+        public Func<T1, T2, T3, TResult> Decorate<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> f)
+            where TResult : GResult
+            where T1:G1
+        {
+            return (arg1, arg2, arg3) => (TResult)Decorate(f, arg1, arg2, arg3);
         }
     }
 
-    public class ThrowOnNullAttribute : DecoratorAttribute
+    public abstract class FuncDecorator<GResult, G1, G2>
     {
-        protected override object Decorator(Delegate d, params object[] objects)
+        protected abstract GResult Decorate(Delegate d, G1 arg0,G2 arg1,params object[] objects);
+
+        public Func<T1, T2, TResult> Decorate<T1, T2, TResult>(Func<T1, T2, TResult> f)
+            where TResult : GResult
+            where T1 : G1
+            where T2 : G2
         {
-            var parameters = d.Method.GetParameters();
-            for (int i = 0; i < objects.Length; i++)
-                if (objects[i] is null)
-                    throw new ArgumentNullException($"Check that parameter {parameters[i].Name} is not null.");
-            return d.DynamicInvoke(objects);
+            return (arg1, arg2) => (TResult)Decorate(f,arg1, arg2);
+        }
+
+        public Func<T1, T2, T3, TResult> Decorate<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> f)
+            where TResult : GResult
+            where T1 : G1
+            where T2 : G2
+        {
+            return (arg1, arg2, arg3) => (TResult)Decorate(f, arg1, arg2, arg3);
         }
     }
 
-    public class TransactionRetryAttribute : DecoratorAttribute
+    public abstract class FuncDecorator<GResult, G1, G2, G3>
     {
-        private int retryTimes;
-        private readonly int miliseconsDelay;
+        protected abstract GResult Decorate(Delegate d, G1 arg0,G2 arg1,G3 arg2, params object[] objects);
 
-        public TransactionRetryAttribute(int retryTimes,int milisecondsDelay)
+        public Func<T1, T2, T3, TResult> Decorate<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> f)
+            where TResult : GResult
+            where T1 : G1
+            where T2 : G2
+            where T3 : G3
         {
-            this.retryTimes = retryTimes;
-            this.miliseconsDelay = milisecondsDelay;
-        }
-
-        protected override object Decorator(Delegate d, params object[] objects)
-        {
-            using (var scope = new TransactionScope())
-            {
-                while (true)
-                {
-                    try
-                    {
-                        var res = d.DynamicInvoke(objects);
-                        scope.Complete();
-                        return res;
-                    }
-                    catch
-                    {
-                        if (retryTimes >= 0)
-                        {
-                            retryTimes--;
-                            Console.WriteLine($"Left {retryTimes} times...");
-                            Console.WriteLine($"Waiting {this.miliseconsDelay} miliseconds to retry...");
-                            System.Threading.Tasks.Task.Delay(this.miliseconsDelay);
-                        }
-                        else
-                            throw;
-                    }
-                }
-            }
+            return (arg1, arg2, arg3) => (TResult)Decorate(f, arg1, arg2, arg3);
         }
     }
 
-    public class TagsCompositionAttribute : DecoratorAttribute
+    public abstract class ActionDecorator
     {
-        readonly string tag;
-        public TagsCompositionAttribute(string tag)
+        protected abstract void Decorate(Delegate d, params object[] objects);
+
+        public Action Decorate(Action f)
         {
-            this.tag = tag;
+            return () => Decorate((Delegate)f);
+        }
+
+        public Action<T1> Decorate<T1>(Action<T1> f)
+        {
+            return (arg1) => Decorate((Delegate)f, arg1);
+        }
+
+        public Action<T1, T2> Decorate<T1, T2>(Action<T1, T2> f)
+        {
+            return (arg1, arg2) => Decorate(f, arg1, arg2);
+        }
+
+        public Action<T1, T2, T3> Decorate<T1, T2, T3>(Action<T1, T2, T3> f)
+        {
+            return (arg1, arg2, arg3) => Decorate(f, arg1, arg2, arg3);
+        }
+
+    }
+
+    public abstract class ActionDecorator<G1>
+    {
+        protected abstract void Decorate(Delegate d, G1 arg0, params object[] objects);
+
+        public Action<T1> Decorate<T1>(Action<T1> f)
+            where T1:G1
+        {
+            return (arg1) => Decorate(f, arg1);
+        }
+
+        public Action<T1, T2> Decorate<T1, T2>(Action<T1, T2> f)
+            where T1:G1
+        {
+            return (arg1, arg2) => Decorate(f, arg1, arg2);
+        }
+
+        public Action<T1, T2, T3> Decorate<T1, T2, T3>(Action<T1, T2, T3> f)
+            where T1:G1
+        {
+            return (arg1, arg2, arg3) => Decorate(f, arg1, arg2, arg3);
+        }
+    }
+
+    public abstract class ActionDecorator<G1,G2>
+    {
+        protected abstract void Decorate(Delegate d, G1 arg0,G2 arg1,params object[] objects);
+
+        public Action<T1,T2> Decorate<T1,T2>(Action<T1,T2> f)
+            where T1 : G1
+            where T2 : G2
+        {
+            return (arg1,arg2) => Decorate(f, arg1,arg2);
         }
         
-        protected override object Decorator(Delegate d,params object[] objects)
+        public Action<T1, T2, T3> Decorate<T1, T2, T3>(Action<T1, T2, T3> f)
+            where T1 : G1
+            where T2 : G2
         {
-            return "<" + tag + ">\n" + d.DynamicInvoke(objects)?.ToString()??"" + " \n<" + tag + "/>";
+            return (arg1, arg2, arg3) => Decorate(f, arg1, arg2, arg3);
         }
-
     }
 
-    public class LoggingAttribute : DecoratorAttribute
+    public abstract class ActionDecorator<G1, G2, G3>
     {
-        protected override object Decorator(Delegate d,params object[] objects)
+        protected abstract void Decorate(Delegate d, G1 arg0, G2 arg1,G3 arg2, params object[] objects);
+
+        public Action<T1, T2, T3> Decorate<T1, T2, T3>(Action<T1, T2, T3> f)
+            where T1 : G1
+            where T2 : G2
+            where T3 : G3
         {
-            Console.WriteLine($"Starting execution of {d.Method.Name} with arguments {String.Join(',',objects.Select(x=>x?.ToString()??"<null>"))}.");
-            var res = d.DynamicInvoke(objects);
-            Console.WriteLine($"Ending execution of {d.Method.Name} with arguments {String.Join(',',objects.Select(x=>x?.ToString()??"<null>"))}.");
-            return res;
+            return (arg1, arg2, arg3) => Decorate(f, arg1, arg2, arg3);
         }
     }
 }
+
