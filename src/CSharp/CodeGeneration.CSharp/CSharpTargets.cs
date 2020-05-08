@@ -39,7 +39,11 @@ namespace CodeGen.CSharp.Context
                 _node = _root.GetAnnotatedNodes($"{this.Id}").First() as TNode;
                 var doc = this.CodeGenerationEngine.CurrentProject.DocumentIds.Select(id => this.CodeGenerationEngine.CurrentProject.GetDocument(id))
                                                    .First(doc => doc.FilePath == this.DocumentPath);
-                _semanticSymbol=doc.GetSemanticModelAsync().Result.GetSymbolInfo(_node).Symbol;
+                var semanticModel = doc.GetSemanticModelAsync().Result;
+                if(Node is MemberDeclarationSyntax)
+                    _semanticSymbol =semanticModel.GetDeclaredSymbol(_node);
+                else
+                    _semanticSymbol =semanticModel.GetSymbolInfo(_node).Symbol;
             }
 
             protected CSharpSingleTargeter(ICodeGenerationEngine engine,Guid id,string path) : base(engine,id, path)
