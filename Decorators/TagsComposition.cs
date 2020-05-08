@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FancyDecoTransformer;
+using System;
 
 namespace Decorators
 {
@@ -10,7 +11,7 @@ namespace Decorators
             this.tag = tag;
         }
 
-        protected override object Decorator(Delegate d, params object[] objects)
+        protected override object Decorate(Delegate d, params object[] objects)
         {
             return "<" + tag + ">\n" + d.DynamicInvoke(objects)?.ToString() ?? "" + " \n<" + tag + "/>";
         }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-
+using FancyDecoTransformer;
 namespace Decorators
 {
-    public class Crono : DecoratorAttribute
+    public class Crono : Decorator
     {
-        protected override object Decorator(Delegate d, params object[] objects)
+        protected override object Decorate(Delegate d, params object[] objects)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FancyDecoTransformer;
+using System;
 
 namespace Decorators
 {
     public class ThrowOnNull : Decorator
     {
-        protected override object Decorator(Delegate d, params object[] objects)
+        protected override object Decorate(Delegate d, params object[] objects)
         {
             var parameters = d.Method.GetParameters();
             for (int i = 0; i < objects.Length; i++)

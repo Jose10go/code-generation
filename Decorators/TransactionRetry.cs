@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FancyDecoTransformer;
+using System;
+using System.Transactions;
 
 namespace Decorators
 {
@@ -13,7 +15,7 @@ namespace Decorators
             this.miliseconsDelay = milisecondsDelay;
         }
 
-        protected override object Decorator(Delegate d, params object[] objects)
+        protected override object Decorate(Delegate d, params object[] objects)
         {
             using (var scope = new TransactionScope())
             {

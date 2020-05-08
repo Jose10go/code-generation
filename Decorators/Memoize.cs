@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-
+using FancyDecoTransformer;
 namespace Decorators
 {
     public class Memoize : Decorator
@@ -31,7 +31,7 @@ namespace Decorators
 
         readonly Dictionary<object[], object> dictionary = new Dictionary<object[], object>(new Comparer());
 
-        protected override object Decorator(Delegate d, params object[] objects)
+        protected override object Decorate(Delegate d, params object[] objects)
         {
             if (dictionary.ContainsKey(objects))
                 return dictionary[objects];
