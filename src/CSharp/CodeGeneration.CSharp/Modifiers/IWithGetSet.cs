@@ -22,96 +22,20 @@ namespace CodeGen.CSharp.Context
             BlockSyntax SetStatements { get; set; }
             ArrowExpressionClauseSyntax GetExpression { get; set; }
             ArrowExpressionClauseSyntax SetExpression { get; set; }
-            
-            TCommand WithGet(string exp)
+
+            TCommand WithGetBody(CodeContext code) 
             {
-                this.GetStatements = SyntaxFactory.ParseStatement(exp) as BlockSyntax;
-                if (this.GetStatements != null)
-                    this.GetExpression = null;
-                else
-                    this.GetExpression = SyntaxFactory.ArrowExpressionClause(SyntaxFactory.ParseExpression(exp));
-                return (TCommand)this;
-            }
-
-            TCommand WithGet(BlockSyntax exp)
-            {
-                this.GetExpression = null;
-                this.GetStatements = exp;
-                return (TCommand)this;
-            }
-
-            TCommand WithGet(ArrowExpressionClauseSyntax exp)
-            {
-                this.GetStatements = null;
-                this.GetExpression = exp;
-                return (TCommand)this;
-            }
-
-            TCommand WithGet<This,ResultType>(Func<This,ResultType> exp, Dictionary<string, string> dynamicContext = null)
-            {
-                throw new NonIntendedException();
-            }
-
-            TCommand WithGet(ParenthesizedLambdaExpressionSyntax codeContext, Dictionary<string, string> dynamicContext = null)
-            {
-                var substitutions = new Dictionary<string, Substitution>();
-                if (dynamicContext != null)
-                    foreach (var item in dynamicContext)
-                        substitutions.Add(item.Key, new Substitution(item.Value, SubstitutionKind.DynamicMember));
-
-                var command = (TCommand)this;
-                substitutions.Add(codeContext.ParameterList.Parameters.First().Identifier.ToString(), new Substitution("this", SubstitutionKind.This));
-
-                var body = new SubstitutionContext(codeContext, substitutions).GetReplacedBody();
+                var body = code.GetCode();
                 GetStatements = body as BlockSyntax;
                 GetExpression = body as ArrowExpressionClauseSyntax;
-                return command;
-            }
-
-            TCommand WithSet(string exp)
-            {
-                this.SetStatements = SyntaxFactory.ParseStatement(exp) as BlockSyntax;
-                if (this.SetStatements != null)
-                    this.SetExpression = null;
-                else
-                    this.SetExpression = SyntaxFactory.ArrowExpressionClause(SyntaxFactory.ParseExpression(exp));
                 return (TCommand)this;
             }
-
-            TCommand WithSet(BlockSyntax exp)
+            TCommand WithSetBody(CodeContext code)
             {
-                this.SetStatements = exp;
-                this.SetExpression = null;
-                return (TCommand)this;
-            }
-
-            TCommand WithSet(ArrowExpressionClauseSyntax exp)
-            {
-                this.SetStatements = null;
-                this.SetExpression = exp;
-                return (TCommand)this;
-            }
-
-            TCommand WithSet<This,ValueType>(Action<This,ValueType> exp, Dictionary<string, string> dynamicContext = null)
-            {
-                throw new NonIntendedException();
-            }
-
-            TCommand WithSet(ParenthesizedLambdaExpressionSyntax codeContext, Dictionary<string, string> dynamicContext = null)
-            {
-                var substitutions = new Dictionary<string, Substitution>();
-                if (dynamicContext != null)
-                    foreach (var item in dynamicContext)
-                        substitutions.Add(item.Key, new Substitution(item.Value, SubstitutionKind.DynamicMember));
-
-                var command = (TCommand)this;
-                substitutions.Add(codeContext.ParameterList.Parameters.First().Identifier.ToString(), new Substitution("this", SubstitutionKind.This));
-                substitutions.Add(codeContext.ParameterList.Parameters.Skip(1).First().Identifier.ToString(), new Substitution("value", SubstitutionKind.Value));
-
-                var body = new SubstitutionContext(codeContext, substitutions).GetReplacedBody();
+                var body = code.GetCode();
                 SetStatements = body as BlockSyntax;
                 SetExpression = body as ArrowExpressionClauseSyntax;
-                return command;
+                return (TCommand)this;
             }
 
             TCommand MakeSetPublic()
