@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -10,7 +10,7 @@
     <Copyright>Copyright 2020 Jose Diego Menendez del Cueto</Copyright>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <BuildOutputTargetFolder>build</BuildOutputTargetFolder>
+    <BuildOutputTargetFolder>build;lib</BuildOutputTargetFolder>
   </PropertyGroup>
 
   <ItemGroup>

@@ -8,8 +8,6 @@ using System.Linq;
 using static System.Linq.Enumerable;
 using static System.String;
 using CodeGen.CSharp;
-using System.Text;
-using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace FancyDecoTransformer
@@ -44,17 +42,19 @@ namespace FancyDecoTransformer
             
             foreach (var target in decoratorsDefinitions)
             {
-                var att=
+                var att =
                 target.Parent.Execute((ICreateClass cmd) =>
                     cmd.MakePublic()
                        .InheritsFrom<DecoratorAttribute>()
-                       .WithName(target.Node.Identifier.ToString() + "Attribute")
-                       .WithAttributes(
-                        (target.SemanticSymbol as ITypeSymbol).BaseType.Name switch
-                        {
-                            "Decorator" => new string[0],
-                            _ => throw new Exception()
-                        }));
+                       .WithName(target.Node.Identifier.ToString() + "Attribute"));
+                       
+                       //Generate TypeCheck Attributes
+                       //.WithAttributes(
+                       // (target.SemanticSymbol as ITypeSymbol).BaseType.Name switch
+                       // {
+                       //     "Decorator" => new string[0],
+                       //     _ => throw new Exception()
+                       // }));
 
                 foreach (var constructor in att.AsMultiple().Select<ConstructorDeclarationSyntax>())
                     constructor.Execute((ICloneConstructor cmd) => 
