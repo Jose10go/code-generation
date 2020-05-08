@@ -15,7 +15,6 @@ namespace CodeGen.CSharp.Context
         {
             
             public TCommand Get<T>(Key<T> key, out T value)
-                where T:class
             {
                 var self = (TCommand)this;
                 value=self.SingleTarget.Get(key);

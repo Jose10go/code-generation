@@ -15,6 +15,7 @@ namespace CodeGen.CSharp.Context
                                          ICommandOn<InterfaceDeclarationSyntax>,
                                          ICommandOn<MethodDeclarationSyntax>,
                                          IWithName<ICreateMethod>,
+                                         IGet<ICreateMethod>,
                                          IWithAttribute<ICreateMethod>,
                                          IWithBody<ICreateMethod>,
                                          IWithAccessModifier<ICreateMethod>,
