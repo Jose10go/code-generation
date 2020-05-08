@@ -24,6 +24,13 @@ namespace CodeGen.Context
             OutTarget Where(Func<InTarget, bool> whereSelector);
         }
 
+        public interface IAsMultiple<OutTarget,TNode>
+            where OutTarget:IMultipleTargeter<TNode>
+            where TNode:TBaseNode
+        {
+            OutTarget AsMultiple();
+        }
+
         public interface ITargetGet<OutTarget> 
             where OutTarget:Core.ITarget
         {
@@ -42,20 +49,32 @@ namespace CodeGen.Context
                 where TOutNode : TBaseNode;
         }
 
-        public interface ISingleTarget<TNode>:ISingleTargeter<TNode>,IUsing<ISingleTarget<TNode>, ISingleTarget<TNode>,TNode>, ITargetGet<ISingleTarget<TNode>>
+        public interface ISingleTarget<TNode>:ISingleTargeter<TNode>,
+                                              IUsing<ISingleTarget<TNode>,
+                                              ISingleTarget<TNode>,TNode>, 
+                                              ITargetGet<ISingleTarget<TNode>>,
+                                              IAsMultiple<IMultipleTarget<TNode>,TNode>
             where TNode:TBaseNode
         {
             
         }
 
-        public interface ISingleTarget<TNode0,TNode1> : ISingleTargeter<TNode0>, IUsing<ISingleTarget<TNode0,TNode1>, ISingleTarget<TNode0,TNode1>, TNode0>,ITargetGet<ISingleTarget<TNode0,TNode1>>
+        public interface ISingleTarget<TNode0,TNode1> : ISingleTargeter<TNode0>, 
+                                                        IUsing<ISingleTarget<TNode0,TNode1>, ISingleTarget<TNode0,TNode1>, TNode0>,
+                                                        ITargetGet<ISingleTarget<TNode0,TNode1>>,
+                                                        IAsMultiple<IMultipleTarget<TNode0,TNode1>, TNode0>
+
             where TNode0 : TBaseNode
             where TNode1 : TBaseNode
         {
             ISingleTarget<TNode1> Parent { get; }
         }
 
-        public interface ISingleTarget<TNode0, TNode1,TNode2> : ISingleTargeter<TNode0>, IUsing<ISingleTarget<TNode0, TNode1, TNode2>, ISingleTarget<TNode0,TNode1,TNode2>, TNode0>,ITargetGet<ISingleTarget<TNode0,TNode1,TNode2>>
+        public interface ISingleTarget<TNode0, TNode1,TNode2> : ISingleTargeter<TNode0>, 
+                                                                IUsing<ISingleTarget<TNode0, TNode1, TNode2>,
+                                                                ISingleTarget<TNode0,TNode1,TNode2>, TNode0>,
+                                                                ITargetGet<ISingleTarget<TNode0,TNode1,TNode2>>,
+                                                                IAsMultiple<IMultipleTarget<TNode0,TNode1,TNode2>, TNode0>
             where TNode0 : TBaseNode
             where TNode1 : TBaseNode
             where TNode2 : TBaseNode
@@ -128,7 +147,8 @@ namespace CodeGen.Context
         
         public interface IMultipleTarget<TNode> : IMultipleTargeter<TNode>,
                                                   IUsing<ISingleTarget<TNode>,IMultipleTarget<TNode>,TNode>,
-                                                  IWhere<ISingleTarget<TNode>,IMultipleTarget<TNode>,TNode>
+                                                  IWhere<ISingleTarget<TNode>,IMultipleTarget<TNode>,TNode>,
+                                                  ISelector<TNode>
             where TNode : TBaseNode
         {
             IEnumerator<ISingleTarget<TNode>> GetEnumerator();
@@ -136,7 +156,8 @@ namespace CodeGen.Context
 
         public interface IMultipleTarget<TNode0,TNode1> : IMultipleTargeter<TNode0>,
                                                           IUsing<ISingleTarget<TNode0,TNode1>,IMultipleTarget<TNode0,TNode1>,TNode0>,
-                                                          IWhere<ISingleTarget<TNode0,TNode1>,IMultipleTarget<TNode0,TNode1>,TNode0>
+                                                          IWhere<ISingleTarget<TNode0,TNode1>,IMultipleTarget<TNode0,TNode1>,TNode0>,
+                                                          ISelector<TNode0,TNode1>
             where TNode0 : TBaseNode
             where TNode1 : TBaseNode
         {
@@ -239,6 +260,18 @@ namespace CodeGen.Context
             {
             }
 
+            public IMultipleTarget<TNode0, TNode1, TNode> Select<TNode0, TNode1>()
+                where TNode0 : TBaseNode
+                where TNode1 : TBaseNode
+            {
+                return this.Select<TNode1>()
+                           .Select<TNode0>();
+            }
+
+            public IMultipleTarget<TNode0, TNode> Select<TNode0>() where TNode0 : TBaseNode
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public sealed class MultipleTarget<TNode, TNode1> : MultipleTargeter<IMultipleTarget<TNode, TNode1>, ISingleTarget<TNode, TNode1>, TNode>,
@@ -257,6 +290,11 @@ namespace CodeGen.Context
             public IMultipleTarget<TNode1> GetParents()
             {
                 return new MultipleTarget<TNode1>(this.SingleTargets.Select(x => x.Parent));
+            }
+
+            public IMultipleTarget<TNode0, TNode, TNode1> Select<TNode0>() where TNode0 : TBaseNode
+            {
+                throw new NotImplementedException();
             }
         }
 
