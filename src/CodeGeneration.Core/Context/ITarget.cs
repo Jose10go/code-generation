@@ -53,7 +53,8 @@ namespace CodeGen.Context
                                               IUsing<ISingleTarget<TNode>,
                                               ISingleTarget<TNode>,TNode>, 
                                               ITargetGet<ISingleTarget<TNode>>,
-                                              IAsMultiple<IMultipleTarget<TNode>,TNode>
+                                              IAsMultiple<IMultipleTarget<TNode>,TNode>,
+                                              ISelector<TNode>
             where TNode:TBaseNode
         {
             
@@ -62,7 +63,8 @@ namespace CodeGen.Context
         public interface ISingleTarget<TNode0,TNode1> : ISingleTargeter<TNode0>, 
                                                         IUsing<ISingleTarget<TNode0,TNode1>, ISingleTarget<TNode0,TNode1>, TNode0>,
                                                         ITargetGet<ISingleTarget<TNode0,TNode1>>,
-                                                        IAsMultiple<IMultipleTarget<TNode0,TNode1>, TNode0>
+                                                        IAsMultiple<IMultipleTarget<TNode0,TNode1>, TNode0>,
+                                                        ISelector<TNode0,TNode1>
 
             where TNode0 : TBaseNode
             where TNode1 : TBaseNode
@@ -190,7 +192,7 @@ namespace CodeGen.Context
                 this.SingleTargets = singleTargets;
             }
 
-            protected IEnumerable<SingleTarget> SingleTargets { get; set; }
+            internal IEnumerable<SingleTarget> SingleTargets { get; set; }
             public MultipleTarget Where(Func<SingleTarget, bool> whereSelector)
             {
                 this.SingleTargets = SingleTargets.Where(whereSelector);
@@ -224,27 +226,6 @@ namespace CodeGen.Context
                 return (MultipleTarget)(IMultipleTargeter<TNode>)this;
             }
 
-            //public static MultipleTarget From(ICodeGenerationEngine engine,params IEnumerable<ISingleTarget<TNode>>[] targets)
-            //{
-            //    var result = Enumerable.Empty<ISingleTarget<TNode>>();
-            //    foreach (var item in targets)
-            //        result = result.Concat(item);
-            //    return (MultipleTarget)(IMultipleTarget<TNode>)new MultipleTarget() { };
-            //}
-
-            //public static MultipleTarget From(ICodeGenerationEngine engine, params SingleTarget[] targets)
-            //{
-            //    return (MultipleTarget)(ITarget<TNode>)new MultipleTargeter<MultipleTarget, SingleTarget, TNode>(engine, targets.AsEnumerable());
-            //}
-
-            //public static MultipleTarget From(ICodeGenerationEngine engine, IEnumerable<SingleTarget> enumerable, params SingleTarget[] targets)
-            //{
-            //    var result = enumerable;
-            //    foreach (var item in targets)
-            //        result = result.Append(item);
-            //    return (MultipleTarget)(ITarget<TNode>)new MultipleTargeter<MultipleTarget, SingleTarget, TNode>(engine, result);
-            //}
-
         }
 
         public sealed class MultipleTarget<TNode> : MultipleTargeter<IMultipleTarget<TNode>, ISingleTarget<TNode>, TNode>,
@@ -270,7 +251,7 @@ namespace CodeGen.Context
 
             public IMultipleTarget<TNode0, TNode> Select<TNode0>() where TNode0 : TBaseNode
             {
-                throw new NotImplementedException();
+                return new MultipleTarget<TNode0, TNode>(SingleTargets.SelectMany(x => (x.Select<TNode0>() as MultipleTarget<TNode0,TNode>).SingleTargets));
             }
         }
 
@@ -294,7 +275,7 @@ namespace CodeGen.Context
 
             public IMultipleTarget<TNode0, TNode, TNode1> Select<TNode0>() where TNode0 : TBaseNode
             {
-                throw new NotImplementedException();
+                return new MultipleTarget<TNode0,TNode,TNode1>(SingleTargets.SelectMany(x => (x.Select<TNode0>() as MultipleTarget<TNode0,TNode,TNode1>).SingleTargets));
             }
         }
 

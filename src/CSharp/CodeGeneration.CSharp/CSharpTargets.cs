@@ -63,6 +63,22 @@ namespace CodeGen.CSharp.Context
             {
                 return new MultipleTarget<TNode0>(Enumerable.Repeat(this,1));
             }
+
+            public IMultipleTarget<TNode2, TNode1, TNode0> Select<TNode2, TNode1>()
+                where TNode2: CSharpSyntaxNode
+                where TNode1 : CSharpSyntaxNode
+            {
+                return this.Select<TNode1>().Select<TNode2>();
+            }
+
+            public IMultipleTarget<TNode1, TNode0> Select<TNode1>() 
+                where TNode1 : CSharpSyntaxNode
+            {
+                return new MultipleTarget<TNode1, TNode0>(this.Node.DescendantNodes()
+                                                                           .OfType<TNode1>()
+                                                                           .Select(x => new CSharpSingleTarget<TNode1, TNode0>(this.CodeGenerationEngine, Guid.NewGuid(), this, this.DocumentPath))
+                                                                           .ToList());
+            }
         }
 
         public sealed class CSharpSingleTarget<TNode0, TNode1> : CSharpSingleTargeter<ISingleTarget<TNode0, TNode1>, TNode0>, ISingleTarget<TNode0, TNode1>
@@ -79,6 +95,15 @@ namespace CodeGen.CSharp.Context
             public IMultipleTarget<TNode0, TNode1> AsMultiple()
             {
                 return new MultipleTarget<TNode0,TNode1>(Enumerable.Repeat(this,1));
+            }
+
+            public IMultipleTarget<TNode, TNode0, TNode1> Select<TNode>()
+                where TNode : CSharpSyntaxNode
+            {
+                return new MultipleTarget<TNode, TNode0, TNode1>(this.Node.DescendantNodes()
+                                                                        .OfType<TNode>()
+                                                                        .Select(x => new CSharpSingleTarget<TNode, TNode0, TNode1>(this.CodeGenerationEngine,Guid.NewGuid(),this,this.DocumentPath))
+                                                                        .ToList());
             }
         }
 
