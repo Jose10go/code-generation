@@ -54,6 +54,11 @@ namespace CodeGen.CSharp.Context
             public CSharpSingleTarget(ICodeGenerationEngine engine, Guid id,string path) : base(engine,id,path)
             {
             }
+
+            public IMultipleTarget<TNode0> AsMultiple()
+            {
+                return new MultipleTarget<TNode0>(Enumerable.Repeat(this,1));
+            }
         }
 
         public sealed class CSharpSingleTarget<TNode0, TNode1> : CSharpSingleTargeter<ISingleTarget<TNode0, TNode1>, TNode0>, ISingleTarget<TNode0, TNode1>
@@ -67,6 +72,10 @@ namespace CodeGen.CSharp.Context
                 this.Parent = parent;
             }
 
+            public IMultipleTarget<TNode0, TNode1> AsMultiple()
+            {
+                return new MultipleTarget<TNode0,TNode1>(Enumerable.Repeat(this,1));
+            }
         }
 
         public sealed class CSharpSingleTarget<TNode0, TNode1, TNode2> : CSharpSingleTargeter<ISingleTarget<TNode0, TNode1, TNode2>, TNode0>, ISingleTarget<TNode0, TNode1, TNode2>
@@ -82,6 +91,10 @@ namespace CodeGen.CSharp.Context
                 this.Parent = parent;
             }
 
+            public IMultipleTarget<TNode0, TNode1, TNode2> AsMultiple()
+            {
+                return new MultipleTarget<TNode0, TNode1, TNode2>(Enumerable.Repeat(this, 1));
+            }
         }
 
     }
