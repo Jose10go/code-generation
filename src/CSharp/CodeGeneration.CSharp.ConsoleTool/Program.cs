@@ -45,12 +45,12 @@ namespace CodeGeneration.CSharp.Precompilation
             foreach (var docId in docs)
             {
                 var doc = engine.CurrentProject.GetDocument(docId);
-                var text = doc.GetTextAsync().Result;//TODO: make async
+                var text = doc.GetSyntaxRootAsync().Result.NormalizeWhitespace().ToFullString();//TODO: make async
                 var relativePath = Path.GetRelativePath(Path.GetDirectoryName(project), doc.FilePath);
-                var newPath = Path.Combine(Path.GetDirectoryName(project), "obj", "Transformers", "CSharp", relativePath);
+                var newPath = Path.Combine(Path.GetDirectoryName(project),"obj","Transformers","CSharp", relativePath);
                 Directory.CreateDirectory(Path.GetDirectoryName(newPath));
-                File.WriteAllText(newPath, text.ToString());
-                Console.WriteLine(new TaskData() { Kind = "Compile", FilePath = relativePath, Status = status });
+                File.WriteAllText(newPath, text);
+                Console.WriteLine(new TaskData() { Kind = "Compile", FilePath = relativePath, Status = status }+";");
             }
         }
 

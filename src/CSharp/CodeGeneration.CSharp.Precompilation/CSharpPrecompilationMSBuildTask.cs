@@ -111,7 +111,8 @@ namespace CodeGeneration.CSharp.Precompilation
 
         private void ParseAndAnalyzeOutputs(string data)
         {
-            var outputs = data.Split(new[] {Environment.NewLine},StringSplitOptions.None)
+            var outputs = data.Split(';')
+                              .Where(x=>!string.IsNullOrEmpty(x))
                               .Select(x=>TaskData.FromString(x));
             foreach (var output in outputs)
                 switch (output.Kind)
@@ -148,7 +149,6 @@ namespace CodeGeneration.CSharp.Precompilation
 
     }
 
-    [Serializable]
     public class TaskData
     {
         public string FilePath { get; set; }
@@ -157,7 +157,7 @@ namespace CodeGeneration.CSharp.Precompilation
 
         public override string ToString()
         {
-            return FilePath + "|" + Kind  + "|" + Status ;
+            return FilePath + "|" + Kind  + "|" + Status;
         }
 
         public static TaskData FromString(string str)
