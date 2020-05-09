@@ -66,20 +66,16 @@ namespace FancyDecoTransformer
         private void GenerateOnDecoratedMethods()
         {
             var implemented = Engine.Select<MethodDeclarationSyntax, ClassDeclarationSyntax>()
-                                    .Where(x => IsFancyDecoratedMethod(x.SemanticSymbol as IMethodSymbol))
-                                    .Using(x => GetDecorators(x.SemanticSymbol as IMethodSymbol), out var decoratorsKey)
-                                    .Using(x => x.Node.Identifier.ToString(), out var methodNameKey)
-                                    .Using(x => x.Node.ReturnType.ToString(), out var returnTypeKey)
-                                    .Using(x => x.Node.ParameterList.Parameters.Select(x=>x.Identifier.ToString()), out var paramNamesKey);
+                                    .Where(x => IsFancyDecoratedMethod(x.SemanticSymbol as IMethodSymbol));
 
             foreach (var item in implemented)
             {
+                var methodName = item.Node.Identifier.ToString();
+                var decorators = GetDecorators(item.SemanticSymbol as IMethodSymbol);
+                var returnType = item.Node.ReturnType.ToString();
                 item.Parent.Execute((ICreateProperty cmd) =>
                 {
-                    cmd.Get(methodNameKey, out var methodName)
-                       .Get(decoratorsKey,out var decorators)
-                       .Get(returnTypeKey, out var returnType)
-                       .WithName("__decorated" + methodName)
+                    cmd.WithName("__decorated" + methodName)
                        .MakePrivate()
                        .MakeStatic()
                        .Returns(returnType);
@@ -96,10 +92,9 @@ namespace FancyDecoTransformer
                     return cmd.WithGetBody(code);
                 });
 
+                var paramNames = item.Node.ParameterList.Parameters.Select(x => x.Identifier.ToString());
                 item.Execute((ICloneMethod cmd) =>
                     cmd.WithAttributes()
-                       .Get(methodNameKey, out var methodName)
-                       .Get(paramNamesKey, out var paramNames)
                        .WithBody(new CodeContext()
                                         .InjectId("__decorated" + methodName, out dynamic __methodName)
                                             .As(nameof(__methodName))
@@ -108,13 +103,12 @@ namespace FancyDecoTransformer
                                         .StartOrContinueWith(()=>__methodName(__args))));
                
                 item.Execute((IModifyMethod cmd) => 
-                    cmd.Get(methodNameKey, out var methodName)
-                       .WithName("_" + methodName)
+                    cmd.WithName("_" + methodName)
                        .MakePrivate()
                        .WithAttributes());
             }
         }
-
+        
         private ArgumentListSyntax GetArguments(AttributeData att)
         {
             return SyntaxFactory.ArgumentList(
@@ -143,7 +137,12 @@ namespace FancyDecoTransformer
 
         private bool IsFancyDecoratedMethod(IMethodSymbol symbol)
         {
-            return symbol.GetAttributes().Any(x=>IsFancyDecoratorDefinition(x.AttributeClass));
+            return symbol.GetAttributes().Any(x=>IsFancyDecoratorAttributeDefinition(x.AttributeClass));
+        }
+
+        private bool IsFancyDecoratorAttributeDefinition(INamedTypeSymbol symbol)
+        {
+            return symbol.BaseType.Name == "DecoratorAttribute";
         }
 
         private bool IsFancyDecoratorDefinition(INamedTypeSymbol symbol) 
