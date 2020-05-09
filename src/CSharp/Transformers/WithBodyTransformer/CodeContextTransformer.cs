@@ -22,7 +22,7 @@ namespace CodeContextTransformer
 
         private ExpressionSyntax GetBody(ParenthesizedLambdaExpressionSyntax node)
         {
-            return SyntaxFactory.ParseExpression($"SyntaxFactory.Parse(\"{node}\") as ParenthesizedLambdaExpressionSyntax");
+            return SyntaxFactory.ParseExpression($"SyntaxFactory.ParseExpression(\"{node}\") as ParenthesizedLambdaExpressionSyntax");
             
                 //SyntaxFactory.BinaryExpression(SyntaxKind.AsExpression,
             //           SyntaxFactory.InvocationExpression(
