@@ -23,7 +23,7 @@ namespace CodeGeneration.CSharp.Precompilation
             //workspace.WorkspaceFailed += (sender, args) => throw new Exception("Aleluya");
             //TODO:should be loading project references???
 
-            var Project = analyzer.AddToWorkspace(workspace);
+            var Project = analyzer.AddToWorkspace(workspace,true);
             if (Project is null)
                 throw new ArgumentException($"Project is null. ({project})");
 

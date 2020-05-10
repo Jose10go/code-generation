@@ -3,7 +3,8 @@
     "CodeGeneration.CSharp.ConsoleTool": {
       "commandName": "Project",
       //"commandLineArgs": "--project C:\\Users\\Jose10go\\Desktop\\Tesis\\CodeGeneration\\csharp_code_generation-master\\src\\CSharp\\Transformers\\FancyDecoTransformer\\FancyDecoTransformer.csproj --transformers C:\\\\Users\\\\Jose10go\\\\.nuget\\\\packages\\\\codecontexttransformer\\\\1.0.0\\\\build\\\\netcoreapp3.0\\\\CodeContextTransformer.dll",
-      "commandLineArgs": "--project C:\\Users\\Jose10go\\Desktop\\Tesis\\CodeGeneration\\csharp_code_generation-master\\Decorators\\Decorators.csproj --transformers C:\\\\Users\\\\Jose10go\\\\.nuget\\\\packages\\\\fancydecotransformer\\\\1.0.0\\\\build\\\\netcoreapp3.0\\\\FancyDecoTransformer.dll"
+      //"commandLineArgs": "--project C:\\Users\\Jose10go\\Desktop\\Tesis\\CodeGeneration\\csharp_code_generation-master\\Decorators\\Decorators.csproj --transformers C:\\\\Users\\\\Jose10go\\\\.nuget\\\\packages\\\\fancydecotransformer\\\\1.0.0\\\\build\\\\netcoreapp3.0\\\\FancyDecoTransformer.dll",
+      "commandLineArgs": "--project C:\\Users\\Jose10go\\Desktop\\Tesis\\CodeGeneration\\csharp_code_generation-master\\UsingDecorators\\UsingDecorators.csproj --transformers C:\\\\Users\\\\Jose10go\\\\.nuget\\\\packages\\\\fancydecotransformer\\\\1.0.0\\\\build\\\\netcoreapp3.0\\\\FancyDecoTransformer.dll"
     }
   }
 }
