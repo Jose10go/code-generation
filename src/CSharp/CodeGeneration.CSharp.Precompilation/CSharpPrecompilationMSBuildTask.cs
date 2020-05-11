@@ -73,40 +73,44 @@ namespace CodeGeneration.CSharp.Precompilation
             Log.LogMessage("Starting out-of-process precompilation task...");
             string commandLineArgs = $" --project {ProjectFilePath} --transformers {string.Join(",",TransformerAssemblies.Select(x=>x.ItemSpec))}";
             Log.LogMessage("commandLineArgs: " + commandLineArgs);
-            
-            Process process = new Process();
-            process.StartInfo.FileName = $"dotnet";
-            process.StartInfo.Arguments = "CodeGeneration.CSharp.Precompilation.dll" + commandLineArgs;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(typeof(PrecompilationTask).Assembly.Location);
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            StringBuilder output = new StringBuilder();
-            StringBuilder error = new StringBuilder();
-            process.OutputDataReceived += (s, e) =>{
-                if (!string.IsNullOrEmpty(e.Data))
-                    output.Append(e.Data);
-            };
-            process.ErrorDataReceived += (s, e) => {
-                if (!string.IsNullOrEmpty(e.Data))
-                    error.Append(e.Data);
-            };
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            process.WaitForExit();
 
-            var error_str = error.ToString();
-            if(!string.IsNullOrEmpty(error_str))
-                Log.LogError(error_str);
-            ParseAndAnalyzeOutputs(output.ToString());
+            using (var process = new Process())
+            {
+                process.StartInfo.FileName = $"dotnet";
+                process.StartInfo.Arguments = "CodeGeneration.CSharp.Precompilation.dll" + commandLineArgs;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(typeof(PrecompilationTask).Assembly.Location);
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                StringBuilder output = new StringBuilder();
+                StringBuilder error = new StringBuilder();
+                process.OutputDataReceived += (s, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Data))
+                        output.Append(e.Data);
+                };
+                process.ErrorDataReceived += (s, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Data))
+                        error.Append(e.Data);
+                };
+                process.Start();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+                process.WaitForExit();
 
-            if (process.ExitCode == 0)
-                Log.LogMessage("Finished script evaluation");
-            else
-                Log.LogError("Got non-zero exit code: " + process.ExitCode);
-            return process.ExitCode == 0;
+                var error_str = error.ToString();
+                if (!string.IsNullOrEmpty(error_str))
+                    Log.LogError(error_str);
+                ParseAndAnalyzeOutputs(output.ToString());
+
+                if (process.ExitCode == 0)
+                    Log.LogMessage("Finished script evaluation");
+                else
+                    Log.LogError("Got non-zero exit code: " + process.ExitCode);
+                return process.ExitCode == 0;
+            }
         }
 
         private void ParseAndAnalyzeOutputs(string data)
