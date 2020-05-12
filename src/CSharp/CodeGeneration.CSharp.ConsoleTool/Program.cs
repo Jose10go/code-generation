@@ -20,9 +20,7 @@ namespace CodeGeneration.CSharp.Precompilation
             ProjectAnalyzer analyzer = manager.GetProject(project);
             AdhocWorkspace workspace = new AdhocWorkspace();
 
-            //workspace.WorkspaceFailed += (sender, args) => throw new Exception("Aleluya");
-            //TODO:should be loading project references???
-
+            analyzer.SetGlobalProperty("BuildingFromCodeGeneration", "true");
             var Project = analyzer.AddToWorkspace(workspace,true);
             if (Project is null)
                 throw new ArgumentException($"Project is null. ({project})");

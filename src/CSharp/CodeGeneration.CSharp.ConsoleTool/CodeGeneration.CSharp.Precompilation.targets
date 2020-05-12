@@ -2,7 +2,10 @@
 <Project>
   <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)netcoreapp3.1\CodeGeneration.CSharp.PrecompilationTask.dll" 
              TaskName="CodeGeneration.CSharp.Precompilation.PrecompilationTask"/>
-  <Target Name="Precompile" BeforeTargets="BeforeCompile" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="Precompile" 
+          BeforeTargets="BeforeCompile" 
+					Condition="'$(MSBuildProjectExtension)'=='.csproj' and
+                      '$(BuildingFromCodeGeneration)' != 'true'">
     <PrecompilationTask ProjectFilePath="$(MSBuildProjectFullPath)" TransformerAssemblies="@(TransformerAssemblies)">
       <Output TaskParameter="AddedCompileFiles" ItemName="AddedCompile"/>
       <Output TaskParameter="AddedNoneFiles" ItemName="AddedNone"/>
@@ -22,6 +25,14 @@
       <Content Include="@(AddedContent)"/>
       <EmbeddedResource Remove="@(RemovedEmbeddedResource)"/>
       <EmbeddedResource Include="@(AddedEmbeddedResource)"/>
+    </ItemGroup>
+  </Target>
+  
+  <Target Name="Postcompile"
+          BeforeTargets="AfterCompile">
+    <ItemGroup>
+      <Compile Include="@(RemovedCompile)"/>
+      <Compile Remove="@(AddedCompile)"/>
     </ItemGroup>
   </Target>
 </Project> 
