@@ -3,7 +3,6 @@
   <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)netcoreapp3.1\CodeGeneration.CSharp.PrecompilationTask.dll" 
              TaskName="CodeGeneration.CSharp.Precompilation.PrecompilationTask"/>
   <Target Name="Precompile" 
-          BeforeTargets="BeforeCompile" 
 					Condition="'$(MSBuildProjectExtension)'=='.csproj' and
                       '$(BuildingFromCodeGeneration)' != 'true'">
     <PrecompilationTask ProjectFilePath="$(MSBuildProjectFullPath)" TransformerAssemblies="@(TransformerAssemblies)">
@@ -29,7 +28,7 @@
   </Target>
   
   <Target Name="Postcompile"
-          BeforeTargets="AfterCompile">
+          AfterTargets="CoreCompile">
     <ItemGroup>
       <Compile Include="@(RemovedCompile)"/>
       <Compile Remove="@(AddedCompile)"/>

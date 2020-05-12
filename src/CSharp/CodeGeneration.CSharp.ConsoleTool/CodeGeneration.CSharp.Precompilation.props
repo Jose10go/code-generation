@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+  <PropertyGroup>
+    <CoreCompileDependsOn>Precompile;$(CoreCompilesDependsOn)</CoreCompileDependsOn>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Compile>
+      <Generator>MSBuild:CoreCompile</Generator>
+    </Compile>
+  </ItemDefinitionGroup>
+</Project> 

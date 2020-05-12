@@ -16,11 +16,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="CodeGeneration.CSharp.Precompilation.props" />
     <None Remove="CodeGeneration.CSharp.Precompilation.targets" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="CodeGeneration.CSharp.Precompilation.targets">
+      <PackagePath>build</PackagePath>
+    </Content>
+    <Content Include="CodeGeneration.CSharp.Precompilation.props">
       <PackagePath>build</PackagePath>
     </Content>
   </ItemGroup>
