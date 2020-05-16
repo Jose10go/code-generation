@@ -1,11 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
-  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)netcoreapp3.1\CodeGeneration.CSharp.PrecompilationTask.dll" 
-             TaskName="CodeGeneration.CSharp.Precompilation.PrecompilationTask"/>
+  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)netcoreapp3.1\CodeGeneration.CSharp.PrecompilationTask.dll"
+              TaskName="CodeGeneration.CSharp.Precompilation.PrecompilationTask"/>
+
   <Target Name="Precompile" 
 					Condition="'$(MSBuildProjectExtension)'=='.csproj' and
-                      '$(BuildingFromCodeGeneration)' != 'true'">
-    <PrecompilationTask ProjectFilePath="$(MSBuildProjectFullPath)" TransformerAssemblies="@(TransformerAssemblies)">
+                      '$(BuildingFromCodeGeneration)' != 'true' and 
+                      '$(DesignTimeBuild)' != 'true'">
+    
+    <PrecompilationTask ProjectFilePath="$(MSBuildProjectFullPath)" TransformerAssemblies="@(TransformerPrecompileAssemblies)">
       <Output TaskParameter="AddedCompileFiles" ItemName="AddedCompile"/>
       <Output TaskParameter="AddedNoneFiles" ItemName="AddedNone"/>
       <Output TaskParameter="AddedContentFiles" ItemName="AddedContent"/>
@@ -26,12 +29,23 @@
       <EmbeddedResource Include="@(AddedEmbeddedResource)"/>
     </ItemGroup>
   </Target>
-  
-  <Target Name="Postcompile"
-          AfterTargets="CoreCompile">
+
+  <Target Name="DesignTime"
+					Condition="'$(MSBuildProjectExtension)'=='.csproj' and
+                      '$(BuildingFromCodeGeneration)' != 'true'">
+
+    <PrecompilationTask ProjectFilePath="$(MSBuildProjectFullPath)" TransformerAssemblies="@(TransformerDesignTimeAssemblies)">
+      <Output TaskParameter="AddedCompileFiles" ItemName="DesignTimeAddedCompile"/>
+      <Output TaskParameter="AddedNoneFiles" ItemName="DesignTimeAddedNone"/>
+      <Output TaskParameter="AddedContentFiles" ItemName="DesignTimeAddedContent"/>
+      <Output TaskParameter="AddedEmbeddedResourceFiles" ItemName="DesignTimeAddedEmbeddedResource"/>
+    </PrecompilationTask>
     <ItemGroup>
-      <Compile Include="@(RemovedCompile)"/>
-      <Compile Remove="@(AddedCompile)"/>
+      <Compile Include="@(DesignTimeAddedCompile)"/>
+      <None Include="@(DesignTimeAddedNone)"/>
+      <Content Include="@(DesignTimeAddedContent)"/>
+      <EmbeddedResource Include="@(DesignTimeAddedEmbeddedResource)"/>
     </ItemGroup>
   </Target>
+  
 </Project> 

@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="Buildalyzer.Workspaces" Version="2.5.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.4.0" />
     <PackageReference Include="System.CommandLine.DragonFruit" Version="0.3.0-alpha.20104.2" />
   </ItemGroup>
 

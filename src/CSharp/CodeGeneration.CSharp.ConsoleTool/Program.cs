@@ -19,12 +19,10 @@ namespace CodeGeneration.CSharp.Precompilation
             AnalyzerManager manager = new AnalyzerManager();
             ProjectAnalyzer analyzer = manager.GetProject(project);
             AdhocWorkspace workspace = new AdhocWorkspace();
-
             analyzer.SetGlobalProperty("BuildingFromCodeGeneration", "true");
-            var Project = analyzer.AddToWorkspace(workspace,true);
+            var Project = analyzer.AddToWorkspace(workspace);
             if (Project is null)
                 throw new ArgumentException($"Project is null. ({project})");
-
             var resolver = new CSharpAutofacResolver();
             var Engine = new CSharpCodeGenerationEngine(Project,resolver);
             foreach (var item in transformers)
@@ -35,7 +33,8 @@ namespace CodeGeneration.CSharp.Precompilation
             }
             var changes = Engine.CurrentProject.GetChanges(Project);
             Procces(Engine,project,changes.GetAddedDocuments(), "Added");
-            Procces(Engine,project,changes.GetChangedDocuments(), "Updated");
+            var changedDocs= changes.GetChangedDocuments(false).Where(x => Engine.CurrentProject.GetDocument(x).GetTextChangesAsync(Project.GetDocument(x)).Result.Any());
+            Procces(Engine,project,changedDocs, "Updated");
         }
 
         private static void Procces(CSharpCodeGenerationEngine engine, string project, IEnumerable<DocumentId> docs, string status)
@@ -44,7 +43,8 @@ namespace CodeGeneration.CSharp.Precompilation
             {
                 var doc = engine.CurrentProject.GetDocument(docId);
                 var text = doc.GetSyntaxRootAsync().Result.NormalizeWhitespace().ToFullString();//TODO: make async
-                var relativePath = Path.GetRelativePath(Path.GetDirectoryName(project), doc.FilePath);
+                var relativePath = Path.IsPathRooted(doc.FilePath)?Path.GetRelativePath(Path.GetDirectoryName(project), doc.FilePath)
+                                                                  :doc.FilePath;
                 var newPath = Path.Combine(Path.GetDirectoryName(project),"obj","Transformers","CSharp", relativePath);
                 Directory.CreateDirectory(Path.GetDirectoryName(newPath));
                 File.WriteAllText(newPath, text);
