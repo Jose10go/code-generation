@@ -17,6 +17,7 @@ namespace CodeGen.CSharp.Context
                                         IWithBody<IModifyMethod>,
                                         IWithParameters<IModifyMethod>,
                                         IWithAccessModifier<IModifyMethod>,
+                                        IWithGeneric<IModifyMethod>,
                                         IAbstract<IModifyMethod>,
                                         IStatic<IModifyMethod>,
                                         IPartial<IModifyMethod>,
@@ -38,6 +39,8 @@ namespace CodeGen.CSharp.Context
             public SyntaxToken Partial { get ; set ; }
             public TypeSyntax ReturnType { get ; set ; }
             public ParameterListSyntax Parameters { get ; set ; }
+            public TypeParameterListSyntax GenericParameters { get; set; }
+            public SyntaxList<TypeParameterConstraintClauseSyntax> GenericParametersConstraints { get; set; }
         }
         
     }

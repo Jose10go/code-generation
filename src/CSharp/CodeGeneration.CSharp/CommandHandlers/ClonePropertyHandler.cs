@@ -27,6 +27,10 @@ namespace CodeGen.CSharp.Context
                                   .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"))
                                   .WithType(Command.ReturnType??node.Type);
 
+                if (Command.InitializerExpression != null)
+                    newNode = newNode.WithInitializer(SyntaxFactory.EqualsValueClause(Command.InitializerExpression))
+                                     .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
                 var getAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.GetAccessorDeclaration));
                 var setAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.SetKeyword));
 

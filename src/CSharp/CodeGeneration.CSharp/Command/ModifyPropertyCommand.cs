@@ -18,7 +18,7 @@ namespace CodeGen.CSharp.Context
                                         IAbstract<IModifyProperty>,
                                         IStatic<IModifyProperty>,
                                         IReturns<IModifyProperty>,
-                                        IWithGetSet<IModifyProperty>
+                                        IWithGetSet<IModifyProperty>,IInitializeWith<IModifyProperty>
         {
         }
 
@@ -38,6 +38,7 @@ namespace CodeGen.CSharp.Context
             public BlockSyntax SetStatements { get ; set ; }
             public ArrowExpressionClauseSyntax GetExpression { get ; set ; }
             public ArrowExpressionClauseSyntax SetExpression { get ; set ; }
+            public ExpressionSyntax InitializerExpression { get; set; }
         }
         
     }

@@ -1,12 +1,9 @@
-﻿using System;
-using CodeGen.Attributes;
+﻿using CodeGen.Attributes;
 using CodeGen.Context;
-using CodeGen.Core.Exceptions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace CodeGen.CSharp.Context
 {
@@ -27,14 +24,14 @@ namespace CodeGen.CSharp.Context
             {
                 var body = code.GetCode();
                 GetStatements = body as BlockSyntax;
-                GetExpression = body as ArrowExpressionClauseSyntax;
+                GetExpression = SyntaxFactory.ArrowExpressionClause(body as ExpressionSyntax);
                 return (TCommand)this;
             }
             TCommand WithSetBody(CodeContext code)
             {
                 var body = code.GetCode();
                 SetStatements = body as BlockSyntax;
-                SetExpression = body as ArrowExpressionClauseSyntax;
+                SetExpression = SyntaxFactory.ArrowExpressionClause(body as ExpressionSyntax);
                 return (TCommand)this;
             }
 

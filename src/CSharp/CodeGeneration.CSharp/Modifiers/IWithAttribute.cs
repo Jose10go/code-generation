@@ -18,7 +18,8 @@ namespace CodeGen.CSharp.Context
             TCommandBuilder WithAttributes(IEnumerable<string> Attributes) 
             {
                 var attrs = Attributes.Select(x => SyntaxFactory.Attribute(SyntaxFactory.ParseName(x)));
-                this.Attributes = new SyntaxList<AttributeListSyntax>(SyntaxFactory.AttributeList().AddAttributes(attrs.ToArray()));
+                if(attrs.Any())
+                    this.Attributes = this.Attributes.Add(SyntaxFactory.AttributeList().AddAttributes(attrs.ToArray()));
                 return (TCommandBuilder)this;
             }
 

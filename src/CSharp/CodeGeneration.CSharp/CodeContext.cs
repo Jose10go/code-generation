@@ -8,11 +8,16 @@ using System.Linq;
 
 namespace CodeGen.CSharp
 {
-    public abstract class BaseCodeContext 
+    public abstract class BaseCodeContext
     {
+        class Replacement 
+        {
+            public CSharpSyntaxNode replaceOn { get; set; }
+            public CSharpSyntaxNode replaceWith { get; set; }
+        }
         protected IEnumerable<StatementSyntax> statements;
         internal readonly Dictionary<string, CSharpSyntaxNode> idSubstitutions;
-        
+
         protected BaseCodeContext()
         {
             idSubstitutions = new Dictionary<string, CSharpSyntaxNode>();
@@ -21,12 +26,36 @@ namespace CodeGen.CSharp
 
         public CSharpSyntaxNode GetCode()
         {
-            statements = statements.Select(
-                x => x.ReplaceNodes(x.DescendantNodes()
-                                     .OfType<IdentifierNameSyntax>()
-                                     .Where(x => idSubstitutions.ContainsKey(x.Identifier.ToString())),
-                                (node, _) =>idSubstitutions[node.Identifier.ToString()]));
-            return SyntaxFactory.Block(statements);
+            var result = statements.Select(
+                statement => {
+                    var replacements = statement.DescendantNodes()
+                                        .OfType<IdentifierNameSyntax>()
+                                        .Where(x => idSubstitutions.ContainsKey(x.Identifier.ToString()))
+                                        .Select(x => {
+                                            switch (idSubstitutions[x.Identifier.ToString()])
+                                            {
+                                                case ExpressionSyntax exp:
+                                                    return new Replacement{
+                                                        replaceOn = x,
+                                                        replaceWith = exp 
+                                                    };
+                                                case ArgumentListSyntax args:
+                                                    return new Replacement
+                                                    {
+                                                        replaceOn = x.Ancestors(false).OfType<ArgumentListSyntax>().First(),
+                                                        replaceWith = args
+                                                    };
+                                            }
+                                            return null;
+                                        })
+                                        .ToDictionary(x=>x.replaceOn);
+                    return statement.ReplaceNodes(replacements.Select(x=>x.Key),
+                                                  (_, node) =>replacements[node].replaceWith);
+                })
+                .ToList();
+            if (result.Count is 1 && result.First() is ExpressionStatementSyntax expStatement)
+                    return expStatement.Expression;
+            return SyntaxFactory.Block(result);
         }
     }
 
@@ -47,10 +76,6 @@ namespace CodeGen.CSharp
         {
             @base = default;
             return new Injector<CodeContext>(this, SyntaxFactory.BaseExpression());
-        }
-        public Injector<CodeContext> InjectType<T>() 
-        {
-            return new Injector<CodeContext>(this,SyntaxFactory.ParseTypeName(Extensions.GetCSharpName<T>()));
         }
         public TypeInjector<CodeContext> InjectType(string value)
         {

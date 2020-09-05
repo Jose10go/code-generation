@@ -20,7 +20,7 @@ namespace CodeGen.CSharp.Context
                                          IAbstract<ICreateProperty>,
                                          IStatic<ICreateProperty>,
                                          IWithGetSet<ICreateProperty>,
-                                         IReturns<ICreateProperty>
+                                         IReturns<ICreateProperty>,IInitializeWith<ICreateProperty>
         {
         }
 
@@ -44,6 +44,7 @@ namespace CodeGen.CSharp.Context
             public ArrowExpressionClauseSyntax GetExpression { get ; set ; }
             public ArrowExpressionClauseSyntax SetExpression { get ; set ; }
             public TypeSyntax ReturnType { get; set ; }
+            public ExpressionSyntax InitializerExpression { get; set; }
         }
 
     }

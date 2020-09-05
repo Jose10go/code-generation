@@ -18,7 +18,7 @@ namespace CodeGen.CSharp.Context
                                           IAbstract<ICloneProperty>,
                                           IStatic<ICloneProperty>,
                                           IWithGetSet<ICloneProperty>,
-                                          IReturns<ICloneProperty>
+                                          IReturns<ICloneProperty>,IInitializeWith<ICloneProperty>
         {
         }
 
@@ -40,6 +40,7 @@ namespace CodeGen.CSharp.Context
             public ArrowExpressionClauseSyntax GetExpression { get ; set ; }
             public ArrowExpressionClauseSyntax SetExpression { get ; set ; }
             public TypeSyntax ReturnType { get; set ; }
+            public ExpressionSyntax InitializerExpression { get; set; }
         }
         
     }

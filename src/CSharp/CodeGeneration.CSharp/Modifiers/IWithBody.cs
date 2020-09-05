@@ -1,11 +1,8 @@
 ﻿using CodeGen.Attributes;
 using CodeGen.Context;
-using CodeGen.Core.Exceptions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Collections.Generic;
 
 namespace CodeGen.CSharp.Context
 {
@@ -22,7 +19,7 @@ namespace CodeGen.CSharp.Context
             {
                 var body = codeContext.GetCode();
                 BlockBody = body as BlockSyntax;
-                ExpressionBody = body as ArrowExpressionClauseSyntax;
+                ExpressionBody = SyntaxFactory.ArrowExpressionClause(body as ExpressionSyntax);
                 return (TCommand)this;
             }
         }

@@ -24,11 +24,16 @@ namespace CodeGen.CSharp.Context
                                                   .WithModifiers(Command.GetModifier)
                                                   .WithExpressionBody(Command.GetExpression)
                                                   .WithBody(Command.GetStatements);
+                if (newGetAccessor.Body is null)
+                    newGetAccessor = newGetAccessor.WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
                 var newSetAccessor =SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
                                                  .WithModifiers(Command.SetModifier)
                                                  .WithExpressionBody(Command.SetExpression)
                                                  .WithBody(Command.SetStatements);
+               
+                if (newSetAccessor.Body is null)
+                    newSetAccessor = newSetAccessor.WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
                 var Accesors = new SyntaxList<AccessorDeclarationSyntax>().Add(newGetAccessor).Add(newSetAccessor);
 
@@ -37,7 +42,12 @@ namespace CodeGen.CSharp.Context
                                             .WithModifiers(modifiers)
                                             .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"))
                                             .WithAccessorList(SyntaxFactory.AccessorList(Accesors));
-                
+
+                if (Command.InitializerExpression != null)
+                    property = property.WithInitializer(SyntaxFactory.EqualsValueClause(Command.InitializerExpression))
+                                       .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+
                 DocumentEditor.InsertMembers(node,0,new[]{property});
             }
 

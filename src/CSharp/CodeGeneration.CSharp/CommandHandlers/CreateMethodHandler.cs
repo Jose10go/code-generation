@@ -36,6 +36,9 @@ namespace CodeGen.CSharp.Context
                                           .WithModifiers(modifiers)
                                           .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"));
                 
+                if (Command.ExpressionBody != null)
+                    method = method.WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                
                 DocumentEditor.InsertMembers(node,0,new[]{method});
             }
 

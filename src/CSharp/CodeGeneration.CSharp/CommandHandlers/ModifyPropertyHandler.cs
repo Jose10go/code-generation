@@ -5,6 +5,8 @@ using Microsoft.CodeAnalysis;
 using CodeGen.Context;
 using static CodeGen.CSharp.Extensions;
 using System.Linq;
+using Microsoft.CodeAnalysis.Formatting;
+
 namespace CodeGen.CSharp.Context
 {
     public abstract partial class CSharpContext : CodeGenContext<Project, CSharpSyntaxNode, CompilationUnitSyntax, ISymbol>
@@ -22,9 +24,14 @@ namespace CodeGen.CSharp.Context
 
                 var newNode = node.WithIdentifier(SyntaxFactory.ParseToken(Command.Name))
                                   .WithAttributeLists(Command.Attributes)
+                                  .WithInitializer(SyntaxFactory.EqualsValueClause(Command.InitializerExpression))
                                   .WithModifiers(modifiers)
                                   .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"))
                                   .WithType(Command.ReturnType ?? node.Type);
+
+                if (Command.InitializerExpression != null)
+                    newNode = newNode.WithInitializer(SyntaxFactory.EqualsValueClause(Command.InitializerExpression))
+                                     .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
                 var getAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.GetAccessorDeclaration));
                 var setAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.SetKeyword));
