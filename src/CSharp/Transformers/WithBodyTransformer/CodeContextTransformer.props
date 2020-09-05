@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
   <ItemGroup>
-    <TransformerAssemblies Include="$(MSBuildThisFileDirectory)netcoreapp3.0\CodeContextTransformer.dll"/>
+    <TransformerPrecompileAssemblies Include="$(MSBuildThisFileDirectory)netcoreapp3.0\CodeContextTransformer.dll"/>
   </ItemGroup>
 </Project> 
