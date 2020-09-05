@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+  <ItemGroup>
+    <TransformerPrecompileAssemblies Include="$(MSBuildThisFileDirectory)netcoreapp3.1\FancyDecoPrecompileTimeTransformer.dll"/>
+  </ItemGroup>
+</Project> 

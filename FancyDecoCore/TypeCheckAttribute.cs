@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FancyDecoTransformer
+namespace FancyDecoCore
 {
     public class TypeCheckAttribute:Attribute
     {

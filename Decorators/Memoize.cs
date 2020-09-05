@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using FancyDecoTransformer;
+using FancyDecoCore;
 namespace Decorators
 {
     public class Memoize : Decorator
@@ -35,7 +35,9 @@ namespace Decorators
         {
             if (dictionary.ContainsKey(objects))
                 return dictionary[objects];
-            return d.DynamicInvoke(objects);
+            var result=d.DynamicInvoke(objects);
+            dictionary.Add(objects, result);
+            return result;
         }
 
     }

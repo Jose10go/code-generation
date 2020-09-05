@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FancyDecoTransformer
+namespace FancyDecoCore
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public abstract class DecoratorAttribute : Attribute 

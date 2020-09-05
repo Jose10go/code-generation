@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using FancyDecoTransformer;
+using FancyDecoCore;
 namespace Decorators
 {
     public class Crono : Decorator

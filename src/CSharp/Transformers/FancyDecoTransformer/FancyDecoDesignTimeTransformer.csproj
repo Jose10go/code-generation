@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>1.0.0</Version>
+    <Company />
+    <Authors>Jose Diego Menendez del Cueto</Authors>
+    <Description>A precompile time FancyDeco transformer.</Description>
+    <ProductName>FancyDecoDesignTimeTransformer</ProductName>
+    <Copyright>Copyright 2020 Jose Diego Menendez del Cueto</Copyright>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <BuildOutputTargetFolder>build</BuildOutputTargetFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="FancyDecoDesignTimeTransformer.props" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="FancyDecoDesignTimeTransformer.props">
+      <PackagePath>build</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CodeGeneration.CSharp.Precompilation" Version="1.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.4.0" />
+    <PackageReference Include="CodeContextTransformer" Version="1.0.0"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\FancyDecoCore\FancyDecoCore.csproj" />
+    <ProjectReference Include="..\..\CodeGeneration.CSharp\CodeGeneration.CSharp.csproj" />
+  </ItemGroup>
+
+
+  <Target Name="PostBuild" AfterTargets="Pack">
+    <Copy SourceFiles="bin\$(Configuration)\$(ProductName).$(Version).nupkg" DestinationFolder=" $(UserProfile)\.nuget\codegen" />
+  </Target>
+
+  <!--The include needs to happen after output has been copied to build output folder
+    but before NuGet generates a nuspec. See https://github.com/NuGet/Home/issues/4704.-->
+
+  <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
+    <ItemGroup>
+      <_PackageFiles Include="bin\$(Configuration)\*\*.dll">
+        <PackagePath>build</PackagePath>
+        <BuildAction>Content</BuildAction>
+      </_PackageFiles>
+    </ItemGroup>
+  </Target>
+
+</Project>

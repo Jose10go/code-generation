@@ -1,4 +1,4 @@
-﻿using FancyDecoTransformer;
+﻿using FancyDecoCore;
 using System;
 
 namespace Decorators

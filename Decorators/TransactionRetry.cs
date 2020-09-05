@@ -1,4 +1,4 @@
-﻿using FancyDecoTransformer;
+﻿using FancyDecoCore;
 using System;
 using System.Transactions;
 
@@ -9,7 +9,7 @@ namespace Decorators
         private int retryTimes;
         private readonly int miliseconsDelay;
 
-        public TransactionRetry(int retryTimes, int milisecondsDelay)
+        public TransactionRetry(int retryTimes=10, int milisecondsDelay=1000)
         {
             this.retryTimes = retryTimes;
             this.miliseconsDelay = milisecondsDelay;
