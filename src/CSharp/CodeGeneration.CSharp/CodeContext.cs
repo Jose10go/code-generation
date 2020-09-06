@@ -98,9 +98,8 @@ namespace CodeGen.CSharp
         
         public CodeContext StartOrContinueWith(string code)
         {
-            var block = SyntaxFactory.ParseStatement($"{{{code}}}") as BlockSyntax;
-            this.statements = this.statements.Concat(block.Statements);
-            return this;
+            var lambda=SyntaxFactory.ParseExpression(code) as ParenthesizedLambdaExpressionSyntax;
+            return StartOrContinueWith(lambda);
         }
         public CodeContext StartOrContinueWith(ParenthesizedLambdaExpressionSyntax code)
         {

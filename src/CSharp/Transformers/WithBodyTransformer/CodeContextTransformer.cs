@@ -22,18 +22,11 @@ namespace CodeContextTransformer
 
         private ExpressionSyntax GetBody(ParenthesizedLambdaExpressionSyntax node)
         {
-            return SyntaxFactory.ParseExpression($"SyntaxFactory.ParseExpression(\"{node}\") as ParenthesizedLambdaExpressionSyntax");
-            
-                //SyntaxFactory.BinaryExpression(SyntaxKind.AsExpression,
-            //           SyntaxFactory.InvocationExpression(
-            //           SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-            //               SyntaxFactory.IdentifierName(nameof(SyntaxFactory)),
-            //               SyntaxFactory.IdentifierName(nameof(SyntaxFactory.ParseExpression))),
-            //           SyntaxFactory.ArgumentList().AddArguments(
-            //               SyntaxFactory.Argument(
-            //                   SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression,
-            //                       SyntaxFactory.Literal(node.ToString()))))),
-            //           SyntaxFactory.IdentifierName(nameof(ParenthesizedLambdaExpressionSyntax)));
+            var code = node.ToString()
+                .Replace("{", "{{")
+                .Replace("}", "}}")
+                .Replace("\"", "\"\"");
+            return SyntaxFactory.ParseExpression(@$"@$""{code}""");
         }
     }
 }

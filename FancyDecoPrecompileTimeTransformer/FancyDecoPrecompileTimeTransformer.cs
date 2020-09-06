@@ -55,7 +55,7 @@ namespace FancyDecoTransformer
                 var methodName = item.Node.Identifier.ToString();
                 var decorators = GetDecorators(item.SemanticSymbol as IMethodSymbol);
                 var returnType = ConstructReturnType(item.SemanticSymbol as IMethodSymbol);
-                var code = new CodeContext().StartOrContinueWith($"({returnType})_{methodName}");
+                var code = new CodeContext().StartOrContinueWith($"()=>{{({returnType})_{methodName}}}");
                 foreach (var decorator in decorators)
                     code = new CodeContext()
                         .InjectType(GetDecoratorFromAttribute(decorator))

@@ -269,14 +269,14 @@ namespace Tests
 
             classTarget.Execute((ICreateProperty cmd) => cmd.WithName("SomeString")
                                                             .Returns<string>()
-                                                            .WithGetBody(new CodeContext().StartOrContinueWith("return null;")));
+                                                            .WithGetBody(new CodeContext().StartOrContinueWith("()=>{return null;}")));
 
             classTarget.Execute((ICreateProperty cmd) => cmd.WithName("SomeInt")
                                                             .MakeStatic()
                                                             .MakePublic()
                                                             .Returns<int>()
                                                             .MakeSetPrivate()
-                                                            .WithGetBody(new CodeContext().StartOrContinueWith("return 100;"))
+                                                            .WithGetBody(new CodeContext().StartOrContinueWith("()=>{return 100;}"))
                                                             .MakeGetInternal());
 
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
@@ -301,7 +301,7 @@ namespace Tests
                   .Execute((ICloneProperty cmd) => cmd.WithName("SomeOtherOne")
                                                       .MakeProtected()
                                                       .Returns<string>()
-                                                      .WithGetBody(new CodeContext().StartOrContinueWith("return \"hola\";"))
+                                                      .WithGetBody(new CodeContext().StartOrContinueWith("()=>{return \"hola\";}"))
                                                       .MakeGetPrivate());
 
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
@@ -341,7 +341,7 @@ namespace Tests
                   .Execute((ICloneMethod cmd)=>cmd.Get(keyName,out var name)
                                                   .MakePublic()
                                                   .WithName(name + "_generated")
-                                                  .WithBody(new CodeContext().StartOrContinueWith("Console.WriteLine(\"hello my friend.\");")));
+                                                  .WithBody(new CodeContext().StartOrContinueWith("()=>{Console.WriteLine(\"hello my friend.\");}")));
 
             //This Comment is preserved to mark the moment :)
             //.WithBody((dynamic @this)=>{ System.Console.WriteLine("hello my friend.");})//this is the best idea ever...
@@ -379,8 +379,10 @@ namespace Tests
                                                      .WithParameters<string>("message")
                                                         .WithDefaultValue("message","hello")   
                                                      .WithBody(new CodeContext().StartOrContinueWith(
-                                                         @"Console.WriteLine(message);
-                                                           return func(self);")));
+                                                         @"()=>{
+                                                            Console.WriteLine(message);
+                                                            return func(self);
+                                                         }")));
 
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
@@ -400,7 +402,7 @@ namespace Tests
                   .Execute((IModifyMethod cmd) => cmd.Get(keyName, out var name)
                                                      .WithName(name + "_modified")
                                                      .MakePublic()
-                                                     .WithBody(new CodeContext().StartOrContinueWith("Console.WriteLine(\"hello my friend.\");")));
+                                                     .WithBody(new CodeContext().StartOrContinueWith("()=>{Console.WriteLine(\"hello my friend.\");}")));
 
           
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
@@ -425,7 +427,7 @@ namespace Tests
                                                          .WithAttributes("GeneratedCode")
                                                          .Returns<int>()
                                                          .MakeStatic()
-                                                         .WithBody(new CodeContext().StartOrContinueWith($"return {i};")));
+                                                         .WithBody(new CodeContext().StartOrContinueWith($"()=>{{return {i};}}")));
             } 
 
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
@@ -470,7 +472,7 @@ namespace Tests
                                                     .MakeStatic())
                   .Execute((ICreateMethod cmd) => cmd.WithName("Main")
                                                      .MakeStatic()
-                                                     .WithBody(new CodeContext().StartOrContinueWith("System.Console.WriteLine(\"Hello World!!!\");")));
+                                                     .WithBody(new CodeContext().StartOrContinueWith("()=>{System.Console.WriteLine(\"Hello World!!!\");}")));
 
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);
             engine.CurrentProject.GetDocument(document_in.Id).TryGetSyntaxTree(out var st1);
