@@ -20,7 +20,7 @@ namespace CodeGeneration.CSharp.Precompilation
             ProjectAnalyzer analyzer = manager.GetProject(project);
             AdhocWorkspace workspace = new AdhocWorkspace();
             analyzer.SetGlobalProperty("BuildingFromCodeGeneration", "true");
-            var Project = analyzer.AddToWorkspace(workspace);
+            var Project = analyzer.AddToWorkspace(workspace,true);
             if (Project is null)
                 throw new ArgumentException($"Project is null. ({project})");
             var resolver = new CSharpAutofacResolver();
