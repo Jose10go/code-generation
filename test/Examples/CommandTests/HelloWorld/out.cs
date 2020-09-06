@@ -2,8 +2,7 @@
 {
     static class Program
     {
-        static void Main() { 
-            System.Console.WriteLine("Hello World!!!"); 
-        }
+        static void Main() 
+            =>System.Console.WriteLine("Hello World!!!"); 
     }
 }

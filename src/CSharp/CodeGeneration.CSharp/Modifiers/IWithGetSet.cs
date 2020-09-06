@@ -20,18 +20,22 @@ namespace CodeGen.CSharp.Context
             ArrowExpressionClauseSyntax GetExpression { get; set; }
             ArrowExpressionClauseSyntax SetExpression { get; set; }
 
+            public bool IsReadOnlyProp => SetExpression is null && SetStatements is null;
+
             TCommand WithGetBody(CodeContext code) 
             {
                 var body = code.GetCode();
                 GetStatements = body as BlockSyntax;
-                GetExpression = SyntaxFactory.ArrowExpressionClause(body as ExpressionSyntax);
+                if(body is ExpressionSyntax bodyexpr)
+                    GetExpression = SyntaxFactory.ArrowExpressionClause(bodyexpr);
                 return (TCommand)this;
             }
             TCommand WithSetBody(CodeContext code)
             {
                 var body = code.GetCode();
                 SetStatements = body as BlockSyntax;
-                SetExpression = SyntaxFactory.ArrowExpressionClause(body as ExpressionSyntax);
+                if(body is ExpressionSyntax bodyexpr)
+                    SetExpression = SyntaxFactory.ArrowExpressionClause(bodyexpr);
                 return (TCommand)this;
             }
 

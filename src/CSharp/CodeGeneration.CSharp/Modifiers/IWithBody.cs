@@ -19,7 +19,8 @@ namespace CodeGen.CSharp.Context
             {
                 var body = codeContext.GetCode();
                 BlockBody = body as BlockSyntax;
-                ExpressionBody = SyntaxFactory.ArrowExpressionClause(body as ExpressionSyntax);
+                if(body is ExpressionSyntax bodyexpr)
+                    ExpressionBody = SyntaxFactory.ArrowExpressionClause(bodyexpr);
                 return (TCommand)this;
             }
         }

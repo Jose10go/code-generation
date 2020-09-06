@@ -34,15 +34,11 @@ namespace CodeGen.CSharp.Context
                 var getAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.GetAccessorDeclaration));
                 var setAccessor = node.AccessorList.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.SetKeyword));
 
-                var newGetAccessor = getAccessor??SyntaxFactory
-                                                 .AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                                                 .WithModifiers(Command.GetModifier)
+                var newGetAccessor = getAccessor?.WithModifiers(Command.GetModifier)
                                                  .WithExpressionBody(Command.GetExpression ?? getAccessor?.ExpressionBody)
                                                  .WithBody(Command.GetStatements??getAccessor?.Body);
 
-                var newSetAccessor = setAccessor ?? SyntaxFactory
-                                                 .AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                                                 .WithModifiers(Command.SetModifier)
+                var newSetAccessor = setAccessor?.WithModifiers(Command.SetModifier)
                                                  .WithExpressionBody(Command.SetExpression ?? setAccessor?.ExpressionBody)
                                                  .WithBody(Command.SetStatements ?? setAccessor?.Body);
 

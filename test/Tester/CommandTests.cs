@@ -269,14 +269,14 @@ namespace Tests
 
             classTarget.Execute((ICreateProperty cmd) => cmd.WithName("SomeString")
                                                             .Returns<string>()
-                                                            .WithGetBody(new CodeContext().StartOrContinueWith("{return null;}")));
+                                                            .WithGetBody(new CodeContext().StartOrContinueWith("return null;")));
 
             classTarget.Execute((ICreateProperty cmd) => cmd.WithName("SomeInt")
                                                             .MakeStatic()
                                                             .MakePublic()
                                                             .Returns<int>()
                                                             .MakeSetPrivate()
-                                                            .WithGetBody(new CodeContext().StartOrContinueWith("{return 100;}"))
+                                                            .WithGetBody(new CodeContext().StartOrContinueWith("return 100;"))
                                                             .MakeGetInternal());
 
             Document document_in = engine.CurrentProject.Documents.First(x => x.FilePath == inpath);

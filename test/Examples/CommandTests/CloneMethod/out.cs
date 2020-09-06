@@ -9,8 +9,6 @@ namespace Tests.Examples.CloneMethod
         }
 
         public void hello_generated()
-        {
-            Console.WriteLine("hello my friend.");
-        }
+            => Console.WriteLine("hello my friend.");
     }
 }

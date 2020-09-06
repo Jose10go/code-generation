@@ -5,8 +5,6 @@ namespace Tests.Examples.ModifyMethod
     public class A
     {
         public void hello_modified()
-        {
-            Console.WriteLine("hello my friend.");
-        }
+            => Console.WriteLine("hello my friend.");
     }
 }

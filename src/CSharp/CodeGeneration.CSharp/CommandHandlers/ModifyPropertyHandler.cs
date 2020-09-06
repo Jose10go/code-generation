@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis;
 using CodeGen.Context;
 using static CodeGen.CSharp.Extensions;
 using System.Linq;
-using Microsoft.CodeAnalysis.Formatting;
 
 namespace CodeGen.CSharp.Context
 {
@@ -24,7 +23,6 @@ namespace CodeGen.CSharp.Context
 
                 var newNode = node.WithIdentifier(SyntaxFactory.ParseToken(Command.Name))
                                   .WithAttributeLists(Command.Attributes)
-                                  .WithInitializer(SyntaxFactory.EqualsValueClause(Command.InitializerExpression))
                                   .WithModifiers(modifiers)
                                   .WithAdditionalAnnotations(new SyntaxAnnotation($"{Id}"))
                                   .WithType(Command.ReturnType ?? node.Type);
@@ -42,9 +40,7 @@ namespace CodeGen.CSharp.Context
                                                 .WithExpressionBody(Command.GetExpression ?? getAccessor?.ExpressionBody)
                                                 .WithBody(Command.GetStatements ?? getAccessor?.Body);
 
-                var newSetAccessor = setAccessor ?? SyntaxFactory
-                                                 .AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                                                 .WithModifiers(Command.SetModifier)
+                var newSetAccessor = setAccessor?.WithModifiers(Command.SetModifier)
                                                  .WithExpressionBody(Command.SetExpression ?? setAccessor?.ExpressionBody)
                                                  .WithBody(Command.SetStatements ?? setAccessor?.Body);
 
